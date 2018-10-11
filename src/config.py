@@ -91,7 +91,7 @@ class Configuration(object):
     bdd100k_file_list_outlier = 'rainy_foggy_snowy_highway_anytime.txt'
     bdd100k_attributes_normal = [["weather", ["clear","partly cloudy", "overcast"]],["scene", "highway"],["timeofday", "daytime"]]
     bdd100k_attributes_outlier = [["scene", "highway"],["weather", ["rainy", "snowy", "foggy"]],["timeofday",["daytime","dawn/dusk","night"]]]
-
+    bdd100k_architecture = 1 # choose one of the implemented architectures
 
     # GTSRB dataset parameters
     gtsrb_rep_dim = 32

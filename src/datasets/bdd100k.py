@@ -117,11 +117,10 @@ class BDD100K_DataLoader(DataLoader):
         print("Data loaded.")
 
     def build_architecture(self, nnet):
-
         # implementation of different network architectures
-        assert Cfg.cifar10_architecture in (1, 2, 3)
+        assert Cfg.bdd100k_architecture == 1
 
-        if Cfg.cifar10_architecture == 1:
+        if Cfg.bdd100k_architecture == 1:
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
@@ -133,8 +132,12 @@ class BDD100K_DataLoader(DataLoader):
                 W1_init = None
 
             # build architecture 1
-            nnet.addInputLayer(shape=(None, 3, 32, 32))
 
+            # input layer
+            nnet.addInputLayer(shape=(None, self.channels, self.image_height,self.image_width))
+
+
+            # convlayer 1
             if Cfg.cifar10_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same')
             else:
@@ -148,6 +151,8 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+
+            # convlayer 2
             if Cfg.cifar10_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same')
             else:
@@ -158,6 +163,7 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addReLU()
             nnet.addMaxPool(pool_size=(2, 2))
 
+            # convlayer 3
             if Cfg.cifar10_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same')
             else:
@@ -166,6 +172,8 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+
+            # convlayer 4
             if Cfg.cifar10_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same')
             else:
@@ -176,6 +184,7 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addReLU()
             nnet.addMaxPool(pool_size=(2, 2))
 
+            # convlayer 5
             if Cfg.cifar10_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same')
             else:
@@ -184,6 +193,8 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+
+            # convlayer 6
             if Cfg.cifar10_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same')
             else:
@@ -194,11 +205,13 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addReLU()
             nnet.addMaxPool(pool_size=(2, 2))
 
+            # dense layer 1
             if Cfg.cifar10_bias:
                 nnet.addDenseLayer(num_units=Cfg.cifar10_rep_dim)
             else:
                 nnet.addDenseLayer(num_units=Cfg.cifar10_rep_dim, b=None)
 
+            # output/feature layer
             if Cfg.softmax_loss:
                 nnet.addDenseLayer(num_units=1)
                 nnet.addSigmoidLayer()
@@ -219,8 +232,11 @@ class BDD100K_DataLoader(DataLoader):
                 W1_init = None
 
             # build architecture 2
+
+            # input layer
             nnet.addInputLayer(shape=(None, 3, 32, 32))
 
+            # convlayer 1
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same',
                                   W=W1_init, b=None)
@@ -233,6 +249,7 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addReLU()
             nnet.addMaxPool(pool_size=(2, 2))
 
+            # convlayer 2
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same',
                               b=None)
             if Cfg.leaky_relu:
@@ -241,6 +258,7 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addReLU()
             nnet.addMaxPool(pool_size=(2, 2))
 
+            # convlayer 3
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same',
                               b=None)
             if Cfg.leaky_relu:
@@ -249,8 +267,10 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addReLU()
             nnet.addMaxPool(pool_size=(2, 2))
 
+            # dense layer 1
             nnet.addDenseLayer(num_units=Cfg.cifar10_rep_dim, b=None)
 
+            # output/feature layer
             if Cfg.softmax_loss:
                 nnet.addDenseLayer(num_units=1)
                 nnet.addSigmoidLayer()
@@ -271,8 +291,11 @@ class BDD100K_DataLoader(DataLoader):
                 W1_init = None
 
             # build architecture 3
+
+            # input layer
             nnet.addInputLayer(shape=(None, 3, 32, 32))
 
+            # convlayer 1
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same',
                                   W=W1_init, b=None)
@@ -285,6 +308,7 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addReLU()
             nnet.addMaxPool(pool_size=(2, 2))
 
+            # convlayer 2
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
@@ -292,6 +316,7 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addReLU()
             nnet.addMaxPool(pool_size=(2, 2))
 
+            # convlayer 3
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=128, filter_size=(5, 5), pad='same',
                               b=None)
             if Cfg.leaky_relu:
@@ -300,8 +325,10 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addReLU()
             nnet.addMaxPool(pool_size=(2, 2))
 
+            # dense layer 1
             nnet.addDenseLayer(num_units=Cfg.cifar10_rep_dim, b=None)
 
+            # output/feature layer
             if Cfg.softmax_loss:
                 nnet.addDenseLayer(num_units=1)
                 nnet.addSigmoidLayer()
@@ -324,8 +351,10 @@ class BDD100K_DataLoader(DataLoader):
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
 
-            nnet.addInputLayer(shape=(None, 3, 32, 32))
+            # input layer
+            nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
+            # convlayer 1
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same',
                                   W=W1_init, b=None)
@@ -335,6 +364,8 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+
+            # convlayer 2
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
@@ -342,6 +373,7 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addReLU()
             nnet.addMaxPool(pool_size=(2, 2))
 
+            # convlayer 3
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
@@ -354,11 +386,14 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addReLU()
             nnet.addMaxPool(pool_size=(2, 2))
 
+            # convlayer 4
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+
+            # convlayer 5
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
@@ -376,6 +411,7 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addReLU()
             nnet.addUpscale(scale_factor=(2, 2))
 
+            # deconvlayer 1
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
