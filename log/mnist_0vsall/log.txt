@@ -1,0 +1,76 @@
+Experiment configuration
+Dataset: mnist
+Seed: 0
+Fraction of Outliers: 0
+First layer weight init by dictionary: True
+PCA pre-processing? False
+Norm used: l1
+Global contrast normalization? True
+ZCA Whitening? False
+MNIST classes: 0 vs. all
+MNIST representation dimensionality: 32
+MNIST architecture used: 1
+MNIST Network with bias terms? True
+
+
+NeuralNet configuration
+Loss: svdd
+Pre-training? True
+Solver: adam
+Learning rate: 0.0001
+Learning rate decay? False
+Learning rate decay after epoch: 10
+Learning rate drop? True
+Learning rate drop in epoch: 50
+Learning rate drop by factor: 10
+Momentum: 0.9
+Rho: None
+Use Batch Normalization? True
+Number of epochs: 150
+Batch size: 200
+Leaky ReLU: True
+
+Regularization
+Weight decay: True
+C-parameter: 1000000.0
+Dropout: False
+Dropout architecture? False
+
+Pre-Training Configuration:
+Reconstruction loss: l2
+Learning rate drop? False
+Learning rate drop in epoch: 50
+Learning rate drop by factor: 10
+Weight decay: True
+C-parameter: 1000.0
+
+SVDD
+Hard margin objective? True
+Block coordinate descent used to solve R (and possibly c)? False
+Is center c fixed? True
+Solver for R: minimize_scalar
+Optimization method if minimize_scalar: bounded
+Objective on which R is optimized if LP: primal
+Block coordinate descent applied from epoch: 10
+(R,c) block update every k epoch with k=5
+Reconstruction regularization: False
+C_rec-parameter: 1000.0
+Nu-parameter: 0.1
+Mean initialization of c? True
+Number of batches for mean initialization of c: all
+
+
+Results
+
+Train AUC: 0.0 %
+Train accuracy: 90.2708 %
+Train time: 1081.2975
+
+Val AUC: 0.0 %
+Val accuracy: 90.1166 %
+
+Test AUC: 98.8394 %
+Test accuracy: 97.54 %
+Test time: 0.0
+
+

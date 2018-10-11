@@ -85,6 +85,14 @@ class Configuration(object):
     cifar10_normal = 1
     cifar10_outlier = -1
 
+    # BDD100K dataset parameters
+    bdd100k_use_file_lists = True
+    bdd100k_file_list_normal = 'clear_overcast_partlycloudy_highway_daytime.txt'
+    bdd100k_file_list_outlier = 'rainy_foggy_snowy_highway_anytime.txt'
+    bdd100k_attributes_normal = [["weather", ["clear","partly cloudy", "overcast"]],["scene", "highway"],["timeofday", "daytime"]]
+    bdd100k_attributes_outlier = [["scene", "highway"],["weather", ["rainy", "snowy", "foggy"]],["timeofday",["daytime","dawn/dusk","night"]]]
+
+
     # GTSRB dataset parameters
     gtsrb_rep_dim = 32
 

@@ -2,6 +2,7 @@ from datasets.__local__ import implemented_datasets
 from datasets.mnist import MNIST_DataLoader
 from datasets.cifar10 import CIFAR_10_DataLoader
 from datasets.GTSRB import GTSRB_DataLoader
+from datasets.bdd100k import BDD100K_DataLoader
 
 
 def load_dataset(learner, dataset_name, pretrain=False):
@@ -16,6 +17,9 @@ def load_dataset(learner, dataset_name, pretrain=False):
 
     if dataset_name == "gtsrb":
         data_loader = GTSRB_DataLoader
+
+    if dataset_name == "bdd100k":
+        data_loader = BDD100K_DataLoader
 
     # load data with data loader
     learner.load_data(data_loader=data_loader, pretrain=pretrain)
