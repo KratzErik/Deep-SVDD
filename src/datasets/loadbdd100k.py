@@ -28,7 +28,7 @@ def load_bdd100k_data_attribute_spec(img_folder, norm_spec, out_spec, n_train, n
     start_time = time.time()
     with open(labels_file) as json_data:
         loaded_json_data = json.load(json_data)
-    print('Json data loaded (%.2fs)' % (time.time()-start_time))
+    print('Loaded json data (%.2fs)' % (time.time()-start_time))
             
     print('Parsing json data...')
     start_time = time.time()
