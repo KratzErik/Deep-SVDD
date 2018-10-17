@@ -8,7 +8,7 @@ from config import Configuration as Cfg
 import os
 import numpy as np
 import cPickle as pickle
-from loadbdd100k import load_bdd100k_data
+from loadbdd100k import load_bdd100k_data_attribute_spec, load_bdd100k_data_filename_list
 
 
 class BDD100K_DataLoader(DataLoader):
