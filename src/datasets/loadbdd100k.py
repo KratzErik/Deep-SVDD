@@ -1,14 +1,15 @@
 import json
-from pathlib import Path, PurePath
+from pathlib import Path
 import numpy as np
 import math
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
-from PIL import Image
+#from PIL import Image
 import time
 
-def load_bdd100k_data_attribute_spec(img_folder, norm_spec, out_spec, n_train, n_val, n_test, out_frac, image_height, image_width, channels, save_name_lists=False, labels_file = None, get_norm_and_out_sets = False, shuffle=False):
-    
-    # img_folder: path to directory containing BDD100K images
+def load_bdd100k_data_attribute_spec(img_folder, norm_spec, out_spec, labels_file, n_train, n_val, n_test, out_frac, image_height, image_width, channels, save_name_lists=False, get_norm_and_out_sets = False, shuffle=False):
+    # Returns bdd100k image data in numpy ndarrays, based on attribute specification (see argument description below)
+    #
+    # img_folder: pathlib Path to directory containing BDD100K images
     # norm_spec, out_spec: Specifications of normal and outlier class, respectively. Input are nested lists of string attributes to be included in therespective datasets. Example: norm_spec = [["weather", ["clear","partly cloudy", "overcast"]],["scene", "highway"],["timeofday", "daytime"]]. Not including an attribute, i.e. no spec of weather, will include all weather conditions, i.e. equivalent of specifying all possible keys explicitly.
     # n_train: number of images to be loaded into training set
     # n_val: number of images to be loaded into validation set
@@ -20,24 +21,14 @@ def load_bdd100k_data_attribute_spec(img_folder, norm_spec, out_spec, n_train, n
     # get_norm_and_out_sets: boolean to indicate wether to return normal and outlier data in two sets (True) or train, validation and test set with test labels (False)
     # shuffle: boolean to indicate wether to shuffle data points. Default False => given same attributes and numbers of images, train, val and test sets are identical every time.
   
+    assert_all_attributes_exist(norm_spec)
+    assert_all_attributes_exist(out_spec)
+    
     n_out_to_choose = int(math.ceil(n_test * out_frac))
     n_norm_test = (n_test - n_out_to_choose)
     n_norm_to_choose = n_train + n_val + n_norm_test
     
-    print('Loading json data ...')
-    start_time = time.time()
-    with open(labels_file) as json_data:
-        loaded_json_data = json.load(json_data)
-    print('Loaded json data (%.2fs)' % (time.time()-start_time))
-            
-    print('Parsing json data...')
-    start_time = time.time()
-    norm_filenames= find_matching_files(loaded_json_data, norm_spec, n_norm_to_choose)           
-    print('norm file list complete (%.2fs)' % (time.time()-start_time))
-        
-    start_time = time.time()   
-    out_filenames = find_matching_files(loaded_json_data, out_spec, n_out_to_choose)
-    print('out file list complete (%.2fs)' % (time.time()-start_time))
+    norm_filenames, out_filenames= find_norm_and_out_files(labels_file, norm_spec, out_spec)
         
     if save_name_lists:
         save_file_list(norm_spec, norm_filenames)
@@ -47,7 +38,8 @@ def load_bdd100k_data_attribute_spec(img_folder, norm_spec, out_spec, n_train, n
 
     
 def load_bdd100k_data_filename_list(img_folder, norm_filenames, out_filenames, n_train, n_val, n_test, out_frac, image_height, image_width, channels, get_norm_and_out_sets=False, shuffle=False):
-  
+    # Returns bdd100k image data in np.ndarrays, based on specified image filenames (see argument description below)
+    #
     # img_folder: path to directory containing BDD100K images
     # norm_filenames, out_filenames: Lists of strings with names of image files to be included in normal and outlier datasets
     # n_train: number of images to be loaded into training set
@@ -59,12 +51,12 @@ def load_bdd100k_data_filename_list(img_folder, norm_filenames, out_filenames, n
     # labels_file: full path of the JSON file with BDD100K labels.
     # get_norm_and_out_sets: boolean to indicate wether to return normal and outlier data in two sets (True) or train, validation and test set with test labels (False)
     # shuffle: boolean to indicate wether to shuffle data points. Default False => given same attributes and numbers of images, train, val and test sets are identical every time.
-  
+    
     n_out_to_choose = int(math.ceil(n_test * out_frac))
     n_norm_test = (n_test - n_out_to_choose)
     n_norm_to_choose = n_train + n_val + n_norm_test
     
-        
+    print("Checking for overlap between NORMAL and OUTLIER classes...")    
     # Assert there is no overlap between target and out data
     overlap_counter = 0
     for filename in out_filenames:
@@ -77,14 +69,14 @@ def load_bdd100k_data_filename_list(img_folder, norm_filenames, out_filenames, n
         n_out_to_choose -= overlap_counter
         
     # Assert there is enough files to generate sets of requested size
-    
+    print("Checking number of available vs requested images...")
     if n_out_to_choose > len(out_filenames):
         print('Not enough files in specified OUTLIER class.\n\tRequested: %d\n\tFound: %d' % (n_out_to_choose, len(out_filenames)))
         scale_factor = len(out_filenames)/n_out_to_choose
         n_out_to_choose = len(out_filenames)
         n_norm_test = int(math.ceil((1 - out_frac)*n_out_to_choose/out_frac))
         n_norm_to_choose = n_train + n_val + n_norm_test
-        print('Test set downsized by factor %.2f' % scale_factor)
+        print('TEST set downsized by factor %.2f' % scale_factor)
         
     if n_norm_to_choose > len(norm_filenames):
         print('Not enough files in specified NORMAL class.\n\tRequested: %d\n\tFound: %d' % (n_norm_to_choose, len(norm_filenames)))
@@ -93,27 +85,13 @@ def load_bdd100k_data_filename_list(img_folder, norm_filenames, out_filenames, n
         n_train = int(math.ceil(scale_factor * n_train))
         n_val = int(math.ceil(scale_factor * n_val))
         n_norm_test = n_norm_to_choose - n_train - n_val
+        
         # Number of outliers has to be adjusted to keep fraction of outliers constant in test set
         n_out_to_choose = int(math.ceil(out_frac * n_norm_test / (1 - out_frac)))
-        print('Train, val and test sets downsized by factor %.2f' % scale_factor) 
-        #print("n_train = %d\nn_val = %d\nn_norm_test = %d\nn_out = %d" % (n_train,n_val,n_norm_test,n_out_to_choose))
-     
-    '''
-    if n_out_to_choose > len(out_filenames):
-        print('Not enough files in specified OUTLIER class.\n\tRequested: %d\n\tFound: %d' % (n_out_to_choose, len(out_filenames)))
-        scale_factor_1 = len(out_filenames)/n_out_to_choose
-        n_out_to_choose = len(out_filenames)
-        n_norm_test = int(math.ceil((1 - out_frac)*n_out_to_choose/out_frac))
-        # n_norm_test reduced means more images can be used for train and val sets
-        n_train_and_val = n_train + n_val
-        scale_factor_2 = (n_norm_to_choose - n_norm_test)/n_train_and_val
-        n_train = int(math.ceil(scale_factor_2 * n_train))
-        n_val = n_norm_to_choose - n_train - n_norm_test
-        print('Test set downsized by factor %.2f, train and val sets upsized by factor %.2f' % (scale_factor_1,scale_factor_2))
-        '''       
-        #print("n_train = %d\nn_val = %d\nn_norm_test = %d\nn_out = %d" % (n_train,n_val,n_norm_test,n_out_to_choose))
-        
+        print('TRAIN, VAL and TEST sets downsized by factor %.2f' % scale_factor) 
+
     # Choose image files
+    print("Choosing which images to load...")
     if shuffle:
         norm_perm = np.random.permutation(len(norm_filenames))
         norm_chosen = norm_perm[:n_norm_to_choose]
@@ -128,7 +106,9 @@ def load_bdd100k_data_filename_list(img_folder, norm_filenames, out_filenames, n
     norm_filenames = [norm_filenames[i] for i in norm_chosen]
     out_filenames = [out_filenames[i] for i in out_chosen]
     
+    
     # Specify image format
+    print("Initializing datasets...")
     norm_data = np.ndarray(shape=(n_norm_to_choose, image_height, image_width, channels), dtype=np.uint8)
     out_data = np.ndarray(shape=(n_out_to_choose, image_height, image_width, channels), dtype=np.uint8)
 
@@ -176,8 +156,32 @@ def load_bdd100k_data_filename_list(img_folder, norm_filenames, out_filenames, n
         return train_data, val_data, test_data, test_labels
 
 
-def find_matching_files(json_data, attributes_to_choose, n_to_choose):
+def find_norm_and_out_files(labels_file, norm_spec, out_spec):
+    
+    print('Loading json data ...')
+    start_time = time.time()
+    with open(labels_file) as json_data:
+        loaded_json_data = json.load(json_data)
+    print('\rLoaded json data (%.2fs)' % (time.time()-start_time))
+    
+    norm_filenames = find_matching_files(loaded_json_data, norm_spec)
+    print('NORMAL filename list complete')
+    out_filenames = find_matching_files(loaded_json_data, out_spec)
+    print('OUTLIER filename list complete')
+    
+    return norm_filenames, out_filenames
+    
+def find_matching_files(json_data, attributes_to_choose):
+    # Parses json database and returns a list with "name" entry of all items with "attribute" keys that match attributes_to_choose
+    #
+    # json_data: dictionary with json data for bdd100k images
+    # attributes_to_choose: attribute specification, see description of *_spec arguments in function load_bdd100k_data_attribute_spec
+    
+
     img_names = []
+    
+    print('Parsing json data...')
+    start_time = time.time()
     
     for entry in json_data:
         add_flag = True
@@ -194,32 +198,18 @@ def find_matching_files(json_data, attributes_to_choose, n_to_choose):
                 break
         if add_flag:
             img_names.append(entry["name"])
-        '''       
-        check if enough images are found
-        if len(img_names) == n_to_choose:
-            break
-        '''
             
-    '''
-    scale_factor = -1
-    if len(img_names) < n_to_choose:
-        attribute_str = ""
-        for attribute in attributes_to_choose:
-            attribute_str += attribute[0]+": "
-            if isinstance(attribute[1], list): 
-                for attribute_value in attribute[1]:
-                    attribute_str += attribute_value + "/"
-            else:
-                attribute_str += attribute[1]
-            attribute_str += ', '
-        err_str = '\tNot enough files with specified attributes (' + attribute_str + ')\n\t\tRequested: %d\n\t\tFound: %d'
-        print( err_str % (n_to_choose, len(img_names)))
-        scale_factor = len(img_names)/n_to_choose
-    '''
-        
-    return img_names #, scale_factor
+    print('Parsing complete (%.2fs)' % (time.time()-start_time))
+    
+    return img_names
+
 
 def save_file_list(attribute_spec, file_list):
+    # Saves list of files from function find_matching_files for future use. Output is saved in current working directory.
+    #
+    # attribute_spec: is used to name the textfile for convenient future reference
+    # file_list: every entry in file_list is written on a separate row in the output .txt-file
+    
     list_name = ""
     for i1, attribute in enumerate(attribute_spec):
         if i1 > 0:
@@ -237,3 +227,42 @@ def save_file_list(attribute_spec, file_list):
         for item in file_list:
             f.write("%s\n" % item)
     
+def get_namelist_from_file(files):
+    
+    if isinstance(files,list): # specify several files in a list to e.g. include several different types of attributes combinations in outlier class
+        _list = []
+        for _file in files:
+            _list.append([line.rstrip('\n') for line in open(_file,'r')] )
+    else:
+        _list = [line.rstrip('\n') for line in open(files,'r')]
+    return _list
+
+
+def assert_all_attributes_exist(attribute_spec):
+    # Prints warning if specified attributes are not available in bdd100k dataset.
+
+    available = [["weather", ["clear", "partly cloudy", "overcast", "rainy", "snowy", "foggy", "undefined"]],["scene", ["highway", "residential", "gas stations", "parking lot", "tunnel", "city street", "undefined"]], ["timeofday", ["daytime", "dawn/dusk", "night"]]]
+    available_attributes = [item[0] for item in available]
+
+    for entry in attribute_spec:
+        attribute = entry[0]
+        key = entry[1]
+        if attribute not in available_attributes:
+            print("Warning: No such attribute: '"+attribute+"'. Available: 'weather', 'scene', 'timeofday'")
+        else:
+            idx = available_attributes.index(attribute)
+            if isinstance(key,list):
+                for key_opt in key:
+                    if key_opt not in available[idx][1]:
+                        options_str = ""
+                        for av_key in available[idx][1]:
+                            options_str += "'" + av_key + "', "
+                        options_str = options_str[:-2] + "."
+                        print("Warning: attribute '"+ attribute + "' has no key called '" + key_opt+ "'. Available: "+options_str)
+            else:
+                if key not in available[idx][1]:
+                    options_str = ""
+                    for av_key in available[idx][1]:
+                        options_str += "'" + av_key + "', "
+                    options_str = options_str[:-2] + "."
+                    print("Warning: attribute '"+ attribute + "' has no key called '" + key+ "'. Available: "+options_str)
