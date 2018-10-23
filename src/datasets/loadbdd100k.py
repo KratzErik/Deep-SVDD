@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 import numpy as np
 import math
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from keras.preprocessing.image import load_img, img_to_array
 #from PIL import Image
 import time
 
