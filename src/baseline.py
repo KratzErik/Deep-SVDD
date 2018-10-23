@@ -244,8 +244,8 @@ def main():
         sys.exit()
 
     # computation device
-    if 'gpu' in args.device:
-        theano.sandbox.cuda.use(args.device)
+#    if 'gpu' in args.device:
+#        theano.sandbox.cuda.use(args.device)
 
     # set save_at to n_epochs if not provided
     save_at = args.n_epochs if not args.save_at else args.save_at
