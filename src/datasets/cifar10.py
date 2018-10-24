@@ -199,6 +199,8 @@ class CIFAR_10_DataLoader(DataLoader):
             # build architecture 1
             nnet.addInputLayer(shape=(None, 3, 32, 32))
 
+
+            # conv1
             if Cfg.cifar10_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same')
             else:
@@ -212,6 +214,8 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+
+            #conv2
             if Cfg.cifar10_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same')
             else:
@@ -220,8 +224,10 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool1
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #conv3
             if Cfg.cifar10_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same')
             else:
@@ -230,6 +236,8 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+
+            #conv4
             if Cfg.cifar10_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same')
             else:
@@ -238,8 +246,11 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            
+            #pool2
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #conv5
             if Cfg.cifar10_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same')
             else:
@@ -248,6 +259,8 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            
+            #conv6
             if Cfg.cifar10_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same')
             else:
@@ -256,6 +269,8 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            
+            #pool3
             nnet.addMaxPool(pool_size=(2, 2))
 
             if Cfg.cifar10_bias:
@@ -285,6 +300,7 @@ class CIFAR_10_DataLoader(DataLoader):
             # build architecture 2
             nnet.addInputLayer(shape=(None, 3, 32, 32))
 
+            #conv1
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same',
                                   W=W1_init, b=None)
@@ -295,24 +311,30 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool1
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #conv2
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same',
                               b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool2
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #conv3
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same',
                               b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool3
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #dense1
             nnet.addDenseLayer(num_units=Cfg.cifar10_rep_dim, b=None)
 
             if Cfg.softmax_loss:
@@ -337,6 +359,7 @@ class CIFAR_10_DataLoader(DataLoader):
             # build architecture 3
             nnet.addInputLayer(shape=(None, 3, 32, 32))
 
+            #conv1
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same',
                                   W=W1_init, b=None)
@@ -347,21 +370,27 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            
+            #pool1
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #conv2
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool2
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #conv3
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=128, filter_size=(5, 5), pad='same',
                               b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool3
             nnet.addMaxPool(pool_size=(2, 2))
 
             nnet.addDenseLayer(num_units=Cfg.cifar10_rep_dim, b=None)
@@ -390,6 +419,7 @@ class CIFAR_10_DataLoader(DataLoader):
 
             nnet.addInputLayer(shape=(None, 3, 32, 32))
 
+            #conv1
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same',
                                   W=W1_init, b=None)
@@ -399,35 +429,43 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #conv2
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool1
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #conv3
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #conv4
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool2
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #conv5
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #conv6
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool3
             nnet.addMaxPool(pool_size=(2, 2))
 
             # Code Layer
@@ -438,44 +476,54 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #unpool1
             nnet.addUpscale(scale_factor=(2, 2))
-
+            #deconv1
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #deconv2
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #unpool2
             nnet.addUpscale(scale_factor=(2, 2))
 
+            #deconv3
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #deconv4
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #unpool3
             nnet.addUpscale(scale_factor=(2, 2))
 
+            #deconv5
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #deconv6
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #unpool4
             nnet.addUpscale(scale_factor=(2, 2))
 
+            #deconv7
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=3, filter_size=(5, 5), pad='same', b=None)
             nnet.addSigmoidLayer()
 
@@ -490,6 +538,7 @@ class CIFAR_10_DataLoader(DataLoader):
 
             nnet.addInputLayer(shape=(None, 3, 32, 32))
 
+            #conv1
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same',
                                   W=W1_init, b=None)
@@ -500,20 +549,26 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool1
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #conv2
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool2
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #conv3
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+
+            #pool3
             nnet.addMaxPool(pool_size=(2, 2))
 
             # Code Layer
@@ -525,27 +580,34 @@ class CIFAR_10_DataLoader(DataLoader):
             else:
                 nnet.addReLU()
 
+            #deconv1
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #unpool1
             nnet.addUpscale(scale_factor=(2, 2))
 
+            #deconv2
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #unpool2
             nnet.addUpscale(scale_factor=(2, 2))
 
+            #deconv3
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #unpool3
             nnet.addUpscale(scale_factor=(2, 2))
 
+            #deconv4
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=3, filter_size=(5, 5), pad='same', b=None)
             nnet.addSigmoidLayer()
 
@@ -560,6 +622,7 @@ class CIFAR_10_DataLoader(DataLoader):
 
             nnet.addInputLayer(shape=(None, 3, 32, 32))
 
+            #conv1
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same',
                                   W=W1_init, b=None)
@@ -570,21 +633,26 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool1
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #conv2
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool2
             nnet.addMaxPool(pool_size=(2, 2))
 
+            #conv3
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=128, filter_size=(5, 5), pad='same',
                               b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #pool3
             nnet.addMaxPool(pool_size=(2, 2))
 
             # Code Layer
@@ -595,27 +663,33 @@ class CIFAR_10_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
-
+            #deconv1
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=128, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #unpool1
             nnet.addUpscale(scale_factor=(2, 2))
 
+            #deconv2
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #unpool2
             nnet.addUpscale(scale_factor=(2, 2))
 
+            #deconv3
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same', b=None)
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
+            #unpool3
             nnet.addUpscale(scale_factor=(2, 2))
 
+            #deconv4
             nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=3, filter_size=(5, 5), pad='same', b=None)
             nnet.addSigmoidLayer()

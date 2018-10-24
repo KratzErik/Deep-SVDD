@@ -24,9 +24,9 @@ def load_bdd100k_data_attribute_spec(img_folder, norm_spec, out_spec, labels_fil
     assert_all_attributes_exist(norm_spec)
     assert_all_attributes_exist(out_spec)
     
-    n_out_to_choose = int(math.ceil(n_test * out_frac))
-    n_norm_test = (n_test - n_out_to_choose)
-    n_norm_to_choose = n_train + n_val + n_norm_test
+    #n_out_to_choose = int(math.ceil(n_test * out_frac))
+    #n_norm_test = (n_test - n_out_to_choose)
+    #n_norm_to_choose = n_train + n_val + n_norm_test
     
     norm_filenames, out_filenames= find_norm_and_out_files(labels_file, norm_spec, out_spec)
         
@@ -109,8 +109,8 @@ def load_bdd100k_data_filename_list(img_folder, norm_filenames, out_filenames, n
     
     # Specify image format
     print("Initializing datasets...")
-    norm_data = np.ndarray(shape=(n_norm_to_choose, image_height, image_width, channels), dtype=np.uint8)
-    out_data = np.ndarray(shape=(n_out_to_choose, image_height, image_width, channels), dtype=np.uint8)
+    norm_data = np.ndarray(shape=(n_norm_to_choose, image_height, image_width, channels), dtype=np.int8)
+    out_data = np.ndarray(shape=(n_out_to_choose, image_height, image_width, channels), dtype=np.int8)
 
     # Load norm images
     print("Loading NORMAL image data...")
@@ -151,7 +151,7 @@ def load_bdd100k_data_filename_list(img_folder, norm_filenames, out_filenames, n
         print("Generated test_data (%.2fs)" % (time.time()-start_time))
 
         start_time = time.time()
-        test_labels = np.concatenate([np.zeros((len(norm_data[n_train + n_val:])),dtype=int),np.ones((len(out_data),),dtype=int)])
+        test_labels = np.concatenate([np.zeros((len(norm_data[n_train + n_val:])),dtype=np.int32),np.ones((len(out_data),),dtype=np.int32)])
         print("Generated test_labels (%.2fs)" % (time.time()-start_time))
         return train_data, val_data, test_data, test_labels
 
