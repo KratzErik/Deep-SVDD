@@ -91,7 +91,7 @@ class Configuration(object):
     bdd100k_file_list_outlier = 'rainy_foggy_snowy_highway_anytime.txt'
     bdd100k_attributes_normal = [["weather", ["clear","partly cloudy", "overcast"]],["scene", "highway"],["timeofday", "daytime"]]
     bdd100k_attributes_outlier = [["scene", "highway"],["weather", ["rainy", "snowy", "foggy"]],["timeofday",["daytime","dawn/dusk","night"]]]
-    bdd100k_architecture = 1 # choose one of the implemented architectures
+    bdd100k_architecture = 3 # choose one of the implemented architectures
     bdd100k_img_folder = Path("/data/bdd100k/images/train_and_val_192by320")
     bdd100k_norm_file = "/data/bdd100k/namelists/clear_or_partly_cloudy_or_overcast_and_highway_and_daytime.txt"
     bdd100k_norm_filenames = loadbdd100k.get_namelist_from_file(norm_file)
@@ -100,8 +100,8 @@ class Configuration(object):
     bdd100k_norm_spec = [["weather", ["clear","partly cloudy", "overcast"]],["scene", "highway"],["timeofday", "daytime"]]
     bdd100k_out_spec = [["weather", ["rainy", "snowy", "foggy"]],["scene", "highway"],["timeofday",["daytime","dawn/dusk","night"]]]
     bdd100k_n_train = 5000
-    bdd100k_n_val = 0
-    bdd100k_n_test = 4000
+    bdd100k_n_val = 2000
+    bdd100k_n_test = 1000 # test set is divided in 2, one half for val and one half for test
     bdd100k_out_frac = 0.5
     bdd100k_image_height = 192
     bdd100k_image_width = 320
@@ -110,6 +110,7 @@ class Configuration(object):
     bdd100k_labels_file = None
     bdd100k_get_norm_and_out_sets = False
     bdd100k_shuffle=False
+    bdd100k_rep_dim = 480
 
     # GTSRB dataset parameters
     gtsrb_rep_dim = 32
