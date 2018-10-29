@@ -1,5 +1,7 @@
 import numpy as np
 import theano
+from pathlib import Path
+from datasets import loadbdd100k
 
 
 class Configuration(object):
@@ -94,9 +96,9 @@ class Configuration(object):
     bdd100k_architecture = 3 # choose one of the implemented architectures
     bdd100k_img_folder = Path("/data/bdd100k/images/train_and_val_192by320")
     bdd100k_norm_file = "/data/bdd100k/namelists/clear_or_partly_cloudy_or_overcast_and_highway_and_daytime.txt"
-    bdd100k_norm_filenames = loadbdd100k.get_namelist_from_file(norm_file)
+    bdd100k_norm_filenames = loadbdd100k.get_namelist_from_file(bdd100k_norm_file)
     bdd100k_out_file = "/data/bdd100k/namelists/rainy_or_snowy_or_foggy_and_highway_and_daytime_or_dawndusk_or_night.txt"
-    bdd100k_out_filenames = loadbdd100k.get_namelist_from_file(out_file)
+    bdd100k_out_filenames = loadbdd100k.get_namelist_from_file(bdd100k_out_file)
     bdd100k_norm_spec = [["weather", ["clear","partly cloudy", "overcast"]],["scene", "highway"],["timeofday", "daytime"]]
     bdd100k_out_spec = [["weather", ["rainy", "snowy", "foggy"]],["scene", "highway"],["timeofday",["daytime","dawn/dusk","night"]]]
     bdd100k_n_train = 5000
