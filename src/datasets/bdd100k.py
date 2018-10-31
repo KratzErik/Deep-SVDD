@@ -472,26 +472,21 @@ class BDD100K_DataLoader(DataLoader):
                           W_init=W1_init,
                           bias=Cfg.bdd100k_bias,
                           pool_size=(2,2),
-                          use_batch_norm=Cfg.use_batch_norm
-                          pad = 'same')
+                          use_batch_norm=Cfg.use_batch_norm)
 
             addConvModule(nnet,
                           num_filters=32,
                           filter_size=(5,5),
-                          W_init=W1_init,
                           bias=Cfg.bdd100k_bias,
                           pool_size=(2,2),
-                          use_batch_norm=Cfg.use_batch_norm
-                          pad = 'same')
+                          use_batch_norm=Cfg.use_batch_norm)
 
             addConvModule(nnet,
                           num_filters=64,
                           filter_size=(5,5),
-                          W_init=W1_init,
                           bias=Cfg.bdd100k_bias,
                           pool_size=(2,2),
-                          use_batch_norm=Cfg.use_batch_norm
-                          pad = 'same')
+                          use_batch_norm=Cfg.use_batch_norm)
 
             addConvModule(nnet,
                           num_filters=64,
@@ -503,20 +498,16 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=128,
                           filter_size=(5,5),
-                          W_init=W1_init,
                           bias=Cfg.bdd100k_bias,
                           pool_size=(2,2),
-                          use_batch_norm=Cfg.use_batch_norm
-                          pad = 'same')
+                          use_batch_norm=Cfg.use_batch_norm)
 
             addConvModule(nnet,
                           num_filters=256,
                           filter_size=(5,5),
-                          W_init=W1_init,
                           bias=Cfg.bdd100k_bias,
                           pool_size=(2,2),
-                          use_batch_norm=Cfg.use_batch_norm
-                          pad = 'same')
+                          use_batch_norm=Cfg.use_batch_norm)
 
             # Code Layer
             if Cfg.mnist_bias:
