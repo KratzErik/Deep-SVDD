@@ -205,8 +205,6 @@ def initialize_c_as_mean(nnet, n_batches, eps=0.1):
     i_batch = 0
     for batch in nnet.data.get_epoch_train():
         inputs, targets, _ = batch
-	print("Inputs: ",inputs.shape, "Targets: ", targets.shape)
-        print(targets)
         if i_batch == n_batches:
             break
 

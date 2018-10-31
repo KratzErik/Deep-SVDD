@@ -71,6 +71,12 @@ class BDD100K_DataLoader(DataLoader):
         else:
             self._X_train, self._X_val, self._X_test, self._y_test = load_bdd100k_data_attribute_spec(self.data_path, self.attributes_normal, self.attributes_outlier, self.label_path, self.n_train, self.n_val, self.n_test, self.out_frac, self.image_height, self.image_width, self.channels, save_name_lists = True)
 
+        # tranpose to channels first
+        self._X_train = np.moveaxis(self._X_train,-1,1)
+        self._X_val = np.moveaxis(self._X_val,-1,1)
+        self._X_test = np.moveaxis(self._X_test,-1,1)
+
+
         # cast data properly
         self._X_train = self._X_train.astype(np.float32)
         self._X_val = self._X_val.astype(np.float32)
@@ -218,7 +224,7 @@ class BDD100K_DataLoader(DataLoader):
                 nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim * units_multiplier,
                                    b=None)
 
-        if Cfg.bdd100k_architecture == 3:
+        elif Cfg.bdd100k_architecture == 3:
             
             #(192,320) input: (2,2) maxpooling down to (3,5)-image before dense layer
 
@@ -324,16 +330,8 @@ class BDD100K_DataLoader(DataLoader):
             else:
                 nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim, b=None)
 
-            # output/feature layer
-            if Cfg.softmax_loss:
-                nnet.addDenseLayer(num_units=1)
-                nnet.addSigmoidLayer()
-            elif Cfg.svdd_loss:
-                nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
-            else:
-                raise ValueError("No valid choice of loss for dataset " + self.dataset_name)
 
-        if Cfg.bdd100k_architecture == 4:
+        elif Cfg.bdd100k_architecture == 4:
             # (192,320) input: first pooling is (3,5), then (2,2) pooling down to (4,4)-image just as for CIFAR-10
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
@@ -438,14 +436,17 @@ class BDD100K_DataLoader(DataLoader):
             else:
                 nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim, b=None)
 
-            # output/feature layer
-            if Cfg.softmax_loss:
-                nnet.addDenseLayer(num_units=1)
-                nnet.addSigmoidLayer()
-            elif Cfg.svdd_loss:
-                nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
-            else:
-                raise ValueError("No valid choice of loss for dataset " + self.dataset_name)
+        else:
+            raise ValueError("No valid choice of architecture")
+
+        # Add ouput/feature layer
+        if Cfg.softmax_loss:
+            nnet.addDenseLayer(num_units=1)
+            nnet.addSigmoidLayer()
+        elif Cfg.svdd_loss:
+            nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
+        else:
+            raise ValueError("No valid choice of loss for dataset " + self.dataset_name)
 
     def build_autoencoder(self, nnet):
 
