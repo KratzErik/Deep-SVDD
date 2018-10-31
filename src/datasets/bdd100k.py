@@ -149,7 +149,7 @@ class BDD100K_DataLoader(DataLoader):
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=500)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -230,7 +230,7 @@ class BDD100K_DataLoader(DataLoader):
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=16, filter_size=5, n_sample=500)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=16, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -336,7 +336,7 @@ class BDD100K_DataLoader(DataLoader):
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=16, filter_size=5, n_sample=500)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=16, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -454,10 +454,10 @@ class BDD100K_DataLoader(DataLoader):
         assert Cfg.bdd100k_architecture in (1, 2)
 
         if Cfg.bdd100k_architecture == 1:
-
+            first_layer_n_filters = 16
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, 8, 5, n_sample=500)
+                W1_init = learn_dictionary(nnet.data._X_train, first_layer_n_filters, 5, n_sample=Cfg.bdd100k_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -467,7 +467,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
             addConvModule(nnet,
-                          num_filters=16,
+                          num_filters=first_layer_n_filters,
                           filter_size=(5,5),
                           W_init=W1_init,
                           bias=Cfg.bdd100k_bias,
@@ -544,37 +544,33 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=64,
                           filter_size=(5,5),
-                          pad=1,
-                          bias=Cfg.bdd100k_bias,
-                          pool_size=(2,2),
-                          use_batch_norm=Cfg.use_batch_norm,
-                          upscale=True)
-            
-            # Deconv and unpool 4
-            addConvModule(nnet,
-                          num_filters=64,
-                          filter_size=(5,5),
-                          pad=1,
-                          bias=Cfg.bdd100k_bias,
-                          pool_size=(2,2),
-                          use_batch_norm=Cfg.use_batch_norm,
-                          upscale=True)
-            
-            # Deconv and unpool 5
-            addConvModule(nnet,
-                          num_filters=64,
-                          filter_size=(5,5),
-                          pad=1,
                           bias=Cfg.bdd100k_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           upscale=True)
 
-            # Deconv and unpool 6  
+            # Deconv and unpool 4
             addConvModule(nnet,
                           num_filters=64,
                           filter_size=(5,5),
-                          pad=1,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          upscale=True)
+
+            # Deconv and unpool 5
+            addConvModule(nnet,
+                          num_filters=64,
+                          filter_size=(5,5),
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          upscale=True)
+
+            # Deconv and unpool 6
+            addConvModule(nnet,
+                          num_filters=64,
+                          filter_size=(5,5),
                           bias=Cfg.bdd100k_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
@@ -598,7 +594,7 @@ class BDD100K_DataLoader(DataLoader):
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=16, filter_size=5, n_sample=500)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=16, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -773,7 +769,7 @@ class BDD100K_DataLoader(DataLoader):
             # input (256,256)
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, 16, 5, n_sample=500)
+                W1_init = learn_dictionary(nnet.data._X_train, 16, 5, n_sample=Cfg.bdd100k_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))

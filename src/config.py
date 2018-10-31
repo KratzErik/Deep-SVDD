@@ -9,6 +9,10 @@ class Configuration(object):
     floatX = np.float32
     seed = 0
 
+    n_pretrain_epochs = 150
+    plot_filters = False
+    plot_most_out_and_norm = False
+
     # BDD100K dataset parameters
     bdd100k_use_file_lists = True
     bdd100k_file_list_normal = 'clear_overcast_partlycloudy_highway_daytime.txt'
@@ -25,7 +29,7 @@ class Configuration(object):
     bdd100k_n_train = 100
     bdd100k_n_val = 100
     bdd100k_n_test = 100 # test set is divided in 2, one half for val and one half for test
-    bdd100k_out_frac = 0.5
+    bdd100k_out_frac = 0.1
     bdd100k_image_height = 256
     bdd100k_image_width = 256
     bdd100k_channels = 3
@@ -33,9 +37,10 @@ class Configuration(object):
     bdd100k_labels_file = "/data/bdd100k/labels/bdd100k_labels_images_train_and_val.json"
     bdd100k_get_norm_and_out_sets = False
     bdd100k_shuffle=False
-    bdd100k_rep_dim = 32
+    bdd100k_rep_dim = 512
     bdd100k_architecture = 1
     bdd100k_bias = True
+    bdd100k_n_dict_learn = min(500,bdd100k_n_train)
 
     # Final Layer
     softmax_loss = False

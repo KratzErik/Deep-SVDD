@@ -226,10 +226,10 @@ parser.add_argument("--bdd100k_bias",
 parser.add_argument("--bdd100k_val_frac",
                     help="specify the fraction the validation set of the initial training data should be",
                     type=float, default=1./6)
+'''
 parser.add_argument("--bdd100k_rep_dim",
                     help="specify the dimensionality of the last layer",
                     type=int, default=32)
-'''
 parser.add_argument("--bdd100k_architecture",
                     help="specify which network architecture should be used",
                     type=int, default=2)
@@ -367,7 +367,7 @@ def main():
     nnet = NeuralNet(dataset=args.dataset, use_weights=weights, pretrain=Cfg.pretrain)
     # pre-train weights via autoencoder, if specified
     if Cfg.pretrain:
-        nnet.pretrain(solver="adam", lr=0.0001, n_epochs=150)
+        nnet.pretrain(solver="adam", lr=0.0001, n_epochs=Cfg.n_pretrain_epochs)
 
     nnet.train(solver=args.solver, n_epochs=args.n_epochs, save_at=save_at, save_to=save_to)
 
@@ -398,13 +398,16 @@ def main():
         else:
             plot_diagnostics(nnet, Cfg.xp_path, Cfg.title_suffix)
 
-    plot_filters(nnet, Cfg.xp_path, Cfg.title_suffix)
+    if Cfg.plot_filters:
+        print("Plotting filters")
+        plot_filters(nnet, Cfg.xp_path, Cfg.title_suffix)
 
     # If AD experiment, plot most anomalous and most normal
-    if Cfg.ad_experiment:
+    if Cfg.ad_experiment and Cfg.plot_most_out_and_norm:
         n_img = 32
+        print 1
         plot_outliers_and_most_normal(nnet, n_img, Cfg.xp_path)
-
+        print 2
 
 if __name__ == '__main__':
     main()
