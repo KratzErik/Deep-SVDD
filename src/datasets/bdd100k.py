@@ -168,7 +168,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=32 * units_multiplier,
                           filter_size=(5,5),
-                          bias=Cfg.mnist_bias,
+                          bias=Cfg.bdd100k_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout)
@@ -177,7 +177,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=64 * units_multiplier,
                           filter_size=(5,5),
-                          bias=Cfg.mnist_bias,
+                          bias=Cfg.bdd100k_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout)
@@ -186,7 +186,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=64 * units_multiplier,
                           filter_size=(5,5),
-                          bias=Cfg.mnist_bias,
+                          bias=Cfg.bdd100k_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout)
@@ -195,7 +195,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=128 * units_multiplier,
                           filter_size=(5,5),
-                          bias=Cfg.mnist_bias,
+                          bias=Cfg.bdd100k_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout)
@@ -204,7 +204,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=256 * units_multiplier,
                           filter_size=(5,5),
-                          bias=Cfg.mnist_bias,
+                          bias=Cfg.bdd100k_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout)
@@ -453,6 +453,146 @@ class BDD100K_DataLoader(DataLoader):
         assert Cfg.bdd100k_architecture in (1, 2)
 
         if Cfg.bdd100k_architecture == 1:
+
+            if Cfg.weight_dict_init & (not nnet.pretrained):
+                # initialize first layer filters by atoms of a dictionary
+                W1_init = learn_dictionary(nnet.data._X_train, 8, 5, n_sample=500)
+                plot_mosaic(W1_init, title="First layer filters initialization",
+                            canvas="black",
+                            export_pdf=(Cfg.xp_path + "/filters_init"))
+            else:
+                W1_init = None
+
+            nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
+
+            addConvModule(nnet,
+                          num_filters=16,
+                          filter_size=(5,5),
+                          W_init=W1_init,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm)
+
+            addConvModule(nnet,
+                          num_filters=32,
+                          filter_size=(5,5),
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm)
+
+            addConvModule(nnet,
+                          num_filters=64,
+                          filter_size=(5,5),
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm)
+
+            addConvModule(nnet,
+                          num_filters=64,
+                          filter_size=(5,5),
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm)
+
+            addConvModule(nnet,
+                          num_filters=128,
+                          filter_size=(5,5),
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm)
+
+            addConvModule(nnet,
+                          num_filters=256,
+                          filter_size=(5,5),
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm)
+
+            # Code Layer
+            if Cfg.mnist_bias:
+                nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim)
+            else:
+                nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim, b=None)
+            nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
+            nnet.addReshapeLayer(shape=([0], (Cfg.bdd100k_rep_dim / 16), 4, 4))
+            if Cfg.leaky_relu:
+                nnet.addLeakyReLU()
+            else:
+                nnet.addReLU()
+            #nnet.addUpscale(scale_factor=(2,2))  # TODO: is this Upscale necessary? Shouldn't there be as many Upscales as MaxPools?
+
+            # Deconv and unpool 1
+            addConvModule(nnet,
+                          num_filters=128,
+                          filter_size=(5,5),
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          upscale=True)
+
+            # Deconv and unpool 2
+            addConvModule(nnet,
+                          num_filters=64,
+                          filter_size=(5,5),
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          upscale=True)
+
+            # Deconv and unpool 3
+            addConvModule(nnet,
+                          num_filters=64,
+                          filter_size=(5,5),
+                          pad=1,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          upscale=True)
+            
+            # Deconv and unpool 4
+            addConvModule(nnet,
+                          num_filters=64,
+                          filter_size=(5,5),
+                          pad=1,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          upscale=True)
+            
+            # Deconv and unpool 5
+            addConvModule(nnet,
+                          num_filters=64,
+                          filter_size=(5,5),
+                          pad=1,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          upscale=True)
+
+            # Deconv and unpool 6  
+            addConvModule(nnet,
+                          num_filters=64,
+                          filter_size=(5,5),
+                          pad=1,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          upscale=True)
+
+            # reconstruction
+            if Cfg.mnist_bias:
+                nnet.addConvLayer(num_filters=self.channels,
+                                  filter_size=(5, 5),
+                                  pad='same')
+            else:
+                nnet.addConvLayer(num_filters=self.channels,
+                                  filter_size=(5, 5),
+                                  pad='same',
+                                  b=None)
+            nnet.addSigmoidLayer()
+
+
+        if Cfg.bdd100k_architecture == 3:
         #(192,320) input: (2,2) maxpooling down to (3,5)-image before dense layer
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
@@ -627,7 +767,7 @@ class BDD100K_DataLoader(DataLoader):
 
 
 
-        if Cfg.bdd100k_architecture == 2:
+        if Cfg.bdd100k_architecture == 4:
 
             # input (256,256)
             if Cfg.weight_dict_init & (not nnet.pretrained):
