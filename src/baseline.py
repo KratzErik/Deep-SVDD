@@ -18,7 +18,7 @@ from utils.visualization.images_plot import plot_outliers_and_most_normal
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset",
                     help="dataset name",
-                    type=str, choices=["mnist", "cifar10", "gtsrb"])
+                    type=str, choices=["mnist", "cifar10", "gtsrb", "bdd100k"])
 parser.add_argument("--solver",
                     help="solver", type=str,
                     choices=["sgd", "momentum", "nesterov", "adagrad", "rmsprop", "adadelta", "adam", "adamax"])
@@ -220,7 +220,24 @@ parser.add_argument("--cifar10_outlier",
 parser.add_argument("--gtsrb_rep_dim",
                     help="specify the dimensionality of the last layer",
                     type=int, default=32)
-
+parser.add_argument("--bdd100k_rep_dim",
+                    help="specify the dimensionality of the last layer",
+                    type=int, default=32)
+parser.add_argument("--bdd100k_architecture",
+                    help="specify which network architecture should be used",
+                    type=int, default=2)
+parser.add_argument("--bdd100k_val_frac",
+                    help="specify the fraction the validation set of the initial training data should be",
+                    type=float, default=1./6)
+parser.add_argument("--bdd100k_bias",
+                    help="specify if bias terms are used in bdd100k network",
+                    type=int, default=1)
+parser.add_argument("--bdd100k_n_train",
+                    help="number of images in training and validation sets",
+                    type=int, default=1000)    
+parser.add_argument("--bdd100k_n_test",
+                    help="number of images in training and validation sets",
+                    type=int, default=1000) 
 # ====================================================================
 
 
@@ -279,6 +296,12 @@ def main():
     Cfg.cifar10_normal = args.cifar10_normal
     Cfg.cifar10_outlier = args.cifar10_outlier
     Cfg.gtsrb_rep_dim = args.gtsrb_rep_dim
+    Cfg.bdd100k_rep_dim = args.bdd100k_rep_dim
+    Cfg.bdd100k_architecture = args.bdd100k_architecture
+    Cfg.bdd100k_val_frac = args.bdd100k_val_frac
+    Cfg.bdd100k_bias = args.bdd100k_bias
+    Cfg.bdd100k_n_train = args.bdd100k_n_train
+    Cfg.bdd100k_n_test = args.bdd100k_n_test
 
     # neural network
     Cfg.softmax_loss = (args.loss == 'ce')
@@ -364,7 +387,7 @@ def main():
         C = int(args.C)
         if not Cfg.weight_decay:
             C = None
-        str_C = "C = " + str(C)
+        str_C = "C = " + str(C)datasetdataset
         Cfg.title_suffix = "(" + args.solver + ", " + str_C + ", " + str_lr + ")"
 
         if args.loss == 'autoencoder':

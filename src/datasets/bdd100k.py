@@ -546,7 +546,7 @@ class BDD100K_DataLoader(DataLoader):
             # input (256,256)
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionry(nnet.data._X_train, 16, 5, n_sample=500)
+                W1_init = learn_dictionary(nnet.data._X_train, 16, 5, n_sample=500)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))

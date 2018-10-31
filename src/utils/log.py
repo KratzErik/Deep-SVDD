@@ -1,7 +1,7 @@
 import time
 import os
 import numpy as np
-
+import datetime
 import cPickle as pickle
 
 from config import Configuration as Cfg
@@ -126,7 +126,7 @@ def log_exp_config(xp_path, dataset):
 
     log_file = "{}/log.txt".format(xp_path)
     log = open(log_file, "a")
-
+    log.write("Start of experiment: %s" % (datetime.datetime.now().strftime('%Y-%m-%d, %H:%M:%S.%f')))
     log.write("Experiment configuration\n")
     log.write("Dataset: {}\n".format(dataset))
     log.write("Seed: {}\n".format(Cfg.seed))
