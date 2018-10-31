@@ -9,13 +9,41 @@ class Configuration(object):
     floatX = np.float32
     seed = 0
 
+    # BDD100K dataset parameters
+    bdd100k_use_file_lists = True
+    bdd100k_file_list_normal = 'clear_overcast_partlycloudy_highway_daytime.txt'
+    bdd100k_file_list_outlier = 'rainy_foggy_snowy_highway_anytime.txt'
+    bdd100k_attributes_normal = [["weather", ["clear","partly cloudy", "overcast"]],["scene", "highway"],["timeofday", "daytime"]]
+    bdd100k_attributes_outlier = [["scene", "highway"],["weather", ["rainy", "snowy", "foggy"]],["timeofday",["daytime","dawn/dusk","night"]]]
+    bdd100k_img_folder = Path("/data/bdd100k/images/train_and_val_256by256")
+    bdd100k_norm_file = "/data/bdd100k/namelists/clear_or_partly_cloudy_or_overcast_and_highway_and_daytime.txt"
+    bdd100k_norm_filenames = loadbdd100k.get_namelist_from_file(bdd100k_norm_file)
+    bdd100k_out_file = "/data/bdd100k/namelists/rainy_or_snowy_or_foggy_and_highway_and_daytime_or_dawndusk_or_night.txt"
+    bdd100k_out_filenames = loadbdd100k.get_namelist_from_file(bdd100k_out_file)
+    bdd100k_norm_spec = [["weather", ["clear","partly cloudy", "overcast"]],["scene", "highway"],["timeofday", "daytime"]]
+    bdd100k_out_spec = [["weather", ["rainy", "snowy", "foggy"]],["scene", "highway"],["timeofday",["daytime","dawn/dusk","night"]]]
+    bdd100k_n_train = 100
+    bdd100k_n_val = 100
+    bdd100k_n_test = 100 # test set is divided in 2, one half for val and one half for test
+    bdd100k_out_frac = 0.5
+    bdd100k_image_height = 256
+    bdd100k_image_width = 256
+    bdd100k_channels = 3
+    bdd100k_save_name_lists=False
+    bdd100k_labels_file = "/data/bdd100k/labels/bdd100k_labels_images_train_and_val.json"
+    bdd100k_get_norm_and_out_sets = False
+    bdd100k_shuffle=False
+    bdd100k_rep_dim = 32
+    bdd100k_architecture = 2
+    bdd100k_bias = True
+
     # Final Layer
     softmax_loss = False
     svdd_loss = False
     reconstruction_loss = False
 
     # Optimization
-    batch_size = 200
+    batch_size = 10
     learning_rate = theano.shared(floatX(1e-4), name="learning rate")
     lr_decay = False
     lr_decay_after_epoch = 10
@@ -86,33 +114,6 @@ class Configuration(object):
     cifar10_architecture = 1  # choose one of the implemented architectures
     cifar10_normal = 1
     cifar10_outlier = -1
-
-    # BDD100K dataset parameters
-    bdd100k_use_file_lists = True
-    bdd100k_file_list_normal = 'clear_overcast_partlycloudy_highway_daytime.txt'
-    bdd100k_file_list_outlier = 'rainy_foggy_snowy_highway_anytime.txt'
-    bdd100k_attributes_normal = [["weather", ["clear","partly cloudy", "overcast"]],["scene", "highway"],["timeofday", "daytime"]]
-    bdd100k_attributes_outlier = [["scene", "highway"],["weather", ["rainy", "snowy", "foggy"]],["timeofday",["daytime","dawn/dusk","night"]]]
-    bdd100k_architecture = 3 # choose one of the implemented architectures
-    bdd100k_img_folder = Path("/data/bdd100k/images/train_and_val_192by320")
-    bdd100k_norm_file = "/data/bdd100k/namelists/clear_or_partly_cloudy_or_overcast_and_highway_and_daytime.txt"
-    bdd100k_norm_filenames = loadbdd100k.get_namelist_from_file(bdd100k_norm_file)
-    bdd100k_out_file = "/data/bdd100k/namelists/rainy_or_snowy_or_foggy_and_highway_and_daytime_or_dawndusk_or_night.txt"
-    bdd100k_out_filenames = loadbdd100k.get_namelist_from_file(bdd100k_out_file)
-    bdd100k_norm_spec = [["weather", ["clear","partly cloudy", "overcast"]],["scene", "highway"],["timeofday", "daytime"]]
-    bdd100k_out_spec = [["weather", ["rainy", "snowy", "foggy"]],["scene", "highway"],["timeofday",["daytime","dawn/dusk","night"]]]
-    bdd100k_n_train = 5000
-    bdd100k_n_val = 2000
-    bdd100k_n_test = 1000 # test set is divided in 2, one half for val and one half for test
-    bdd100k_out_frac = 0.5
-    bdd100k_image_height = 192
-    bdd100k_image_width = 320
-    bdd100k_channels = 3
-    bdd100k_save_name_lists=False
-    bdd100k_labels_file = None
-    bdd100k_get_norm_and_out_sets = False
-    bdd100k_shuffle=False
-    bdd100k_rep_dim = 480
 
     # GTSRB dataset parameters
     gtsrb_rep_dim = 32

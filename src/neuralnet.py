@@ -480,7 +480,9 @@ class NeuralNet:
 
     def load_weights(self, filename=None):
 
-        assert filename and os.path.exists(filename)
+        assert filename
+        print filename
+        assert os.path.exists(filename)
 
         load_weights(self, filename)
 

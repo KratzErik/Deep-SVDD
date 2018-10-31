@@ -220,24 +220,26 @@ parser.add_argument("--cifar10_outlier",
 parser.add_argument("--gtsrb_rep_dim",
                     help="specify the dimensionality of the last layer",
                     type=int, default=32)
-parser.add_argument("--bdd100k_rep_dim",
-                    help="specify the dimensionality of the last layer",
-                    type=int, default=32)
-parser.add_argument("--bdd100k_architecture",
-                    help="specify which network architecture should be used",
-                    type=int, default=2)
-parser.add_argument("--bdd100k_val_frac",
-                    help="specify the fraction the validation set of the initial training data should be",
-                    type=float, default=1./6)
 parser.add_argument("--bdd100k_bias",
                     help="specify if bias terms are used in bdd100k network",
                     type=int, default=1)
+parser.add_argument("--bdd100k_val_frac",
+                    help="specify the fraction the validation set of the initial training data should be",
+                    type=float, default=1./6)
+parser.add_argument("--bdd100k_rep_dim",
+                    help="specify the dimensionality of the last layer",
+                    type=int, default=32)
+'''
+parser.add_argument("--bdd100k_architecture",
+                    help="specify which network architecture should be used",
+                    type=int, default=2)
 parser.add_argument("--bdd100k_n_train",
                     help="number of images in training and validation sets",
-                    type=int, default=1000)    
+                    type=int, default=1000)
 parser.add_argument("--bdd100k_n_test",
                     help="number of images in training and validation sets",
-                    type=int, default=1000) 
+                    type=int, default=1000)
+'''
 # ====================================================================
 
 
@@ -269,6 +271,7 @@ def main():
 
     save_to = "{}_weights.p".format(base_file)
     weights = "../log/{}.p".format(args.in_name) if args.in_name else None
+    print(weights)
 
     # update config data
 
@@ -296,12 +299,12 @@ def main():
     Cfg.cifar10_normal = args.cifar10_normal
     Cfg.cifar10_outlier = args.cifar10_outlier
     Cfg.gtsrb_rep_dim = args.gtsrb_rep_dim
-    Cfg.bdd100k_rep_dim = args.bdd100k_rep_dim
-    Cfg.bdd100k_architecture = args.bdd100k_architecture
-    Cfg.bdd100k_val_frac = args.bdd100k_val_frac
-    Cfg.bdd100k_bias = args.bdd100k_bias
-    Cfg.bdd100k_n_train = args.bdd100k_n_train
-    Cfg.bdd100k_n_test = args.bdd100k_n_test
+#    Cfg.bdd100k_rep_dim = args.bdd100k_rep_dim
+#    Cfg.bdd100k_architecture = args.bdd100k_architecture
+#    Cfg.bdd100k_val_frac = args.bdd100k_val_frac
+#    Cfg.bdd100k_bias = args.bdd100k_bias
+#    Cfg.bdd100k_n_train = args.bdd100k_n_train
+#    Cfg.bdd100k_n_test = args.bdd100k_n_test
 
     # neural network
     Cfg.softmax_loss = (args.loss == 'ce')
@@ -387,7 +390,7 @@ def main():
         C = int(args.C)
         if not Cfg.weight_decay:
             C = None
-        str_C = "C = " + str(C)datasetdataset
+        str_C = "C = " + str(C)
         Cfg.title_suffix = "(" + args.solver + ", " + str_C + ", " + str_lr + ")"
 
         if args.loss == 'autoencoder':

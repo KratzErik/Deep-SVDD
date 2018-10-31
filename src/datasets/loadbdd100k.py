@@ -116,7 +116,7 @@ def load_bdd100k_data_filename_list(img_folder, norm_filenames, out_filenames, n
     print("Loading NORMAL image data...")
     start_time = time.time()
     for i, _file in enumerate(norm_filenames):
-        img = load_img(str(img_folder / _file))  # this is a PIL image
+        img = load_img(str(img_folder / _file)[:-1])  #  this is a PIL image. [:-1] to remove \r character added by load_img
         img.thumbnail((image_width, image_height))
         x = img_to_array(img)  
         norm_data[i] = x
@@ -126,7 +126,8 @@ def load_bdd100k_data_filename_list(img_folder, norm_filenames, out_filenames, n
     print("Loading OUTLIER image data...")
     start_time = time.time() 
     for i, _file in enumerate(out_filenames):
-        img = load_img(str(img_folder / _file))  # this is a PIL image
+        img = load_img(str(img_folder / _file)[:-1])  # this is a PIL image. [:-1] to remove \r character added by load_img
+
         img.thumbnail((image_width, image_height))
         x = img_to_array(img)
         out_data[i] = x
@@ -134,7 +135,7 @@ def load_bdd100k_data_filename_list(img_folder, norm_filenames, out_filenames, n
 
     if get_norm_and_out_sets:
         return norm_data, out_data
-    
+
     else:
         # Divide into train, val and test sets.
         start_time = time.time()

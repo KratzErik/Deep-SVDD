@@ -68,9 +68,9 @@ class BDD100K_DataLoader(DataLoader):
         # load normal and outlier data
         if Cfg.bdd100k_use_file_lists:
             self._X_train, self._X_val, self._X_test, self._y_test = load_bdd100k_data_filename_list(self.data_path, self.norm_filenames, self.out_filenames, self.n_train, self.n_val, self.n_test, self.out_frac, self.image_height, self.image_width, self.channels)
-        else: 
+        else:
             self._X_train, self._X_val, self._X_test, self._y_test = load_bdd100k_data_attribute_spec(self.data_path, self.attributes_normal, self.attributes_outlier, self.label_path, self.n_train, self.n_val, self.n_test, self.out_frac, self.image_height, self.image_width, self.channels, save_name_lists = True)
-        
+
         # cast data properly
         self._X_train = self._X_train.astype(np.float32)
         self._X_val = self._X_val.astype(np.float32)
@@ -96,6 +96,7 @@ class BDD100K_DataLoader(DataLoader):
             self._y_val = self._y_train[perm_val]
 
             # Subset train set such that we only get batches of the same size
+            assert(self.n_train >= Cfg.batch_size)
             self.n_train = (self.n_train / Cfg.batch_size) * Cfg.batch_size
             subset = np.random.choice(len(self._X_train), self.n_train, replace=False)
             self._X_train = self._X_train[subset]
