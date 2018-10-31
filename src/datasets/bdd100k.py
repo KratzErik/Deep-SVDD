@@ -4,7 +4,7 @@ from datasets.preprocessing import center_data, normalize_data, rescale_to_unit_
 from utils.visualization.mosaic_plot import plot_mosaic
 from utils.misc import flush_last_line
 from config import Configuration as Cfg
-
+from datasets.modules import addConvModule
 import os
 import numpy as np
 import cPickle as pickle
@@ -133,7 +133,92 @@ class BDD100K_DataLoader(DataLoader):
         # implementation of different network architectures
         assert Cfg.bdd100k_architecture in (1,2)
 
-        if Cfg.bdd100k_architecture == 1:
+        # increase number of parameters if dropout is used
+        if Cfg.dropout_architecture:
+            units_multiplier = 2
+        else:
+            units_multiplier = 1
+
+        if Cfg.bdd100k_architecture == 1: # For 256by256 images
+
+            if Cfg.weight_dict_init & (not nnet.pretrained):
+                # initialize first layer filters by atoms of a dictionary
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=500)
+                plot_mosaic(W1_init, title="First layer filters initialization",
+                            canvas="black",
+                            export_pdf=(Cfg.xp_path + "/filters_init"))
+            else:
+                W1_init = None
+
+            # build architecture
+            nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
+
+            # conv1 : h_in 256 -> h_out 128
+            addConvModule(nnet,
+                          num_filters=16 * units_multiplier,
+                          filter_size=(5,5),
+                          W_init=W1_init,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout,
+                          p_dropout=0.2)
+            
+            # conv2 : h_in 128 -> h_out 64
+            addConvModule(nnet,
+                          num_filters=32 * units_multiplier,
+                          filter_size=(5,5),
+                          bias=Cfg.mnist_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout)
+            
+            # conv3 : h_in 64 -> h_out 32
+            addConvModule(nnet,
+                          num_filters=64 * units_multiplier,
+                          filter_size=(5,5),
+                          bias=Cfg.mnist_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout)
+
+            # conv4 : h_in 32 -> h_out 16
+            addConvModule(nnet,
+                          num_filters=64 * units_multiplier,
+                          filter_size=(5,5),
+                          bias=Cfg.mnist_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout)
+
+            # conv5 : h_in 16 -> h_out 8
+            addConvModule(nnet,
+                          num_filters=128 * units_multiplier,
+                          filter_size=(5,5),
+                          bias=Cfg.mnist_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout)
+
+            # conv6 : h_in 8 -> h_out 4
+            addConvModule(nnet,
+                          num_filters=256 * units_multiplier,
+                          filter_size=(5,5),
+                          bias=Cfg.mnist_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout)
+
+            # Dense layer
+            if Cfg.dropout:
+                nnet.addDropoutLayer()
+            if Cfg.mnist_bias:
+                nnet.addDenseLayer(num_units=Cfg.bdd10k_rep_dim * units_multiplier)
+            else:
+                nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim * units_multiplier,
+                                   b=None)
+
+        if Cfg.bdd100k_architecture == 3:
             
             #(192,320) input: (2,2) maxpooling down to (3,5)-image before dense layer
 
@@ -248,7 +333,7 @@ class BDD100K_DataLoader(DataLoader):
             else:
                 raise ValueError("No valid choice of loss for dataset " + self.dataset_name)
 
-        if Cfg.bdd100k_architecture == 2:
+        if Cfg.bdd100k_architecture == 4:
             # (192,320) input: first pooling is (3,5), then (2,2) pooling down to (4,4)-image just as for CIFAR-10
 
             if Cfg.weight_dict_init & (not nnet.pretrained):

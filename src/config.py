@@ -34,7 +34,7 @@ class Configuration(object):
     bdd100k_get_norm_and_out_sets = False
     bdd100k_shuffle=False
     bdd100k_rep_dim = 32
-    bdd100k_architecture = 2
+    bdd100k_architecture = 1
     bdd100k_bias = True
 
     # Final Layer
