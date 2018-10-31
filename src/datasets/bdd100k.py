@@ -213,7 +213,7 @@ class BDD100K_DataLoader(DataLoader):
             if Cfg.dropout:
                 nnet.addDropoutLayer()
             if Cfg.mnist_bias:
-                nnet.addDenseLayer(num_units=Cfg.bdd10k_rep_dim * units_multiplier)
+                nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim * units_multiplier)
             else:
                 nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim * units_multiplier,
                                    b=None)
