@@ -3,7 +3,7 @@ from lasagne.init import GlorotUniform, Constant
 
 
 def addConvModule(nnet, num_filters, filter_size, pad='same', W_init=None, bias=True, use_maxpool = True, pool_size=(2,2),
-                  use_batch_norm=False, dropout=False, p_dropout=0.5, upscale=False, dilation = (1,1), stride = (1,1)):
+                  use_batch_norm=False, dropout=False, p_dropout=0.5, upscale=False, stride = (1,1)):
     """
     add a convolutional module (convolutional layer + (leaky) ReLU + MaxPool) to the network  
     """
@@ -27,7 +27,8 @@ def addConvModule(nnet, num_filters, filter_size, pad='same', W_init=None, bias=
                       filter_size=filter_size,
                       pad=pad,
                       W=W,
-                      b=b)
+                      b=b,
+                      stride = stride)
 
     if Cfg.leaky_relu:
         nnet.addLeakyReLU()

@@ -148,8 +148,14 @@ class BDD100K_DataLoader(DataLoader):
             ksize= int(tmp[5])
             stride = int(tmp[6])
             pad = int(tmp[7])
-            dil = 1
-            
+            num_filters = c1
+
+            # If using maxpool, we should have pad = same
+            if use_pool:
+                pad = 'same'
+            else:
+                pad = (pad,pad)
+
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
                 W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
@@ -160,9 +166,11 @@ class BDD100K_DataLoader(DataLoader):
                 W1_init = None
 
             # Build architecture
+
+            # Add all but last conv. layer
             for i in range(n_conv-1):
                 addConvModule(nnet,
-                          num_filters=16 * units_multiplier,
+                          num_filters=num_filters,
                           filter_size=(ksize,ksize),
                           W_init=W1_init,
                           bias=Cfg.bdd100k_bias,
@@ -172,15 +180,49 @@ class BDD100K_DataLoader(DataLoader):
                           p_dropout=0.2,
                           use_maxpool = use_pool,
                           stride = stride,
-                          pad = (pad,pad),
+                          pad = pad,
                           )
+                num_filters *= 2
             
-           
-        # increase number of parameters if dropout is used
-        if Cfg.dropout_architecture:
-            units_multiplier = 2
-        else:
-            units_multiplier = 1
+            if dense_layer:
+                addConvModule(nnet,
+                          num_filters=num_filters,
+                          filter_size=(ksize,ksize),
+                          W_init=W1_init,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout,
+                          p_dropout=0.2,
+                          use_maxpool = use_pool,
+                          stride = stride,
+                          pad = pad,
+                          )
+
+                shape_in = (None,self.image_height,W_in,num_filters)
+                # Dense layer
+                if Cfg.dropout:
+                nnet.addDropoutLayer()
+                if Cfg.bdd100k_bias:
+                    nnet.addDenseLayer(num_units=zsize)
+                else:
+                    nnet.addDenseLayer(num_units=zsize,
+                                        b=None)
+            else:
+                h = self.image_height / (2**(n_conv-1))
+                addConvModule(nnet,
+                          num_filters=zsize,
+                          filter_size=(h,h),
+                          W_init=W1_init,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=False,
+                          dropout=False,
+                          p_dropout=0.2,
+                          use_maxpool = False,
+                          stride = (1,1),
+                          pad = (0,0),
+                          )
 
         elif Cfg.bdd100k_architecture == 1: # For 256by256 images
 
@@ -255,7 +297,7 @@ class BDD100K_DataLoader(DataLoader):
             # Dense layer
             if Cfg.dropout:
                 nnet.addDropoutLayer()
-            if Cfg.mnist_bias:
+            if Cfg.bdd100k_bias:
                 nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim * units_multiplier)
             else:
                 nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim * units_multiplier,
@@ -488,7 +530,154 @@ class BDD100K_DataLoader(DataLoader):
     def build_autoencoder(self, nnet):
 
         # implementation of different network architectures
-        assert Cfg.bdd100k_architecture in (1, 2)
+        if Cfg.bdd100k_architecture not in (1,2,3):
+            # architecture spec A_B_C_D_E_F_G_H
+            tmp = Cfg.bdd100k_architecture.split("_")
+            use_pool = int(tmp[0]) # 1 or 0
+            n_conv = int(tmp[1])
+            n_dense = int(tmp[2])
+            c_out = int(tmp[3])
+            zsize = int(tmp[4])
+            ksize= int(tmp[5])
+            stride = int(tmp[6])
+            pad = int(tmp[7])
+            num_filters = c1
+
+            if use_pool:
+                pad = 'same'
+            else:
+                pad = (pad,pad)
+
+            if Cfg.weight_dict_init & (not nnet.pretrained):
+                # initialize first layer filters by atoms of a dictionary
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
+                plot_mosaic(W1_init, title="First layer filters initialization",
+                            canvas="black",
+                            export_pdf=(Cfg.xp_path + "/filters_init"))
+            else:
+                W1_init = None
+
+            # Build architecture
+
+            # Add all but last conv. layer
+            for i in range(n_conv-1):
+                addConvModule(nnet,
+                          num_filters=num_filters,
+                          filter_size=(ksize,ksize),
+                          W_init=W1_init,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout,
+                          p_dropout=0.2,
+                          use_maxpool = use_pool,
+                          stride = stride,
+                          pad = pad,
+                          )
+                num_filters *= 2
+            
+            if dense_layer:
+                addConvModule(nnet,
+                          num_filters=num_filters,
+                          filter_size=(ksize,ksize),
+                          W_init=W1_init,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout,
+                          p_dropout=0.2,
+                          use_maxpool = use_pool,
+                          stride = stride,
+                          pad = pad,
+                          )
+
+                # Dense layer
+                if Cfg.dropout:
+                nnet.addDropoutLayer()
+                if Cfg.bdd100k_bias:
+                    nnet.addDenseLayer(num_units=zsize)
+                else:
+                    nnet.addDenseLayer(num_units=zsize,
+                                        b=None)
+            else:
+                h = self.image_height / (2**(n_conv-1))
+                addConvModule(nnet,
+                          num_filters=zsize,
+                          filter_size=(h,h),
+                          W_init=W1_init,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=False,
+                          dropout=False,
+                          p_dropout=0.2,
+                          use_maxpool = False,
+                          stride = (1,1),
+                          pad = (0,0),
+                          )
+
+
+            nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
+
+            # Here we use upscaling, pad should be "same"
+            
+            if dense_layer:
+                
+                h1 = self.image_height // (2**n_conv) # height = width of image going into first conv layer
+                num_filters =  c_out * (2**(n_conv-1))
+                nnet.addDenseLayer(num_units = h1**2 * num_filters)
+                nnet.addReshapeLayer(shape=([0], num_filters, h1, h1))
+                num_filters = num_filters // 2
+
+                addConvModule(nnet,
+                          num_filters=num_filters,
+                          filter_size=(ksize,ksize),
+                          W_init=W1_init,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout,
+                          p_dropout=0.2,
+                          use_maxpool = False,
+                          stride = stride,
+                          pad = pad,
+                          upscale = True
+                          )
+                num_filters //=2
+            else:
+                h2 = self.image_height // (2**(n_conv-1)# height of image going in to second conv layer
+                num_filters = c_out * (2**(n_conv-2))
+                addConvModule(nnet,
+                          num_filters=num_filters,
+                          filter_size=(h2,h2),
+                          W_init=W1_init,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout,
+                          p_dropout=0.2,
+                          use_maxpool = False,
+                          stride = (1,1),
+                          pad = (0,0),
+                          upscale = True
+                          )
+            
+            # Add remaining deconv layers
+            for i in range(n_conv-2):
+                addConvModule(nnet,
+                          num_filters=num_filters,
+                          filter_size=(ksize,ksize),
+                          W_init=W1_init,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout,
+                          p_dropout=0.2,
+                          use_maxpool = False,
+                          stride = stride,
+                          pad = pad,
+                          upscale = True
+                          )
+                num_filters //=2
 
         if Cfg.bdd100k_architecture == 1:
             first_layer_n_filters = 16
