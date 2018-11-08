@@ -137,15 +137,52 @@ class BDD100K_DataLoader(DataLoader):
 
     def build_architecture(self, nnet):
         # implementation of different network architectures
-        assert Cfg.bdd100k_architecture in (1,2)
+        if Cfg.bdd100k_architecture not in (1,2,3):
+            # architecture spec A_B_C_D_E_F_G_H
+            tmp = Cfg.bdd100k_architecture.split("_")
+            use_pool = int(tmp[0]) # 1 or 0
+            n_conv = int(tmp[1])
+            n_dense = int(tmp[2])
+            c1 = int(tmp[3])
+            zsize = int(tmp[4])
+            ksize= int(tmp[5])
+            stride = int(tmp[6])
+            pad = int(tmp[7])
+            dil = 1
+            
+            if Cfg.weight_dict_init & (not nnet.pretrained):
+                # initialize first layer filters by atoms of a dictionary
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
+                plot_mosaic(W1_init, title="First layer filters initialization",
+                            canvas="black",
+                            export_pdf=(Cfg.xp_path + "/filters_init"))
+            else:
+                W1_init = None
 
+            # Build architecture
+            for i in range(n_conv-1):
+                addConvModule(nnet,
+                          num_filters=16 * units_multiplier,
+                          filter_size=(ksize,ksize),
+                          W_init=W1_init,
+                          bias=Cfg.bdd100k_bias,
+                          pool_size=(2,2),
+                          use_batch_norm=Cfg.use_batch_norm,
+                          dropout=Cfg.dropout,
+                          p_dropout=0.2,
+                          use_maxpool = use_pool,
+                          stride = stride,
+                          pad = (pad,pad),
+                          )
+            
+           
         # increase number of parameters if dropout is used
         if Cfg.dropout_architecture:
             units_multiplier = 2
         else:
             units_multiplier = 1
 
-        if Cfg.bdd100k_architecture == 1: # For 256by256 images
+        elif Cfg.bdd100k_architecture == 1: # For 256by256 images
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
