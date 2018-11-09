@@ -22,7 +22,7 @@ class DREYEVE_DataLoader(DataLoader):
         self.n_val = Cfg.dreyeve_n_val
         self.n_test = Cfg.dreyeve_n_test
 
-        self.out_frac = Cfg.dreyeve_out_frac
+#        self.out_frac = Cfg.dreyeve_out_frac
 
         self.image_height = Cfg.dreyeve_image_height
         self.image_width = Cfg.dreyeve_image_width
@@ -37,16 +37,16 @@ class DREYEVE_DataLoader(DataLoader):
 
         Cfg.n_batches = int(np.ceil(self.n_train * 1. / Cfg.batch_size))
 
-        self.data_path = Cfg.dreyeve_img_folder
-        self.norm_filenames = Cfg.dreyeve_norm_filenames
-        self.out_filenames = Cfg.dreyeve_out_filenames
+#        self.data_path = Cfg.dreyeve_img_folder
+#        self.norm_filenames = Cfg.dreyeve_norm_filenames
+#        self.out_filenames = Cfg.dreyeve_out_filenames
 
-        self.label_path = Cfg.dreyeve_labels_file
-        self.attributes_normal = Cfg.dreyeve_attributes_normal
-        self.attributes_outlier = Cfg.dreyeve_attributes_outlier
+#        self.label_path = Cfg.dreyeve_labels_file
+#        self.attributes_normal = Cfg.dreyeve_attributes_normal
+#        self.attributes_outlier = Cfg.dreyeve_attributes_outlier
 
-        self.save_name_lists = Cfg.dreyeve_save_name_lists
-        self.get_norm_and_out_sets = Cfg.dreyeve_get_norm_and_out_sets
+#        self.save_name_lists = Cfg.dreyeve_save_name_lists
+#        self.get_norm_and_out_sets = Cfg.dreyeve_get_norm_and_out_sets
 
 
         self.on_memory = True
