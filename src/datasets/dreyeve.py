@@ -8,8 +8,6 @@ from datasets.modules import addConvModule
 import os
 import numpy as np
 import cPickle as pickle
-from loaddreyeve import load_dreyeve_data_attribute_spec, load_dreyeve_data_filename_list
-
 
 class dreyeve_DataLoader(DataLoader):
 
@@ -66,11 +64,7 @@ class dreyeve_DataLoader(DataLoader):
         print("Loading data...")
 
         # load normal and outlier data
-        if Cfg.dreyeve_use_file_lists:
-            self._X_train, self._X_val, self._X_test, self._y_test = load_dreyeve_data_filename_list(self.data_path, self.norm_filenames, self.out_filenames, self.n_train, self.n_val, self.n_test, self.out_frac, self.image_height, self.image_width, self.channels)
-        else:
-            self._X_train, self._X_val, self._X_test, self._y_test = load_dreyeve_data_attribute_spec(self.data_path, self.attributes_normal, self.attributes_outlier, self.label_path, self.n_train, self.n_val, self.n_test, self.out_frac, self.image_height, self.image_width, self.channels, save_name_lists = True)
-
+        self._X_train = 
         # tranpose to channels first
         self._X_train = np.moveaxis(self._X_train,-1,1)
         self._X_val = np.moveaxis(self._X_val,-1,1)

@@ -42,6 +42,26 @@ class Configuration(object):
     bdd100k_bias = True
     bdd100k_n_dict_learn = min(500,bdd100k_n_train)
 
+    dreyve_folder_normal = "../data/dreyeve/highway_morning_sunny/"
+    dreyve_folder_outlier = "../data/dreyeve/highway_morning_rainy/"
+    dreyve_norm_file = "/data/bdd100k/namelists/clear_or_partly_cloudy_or_overcast_and_highway_and_daytime.txt"
+    dreyve_norm_filenames = loadbdd100k.get_namelist_from_file(bdd100k_norm_file)
+    dreyve_n_train = 50
+    dreyve_n_val = 20
+    dreyve_n_test = 
+    dreyve_out_frac = 0.5
+    dreyve_image_height = 256
+    dreyve_image_width = 256
+    dreyve_channels = 3
+    dreyve_save_name_lists=False
+    dreyve_labels_file = "/data/bdd100k/labels/bdd100k_labels_images_train_and_val.json"
+    dreyve_get_norm_and_out_sets = False
+    dreyve_shuffle=False
+    dreyve_rep_dim = 512
+    dreyve_architecture = 1
+    dreyve_bias = True
+    dreyve_n_dict_learn = min(500,bdd100k_n_train)
+
     # Final Layer
     softmax_loss = False
     svdd_loss = False
