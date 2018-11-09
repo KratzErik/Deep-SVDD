@@ -21,6 +21,9 @@ def load_dataset(learner, dataset_name, pretrain=False):
     if dataset_name == "bdd100k":
         data_loader = BDD100K_DataLoader
 
+    if dataset-name == "dreyeve":
+        data_loader = DREYEVE_DataLoader
+
     # load data with data loader
     learner.load_data(data_loader=data_loader, pretrain=pretrain)
 

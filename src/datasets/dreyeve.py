@@ -8,8 +8,9 @@ from datasets.modules import addConvModule
 import os
 import numpy as np
 import cPickle as pickle
+from keras.preprocessing.image import load_img, img_to_array
 
-class dreyeve_DataLoader(DataLoader):
+class DREYEVE_DataLoader(DataLoader):
 
     def __init__(self):
 
@@ -64,7 +65,14 @@ class dreyeve_DataLoader(DataLoader):
         print("Loading data...")
 
         # load normal and outlier data
-        self._X_train = 
+        self._X_train = [img_to_array(load_img[Cfg.dreyeve_train_folder + filename] for filename in os.listdir(Cfg.dreyeve_train_folder))]
+        self._X_val = [img_to_array(load_img[Cfg.dreyeve_val_folder + filename] for filename in os.listdir(Cfg.dreyeve_val_folder))]
+        self._X_train = [img_to_array(load_img[Cfg.dreyeve_test_folder + filename] for filename in os.listdir(Cfg.dreyeve_test_folder))]
+        self._y_test = np.concatenate([np.zeros(Cfg.dreyeve_n_test_in,),dtype=np.int32),np.ones((Cfg.dreyeve_n_test-Cfg.dreyeve_n_test_in,),dtype=np.int32)])
+        
+        if Cfg.dreyeve_test_in_loc != "first": # outliers before inliers in test set
+            self._y_test = self._y_test[::-1] #  flip labels
+
         # tranpose to channels first
         self._X_train = np.moveaxis(self._X_train,-1,1)
         self._X_val = np.moveaxis(self._X_val,-1,1)
