@@ -8,26 +8,26 @@ from datasets.modules import addConvModule
 import os
 import numpy as np
 import cPickle as pickle
-from loadbdd100k import load_bdd100k_data_attribute_spec, load_bdd100k_data_filename_list
+from loaddreyeve import load_dreyeve_data_attribute_spec, load_dreyeve_data_filename_list
 
 
-class BDD100K_DataLoader(DataLoader):
+class dreyeve_DataLoader(DataLoader):
 
     def __init__(self):
 
         DataLoader.__init__(self)
 
-        self.dataset_name = "bdd100k"
+        self.dataset_name = "dreyeve"
 
-        self.n_train = Cfg.bdd100k_n_train
-        self.n_val = Cfg.bdd100k_n_val
-        self.n_test = Cfg.bdd100k_n_test
+        self.n_train = Cfg.dreyeve_n_train
+        self.n_val = Cfg.dreyeve_n_val
+        self.n_test = Cfg.dreyeve_n_test
 
-        self.out_frac = Cfg.bdd100k_out_frac
+        self.out_frac = Cfg.dreyeve_out_frac
 
-        self.image_height = Cfg.bdd100k_image_height
-        self.image_width = Cfg.bdd100k_image_width
-        self.channels = Cfg.bdd100k_channels
+        self.image_height = Cfg.dreyeve_image_height
+        self.image_width = Cfg.dreyeve_image_width
+        self.channels = Cfg.dreyeve_channels
 
         self.seed = Cfg.seed
 
@@ -38,16 +38,16 @@ class BDD100K_DataLoader(DataLoader):
 
         Cfg.n_batches = int(np.ceil(self.n_train * 1. / Cfg.batch_size))
 
-        self.data_path = Cfg.bdd100k_img_folder
-        self.norm_filenames = Cfg.bdd100k_norm_filenames
-        self.out_filenames = Cfg.bdd100k_out_filenames
+        self.data_path = Cfg.dreyeve_img_folder
+        self.norm_filenames = Cfg.dreyeve_norm_filenames
+        self.out_filenames = Cfg.dreyeve_out_filenames
 
-        self.label_path = Cfg.bdd100k_labels_file
-        self.attributes_normal = Cfg.bdd100k_attributes_normal
-        self.attributes_outlier = Cfg.bdd100k_attributes_outlier
+        self.label_path = Cfg.dreyeve_labels_file
+        self.attributes_normal = Cfg.dreyeve_attributes_normal
+        self.attributes_outlier = Cfg.dreyeve_attributes_outlier
 
-        self.save_name_lists = Cfg.bdd100k_save_name_lists
-        self.get_norm_and_out_sets = Cfg.bdd100k_get_norm_and_out_sets
+        self.save_name_lists = Cfg.dreyeve_save_name_lists
+        self.get_norm_and_out_sets = Cfg.dreyeve_get_norm_and_out_sets
 
 
         self.on_memory = True
@@ -66,10 +66,10 @@ class BDD100K_DataLoader(DataLoader):
         print("Loading data...")
 
         # load normal and outlier data
-        if Cfg.bdd100k_use_file_lists:
-            self._X_train, self._X_val, self._X_test, self._y_test = load_bdd100k_data_filename_list(self.data_path, self.norm_filenames, self.out_filenames, self.n_train, self.n_val, self.n_test, self.out_frac, self.image_height, self.image_width, self.channels)
+        if Cfg.dreyeve_use_file_lists:
+            self._X_train, self._X_val, self._X_test, self._y_test = load_dreyeve_data_filename_list(self.data_path, self.norm_filenames, self.out_filenames, self.n_train, self.n_val, self.n_test, self.out_frac, self.image_height, self.image_width, self.channels)
         else:
-            self._X_train, self._X_val, self._X_test, self._y_test = load_bdd100k_data_attribute_spec(self.data_path, self.attributes_normal, self.attributes_outlier, self.label_path, self.n_train, self.n_val, self.n_test, self.out_frac, self.image_height, self.image_width, self.channels, save_name_lists = True)
+            self._X_train, self._X_val, self._X_test, self._y_test = load_dreyeve_data_attribute_spec(self.data_path, self.attributes_normal, self.attributes_outlier, self.label_path, self.n_train, self.n_val, self.n_test, self.out_frac, self.image_height, self.image_width, self.channels, save_name_lists = True)
 
         # tranpose to channels first
         self._X_train = np.moveaxis(self._X_train,-1,1)
@@ -137,9 +137,9 @@ class BDD100K_DataLoader(DataLoader):
 
     def build_architecture(self, nnet):
         # implementation of different network architectures
-        if Cfg.bdd100k_architecture not in (1,2,3):
+        if Cfg.dreyeve_architecture not in (1,2,3):
             # architecture spec A_B_C_D_E_F_G_H
-            tmp = Cfg.bdd100k_architecture.split("_")
+            tmp = Cfg.dreyeve_architecture.split("_")
             use_pool = int(tmp[0]) # 1 or 0
             n_conv = int(tmp[1])
             n_dense = int(tmp[2])
@@ -158,7 +158,7 @@ class BDD100K_DataLoader(DataLoader):
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=Cfg.dreyeve_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -173,7 +173,7 @@ class BDD100K_DataLoader(DataLoader):
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
                           W_init=W1_init,
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout,
@@ -189,7 +189,7 @@ class BDD100K_DataLoader(DataLoader):
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
                           W_init=W1_init,
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout,
@@ -203,7 +203,7 @@ class BDD100K_DataLoader(DataLoader):
                 # Dense layer
                 if Cfg.dropout:
                 nnet.addDropoutLayer()
-                if Cfg.bdd100k_bias:
+                if Cfg.dreyeve_bias:
                     nnet.addDenseLayer(num_units=zsize)
                 else:
                     nnet.addDenseLayer(num_units=zsize,
@@ -214,7 +214,7 @@ class BDD100K_DataLoader(DataLoader):
                           num_filters=zsize,
                           filter_size=(h,h),
                           W_init=W1_init,
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=False,
                           dropout=False,
@@ -224,11 +224,11 @@ class BDD100K_DataLoader(DataLoader):
                           pad = (0,0),
                           )
 
-        elif Cfg.bdd100k_architecture == 1: # For 256by256 images
+        elif Cfg.dreyeve_architecture == 1: # For 256by256 images
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=Cfg.dreyeve_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -243,7 +243,7 @@ class BDD100K_DataLoader(DataLoader):
                           num_filters=16 * units_multiplier,
                           filter_size=(5,5),
                           W_init=W1_init,
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout,
@@ -253,7 +253,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=32 * units_multiplier,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout)
@@ -262,7 +262,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=64 * units_multiplier,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout)
@@ -271,7 +271,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=64 * units_multiplier,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout)
@@ -280,7 +280,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=128 * units_multiplier,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout)
@@ -289,7 +289,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=256 * units_multiplier,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout)
@@ -297,19 +297,19 @@ class BDD100K_DataLoader(DataLoader):
             # Dense layer
             if Cfg.dropout:
                 nnet.addDropoutLayer()
-            if Cfg.bdd100k_bias:
-                nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim * units_multiplier)
+            if Cfg.dreyeve_bias:
+                nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim * units_multiplier)
             else:
-                nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim * units_multiplier,
+                nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim * units_multiplier,
                                    b=None)
 
-        elif Cfg.bdd100k_architecture == 3:
+        elif Cfg.dreyeve_architecture == 3:
             
             #(192,320) input: (2,2) maxpooling down to (3,5)-image before dense layer
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=16, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=16, filter_size=5, n_sample=Cfg.dreyeve_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -322,7 +322,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
             # convlayer 1
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same')
             else:
                 if Cfg.weight_dict_init & (not nnet.pretrained):
@@ -340,7 +340,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 2
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same', b=None)
@@ -352,7 +352,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 3
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
@@ -365,7 +365,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 4
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
@@ -378,7 +378,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 5
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=128, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=128, filter_size=(5, 5), pad='same', b=None)
@@ -391,7 +391,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 6
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=256, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=256, filter_size=(5, 5),  pad='same', b=None)
@@ -404,18 +404,18 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # dense layer 1
-            if Cfg.bdd100k_bias:
-                nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim)
+            if Cfg.dreyeve_bias:
+                nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim)
             else:
-                nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim, b=None)
+                nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim, b=None)
 
 
-        elif Cfg.bdd100k_architecture == 4:
+        elif Cfg.dreyeve_architecture == 4:
             # (192,320) input: first pooling is (3,5), then (2,2) pooling down to (4,4)-image just as for CIFAR-10
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=16, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=16, filter_size=5, n_sample=Cfg.dreyeve_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -428,7 +428,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
             # convlayer 1
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same')
             else:
                 if Cfg.weight_dict_init & (not nnet.pretrained):
@@ -446,7 +446,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(3, 5))
 
             # convlayer 2
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same', b=None)
@@ -458,7 +458,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 3
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
@@ -471,7 +471,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 4
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
@@ -484,7 +484,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 5
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=128, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=128, filter_size=(5, 5), pad='same', b=None)
@@ -497,7 +497,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 6
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=256, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=256, filter_size=(5, 5),  pad='same', b=None)
@@ -510,10 +510,10 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # dense layer 1
-            if Cfg.bdd100k_bias:
-                nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim)
+            if Cfg.dreyeve_bias:
+                nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim)
             else:
-                nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim, b=None)
+                nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim, b=None)
 
         else:
             raise ValueError("No valid choice of architecture")
@@ -530,9 +530,9 @@ class BDD100K_DataLoader(DataLoader):
     def build_autoencoder(self, nnet):
 
         # implementation of different network architectures
-        if Cfg.bdd100k_architecture not in (1,2,3):
+        if Cfg.dreyeve_architecture not in (1,2,3):
             # architecture spec A_B_C_D_E_F_G_H
-            tmp = Cfg.bdd100k_architecture.split("_")
+            tmp = Cfg.dreyeve_architecture.split("_")
             use_pool = int(tmp[0]) # 1 or 0
             n_conv = int(tmp[1])
             n_dense = int(tmp[2])
@@ -550,7 +550,7 @@ class BDD100K_DataLoader(DataLoader):
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=Cfg.dreyeve_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -565,7 +565,7 @@ class BDD100K_DataLoader(DataLoader):
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
                           W_init=W1_init,
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout,
@@ -581,7 +581,7 @@ class BDD100K_DataLoader(DataLoader):
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
                           W_init=W1_init,
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout,
@@ -594,7 +594,7 @@ class BDD100K_DataLoader(DataLoader):
                 # Dense layer
                 if Cfg.dropout:
                 nnet.addDropoutLayer()
-                if Cfg.bdd100k_bias:
+                if Cfg.dreyeve_bias:
                     nnet.addDenseLayer(num_units=zsize)
                 else:
                     nnet.addDenseLayer(num_units=zsize,
@@ -605,7 +605,7 @@ class BDD100K_DataLoader(DataLoader):
                           num_filters=zsize,
                           filter_size=(h,h),
                           W_init=W1_init,
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=False,
                           dropout=False,
@@ -632,7 +632,7 @@ class BDD100K_DataLoader(DataLoader):
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
                           W_init=W1_init,
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout,
@@ -650,7 +650,7 @@ class BDD100K_DataLoader(DataLoader):
                           num_filters=num_filters,
                           filter_size=(h2,h2),
                           W_init=W1_init,
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout,
@@ -667,7 +667,7 @@ class BDD100K_DataLoader(DataLoader):
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
                           W_init=W1_init,
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout,
@@ -679,11 +679,11 @@ class BDD100K_DataLoader(DataLoader):
                           )
                 num_filters //=2
 
-        if Cfg.bdd100k_architecture == 1:
+        if Cfg.dreyeve_architecture == 1:
             first_layer_n_filters = 16
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, first_layer_n_filters, 5, n_sample=Cfg.bdd100k_n_dict_learn)
+                W1_init = learn_dictionary(nnet.data._X_train, first_layer_n_filters, 5, n_sample=Cfg.dreyeve_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -696,52 +696,52 @@ class BDD100K_DataLoader(DataLoader):
                           num_filters=first_layer_n_filters,
                           filter_size=(5,5),
                           W_init=W1_init,
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm)
 
             addConvModule(nnet,
                           num_filters=32,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm)
 
             addConvModule(nnet,
                           num_filters=64,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm)
 
             addConvModule(nnet,
                           num_filters=64,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm)
 
             addConvModule(nnet,
                           num_filters=128,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm)
 
             addConvModule(nnet,
                           num_filters=256,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm)
 
             # Code Layer
             if Cfg.mnist_bias:
-                nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim)
+                nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim)
             else:
-                nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim, b=None)
+                nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim, b=None)
             nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
-            nnet.addReshapeLayer(shape=([0], (Cfg.bdd100k_rep_dim / 16), 4, 4))
+            nnet.addReshapeLayer(shape=([0], (Cfg.dreyeve_rep_dim / 16), 4, 4))
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
@@ -752,7 +752,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=128,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           upscale=True)
@@ -761,7 +761,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=64,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           upscale=True)
@@ -770,7 +770,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=64,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           upscale=True)
@@ -779,7 +779,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=64,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           upscale=True)
@@ -788,7 +788,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=64,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           upscale=True)
@@ -797,7 +797,7 @@ class BDD100K_DataLoader(DataLoader):
             addConvModule(nnet,
                           num_filters=64,
                           filter_size=(5,5),
-                          bias=Cfg.bdd100k_bias,
+                          bias=Cfg.dreyeve_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           upscale=True)
@@ -815,12 +815,12 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addSigmoidLayer()
 
 
-        if Cfg.bdd100k_architecture == 3:
+        if Cfg.dreyeve_architecture == 3:
         #(192,320) input: (2,2) maxpooling down to (3,5)-image before dense layer
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=16, filter_size=5, n_sample=Cfg.bdd100k_n_dict_learn)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=16, filter_size=5, n_sample=Cfg.dreyeve_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -833,7 +833,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
             # convlayer 1
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=16, filter_size=(5, 5), pad='same')
             else:
                 if Cfg.weight_dict_init & (not nnet.pretrained):
@@ -851,7 +851,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 2
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=32, filter_size=(5, 5), pad='same', b=None)
@@ -863,7 +863,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 3
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
@@ -876,7 +876,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 4
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=64, filter_size=(5, 5), pad='same', b=None)
@@ -889,7 +889,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 5
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=128, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=128, filter_size=(5, 5), pad='same', b=None)
@@ -902,7 +902,7 @@ class BDD100K_DataLoader(DataLoader):
             nnet.addMaxPool(pool_size=(2, 2))
 
             # convlayer 6
-            if Cfg.bdd100k_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=256, filter_size=(5, 5), pad='same')
             else:
                 nnet.addConvLayer(use_batch_norm=Cfg.use_batch_norm, num_filters=256, filter_size=(5, 5),  pad='same', b=None)
@@ -916,9 +916,9 @@ class BDD100K_DataLoader(DataLoader):
 
             # shape is now (3,5) images with 256 channels
             # Code Layer
-            nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim, b=None)
+            nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim, b=None)
             nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
-            nnet.addReshapeLayer(shape=([0], (Cfg.bdd100k_rep_dim / (3*5)), 3, 5))
+            nnet.addReshapeLayer(shape=([0], (Cfg.dreyeve_rep_dim / (3*5)), 3, 5))
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
@@ -990,12 +990,12 @@ class BDD100K_DataLoader(DataLoader):
 
 
 
-        if Cfg.bdd100k_architecture == 4:
+        if Cfg.dreyeve_architecture == 4:
 
             # input (256,256)
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, 16, 5, n_sample=Cfg.bdd100k_n_dict_learn)
+                W1_init = learn_dictionary(nnet.data._X_train, 16, 5, n_sample=Cfg.dreyeve_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -1081,9 +1081,9 @@ class BDD100K_DataLoader(DataLoader):
 
             # shape is now (2,2) images
             # Code Layer
-            nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim, b=None)
+            nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim, b=None)
             nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
-            nnet.addReshapeLayer(shape=([0], (Cfg.bdd100k_rep_dim / (2*2)), 2, 2))
+            nnet.addReshapeLayer(shape=([0], (Cfg.dreyeve_rep_dim / (2*2)), 2, 2))
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
@@ -1171,7 +1171,7 @@ class BDD100K_DataLoader(DataLoader):
 
             nnet.addSigmoidLayer()
 
-        if Cfg.bdd100k_architecture == 2:
+        if Cfg.dreyeve_architecture == 2:
 
             # input (256,256)
             if Cfg.weight_dict_init & (not nnet.pretrained):
@@ -1262,9 +1262,9 @@ class BDD100K_DataLoader(DataLoader):
 
             # shape is now (2,2) images
             # Code Layer
-            nnet.addDenseLayer(num_units=Cfg.bdd100k_rep_dim, b=None)
+            nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim, b=None)
             nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
-            nnet.addReshapeLayer(shape=([0], (Cfg.bdd100k_rep_dim / (2*2)), 2, 2))
+            nnet.addReshapeLayer(shape=([0], (Cfg.dreyeve_rep_dim / (2*2)), 2, 2))
             if Cfg.leaky_relu:
                 nnet.addLeakyReLU()
             else:
