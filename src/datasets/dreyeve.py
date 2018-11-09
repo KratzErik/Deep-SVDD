@@ -65,10 +65,10 @@ class DREYEVE_DataLoader(DataLoader):
         print("Loading data...")
 
         # load normal and outlier data
-        self._X_train = [img_to_array(load_img[Cfg.dreyeve_train_folder + filename] for filename in os.listdir(Cfg.dreyeve_train_folder))]
-        self._X_val = [img_to_array(load_img[Cfg.dreyeve_val_folder + filename] for filename in os.listdir(Cfg.dreyeve_val_folder))]
-        self._X_train = [img_to_array(load_img[Cfg.dreyeve_test_folder + filename] for filename in os.listdir(Cfg.dreyeve_test_folder))]
-        self._y_test = np.concatenate([np.zeros(Cfg.dreyeve_n_test_in,),dtype=np.int32),np.ones((Cfg.dreyeve_n_test-Cfg.dreyeve_n_test_in,),dtype=np.int32)])
+        self._X_train = [img_to_array(load_img(Cfg.dreyeve_train_folder + filename) for filename in os.listdir(Cfg.dreyeve_train_folder))]
+        self._X_val = [img_to_array(load_img(Cfg.dreyeve_val_folder + filename) for filename in os.listdir(Cfg.dreyeve_val_folder))]
+        self._X_train = [img_to_array(load_img(Cfg.dreyeve_test_folder + filename) for filename in os.listdir(Cfg.dreyeve_test_folder))]
+        self._y_test = np.concatenate([np.zeros((Cfg.dreyeve_n_test_in,),dtype=np.int32),np.ones((Cfg.dreyeve_n_test-Cfg.dreyeve_n_test_in,),dtype=np.int32)])
         
         if Cfg.dreyeve_test_in_loc != "first": # outliers before inliers in test set
             self._y_test = self._y_test[::-1] #  flip labels
@@ -204,7 +204,7 @@ class DREYEVE_DataLoader(DataLoader):
                 shape_in = (None,self.image_height,W_in,num_filters)
                 # Dense layer
                 if Cfg.dropout:
-                nnet.addDropoutLayer()
+                    nnet.addDropoutLayer()
                 if Cfg.dreyeve_bias:
                     nnet.addDenseLayer(num_units=zsize)
                 else:
@@ -595,7 +595,7 @@ class DREYEVE_DataLoader(DataLoader):
 
                 # Dense layer
                 if Cfg.dropout:
-                nnet.addDropoutLayer()
+                    nnet.addDropoutLayer()
                 if Cfg.dreyeve_bias:
                     nnet.addDenseLayer(num_units=zsize)
                 else:
@@ -646,7 +646,7 @@ class DREYEVE_DataLoader(DataLoader):
                           )
                 num_filters //=2
             else:
-                h2 = self.image_height // (2**(n_conv-1)# height of image going in to second conv layer
+                h2 = self.image_height // (2**(n_conv-1)) # height of image going in to second conv layer
                 num_filters = c_out * (2**(n_conv-2))
                 addConvModule(nnet,
                           num_filters=num_filters,

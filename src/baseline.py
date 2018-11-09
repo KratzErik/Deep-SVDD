@@ -18,7 +18,7 @@ from utils.visualization.images_plot import plot_outliers_and_most_normal
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset",
                     help="dataset name",
-                    type=str, choices=["mnist", "cifar10", "gtsrb", "bdd100k"])
+                    type=str, choices=["mnist", "cifar10", "gtsrb", "bdd100k", "dreyeve"])
 parser.add_argument("--solver",
                     help="solver", type=str,
                     choices=["sgd", "momentum", "nesterov", "adagrad", "rmsprop", "adadelta", "adam", "adamax"])
@@ -226,6 +226,13 @@ parser.add_argument("--bdd100k_bias",
 parser.add_argument("--bdd100k_val_frac",
                     help="specify the fraction the validation set of the initial training data should be",
                     type=float, default=1./6)
+parser.add_argument("--dreyeve_bias",
+                    help="specify if bias terms are used in bdd100k network",
+                    type=int, default=1)
+parser.add_argument("--dreyeve_val_frac",
+                    help="specify the fraction the validation set of the initial training data should be",
+                    type=float, default=1./6)
+
 '''
 parser.add_argument("--bdd100k_rep_dim",
                     help="specify the dimensionality of the last layer",

@@ -202,7 +202,7 @@ class BDD100K_DataLoader(DataLoader):
                 shape_in = (None,self.image_height,W_in,num_filters)
                 # Dense layer
                 if Cfg.dropout:
-                nnet.addDropoutLayer()
+                    nnet.addDropoutLayer()
                 if Cfg.bdd100k_bias:
                     nnet.addDenseLayer(num_units=zsize)
                 else:
@@ -593,7 +593,7 @@ class BDD100K_DataLoader(DataLoader):
 
                 # Dense layer
                 if Cfg.dropout:
-                nnet.addDropoutLayer()
+                    nnet.addDropoutLayer()
                 if Cfg.bdd100k_bias:
                     nnet.addDenseLayer(num_units=zsize)
                 else:
@@ -644,7 +644,7 @@ class BDD100K_DataLoader(DataLoader):
                           )
                 num_filters //=2
             else:
-                h2 = self.image_height // (2**(n_conv-1)# height of image going in to second conv layer
+                h2 = self.image_height // (2**(n_conv-1)) # height of image going in to second conv layer
                 num_filters = c_out * (2**(n_conv-2))
                 addConvModule(nnet,
                           num_filters=num_filters,

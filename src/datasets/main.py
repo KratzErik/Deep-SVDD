@@ -3,7 +3,7 @@ from datasets.mnist import MNIST_DataLoader
 from datasets.cifar10 import CIFAR_10_DataLoader
 from datasets.GTSRB import GTSRB_DataLoader
 from datasets.bdd100k import BDD100K_DataLoader
-
+from datasets.dreyeve import DREYEVE_DataLoader
 
 def load_dataset(learner, dataset_name, pretrain=False):
 
@@ -21,7 +21,7 @@ def load_dataset(learner, dataset_name, pretrain=False):
     if dataset_name == "bdd100k":
         data_loader = BDD100K_DataLoader
 
-    if dataset-name == "dreyeve":
+    if dataset_name == "dreyeve":
         data_loader = DREYEVE_DataLoader
 
     # load data with data loader
