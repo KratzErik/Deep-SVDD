@@ -227,7 +227,7 @@ parser.add_argument("--bdd100k_val_frac",
                     help="specify the fraction the validation set of the initial training data should be",
                     type=float, default=1./6)
 parser.add_argument("--dreyeve_bias",
-                    help="specify if bias terms are used in bdd100k network",
+                    help="specify if bias terms are used in dreyeve network",
                     type=int, default=1)
 parser.add_argument("--dreyeve_val_frac",
                     help="specify the fraction the validation set of the initial training data should be",
