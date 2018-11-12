@@ -264,7 +264,6 @@ def plot_random_reconstructions(nnet, xp_path, title_suffix, file_prefix, n_img=
 
     # only plot reconstructions for image data
     if nnet.data._X_train.ndim != 4:
-        print("Wrong input shape: not exporting reconstruction samples")
         return
 
     from utils.visualization.mosaic_plot import plot_mosaic
@@ -275,10 +274,5 @@ def plot_random_reconstructions(nnet, xp_path, title_suffix, file_prefix, n_img=
                                                              nnet.data._y_train[random_idx])
 
     title = str(n_img) + " random autoencoder reconstructions " + title_suffix
+    print(reconstruction.shape)
     plot_mosaic(reconstruction, title=title, export_pdf=(xp_path + "/" + file_prefix + "ae_reconstructions"))
-    print("Exported random reconstructions")
-
-    # Also plot the corresponding input, for comparison
-    title = str(n_img) + " random autoencoder inputs " + title_suffix
-    plot_mosaic(nnet.data._X_train[random_idx, ...], title=title, export_pdf=(xp_path + "/" + file_prefix + "ae_inputs"))
-    print("Exported random inputs")

@@ -872,7 +872,7 @@ class DREYEVE_DataLoader(DataLoader):
                           upscale=True)
 
             # reconstruction
-            if Cfg.mnist_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addConvLayer(num_filters=self.channels,
                                   filter_size=(5, 5),
                                   pad='same')

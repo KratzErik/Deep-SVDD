@@ -320,6 +320,9 @@ def train_autoencoder(nnet):
 
         title = str(n_img) + " random autoencoder reconstructions"
         plot_mosaic(reps, title=title, export_pdf=(Cfg.xp_path + "/ae_reconstructions"))
+        title = str(n_img) + " random autoencoder inputs"
+        plot_mosaic(nnet.data._X_train[random_idx, ...],title=title, export_pdf=(Cfg.xp_path + "/ae_inputs"))
+
 
     # plot diagnostics if specified
     if Cfg.ae_diagnostics & Cfg.pretrain:
