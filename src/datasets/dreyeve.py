@@ -210,8 +210,10 @@ class DREYEVE_DataLoader(DataLoader):
                           pad = pad,
                           )
                 num_filters *= 2
-            
-            if dense_layer:
+
+                print("Added conv_layer %d" % nnet.n_conv_layers)
+
+            if n_dense > 0:
                 addConvModule(nnet,
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
@@ -225,8 +227,9 @@ class DREYEVE_DataLoader(DataLoader):
                           stride = stride,
                           pad = pad,
                           )
+                print("Added conv_layer %d" % nnet.n_conv_layers)
 
-                shape_in = (None,self.image_height,W_in,num_filters)
+                #shape_in = (None,self.image_height,W_in,num_filters)
                 # Dense layer
                 if Cfg.dropout:
                     nnet.addDropoutLayer()
@@ -235,6 +238,8 @@ class DREYEVE_DataLoader(DataLoader):
                 else:
                     nnet.addDenseLayer(num_units=zsize,
                                         b=None)
+                print("Added dense layer")
+
             else:
                 h = self.image_height / (2**(n_conv-1))
                 addConvModule(nnet,
@@ -250,6 +255,8 @@ class DREYEVE_DataLoader(DataLoader):
                           stride = (1,1),
                           pad = (0,0),
                           )
+
+                print("Added conv_layer %d" % nnet.n_conv_layers)
 
         elif Cfg.dreyeve_architecture == 1: # For 256by256 images
 
@@ -612,7 +619,7 @@ class DREYEVE_DataLoader(DataLoader):
 
                 print("Added conv_layer %d" % nnet.n_conv_layers)
 
-            if dense_layer > 0:
+            if n_dense > 0:
                 addConvModule(nnet,
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
@@ -655,17 +662,19 @@ class DREYEVE_DataLoader(DataLoader):
                 print("Added conv_layer %d" % nnet.n_conv_layers)
 
             nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
+            print("Feature layer here")
 
-            # Here we use upscaling, pad should be "same"
             n_deconv_layers = 0
-            if dense_layer:
-                
+            if n_dense > 0:
+
                 h1 = self.image_height // (2**n_conv) # height = width of image going into first conv layer
                 num_filters =  c_out * (2**(n_conv-1))
                 nnet.addDenseLayer(num_units = h1**2 * num_filters)
                 nnet.addReshapeLayer(shape=([0], num_filters, h1, h1))
                 num_filters = num_filters // 2
-                
+
+                nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
+
                 addConvModule(nnet,
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
@@ -685,6 +694,8 @@ class DREYEVE_DataLoader(DataLoader):
 
                 num_filters //=2
             else:
+                nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
+
                 h2 = self.image_height // (2**(n_conv-1)) # height of image going in to second conv layer
                 num_filters = c_out * (2**(n_conv-2))
                 addConvModule(nnet,
