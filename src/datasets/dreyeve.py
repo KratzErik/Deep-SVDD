@@ -37,7 +37,7 @@ class DREYEVE_DataLoader(DataLoader):
 
         Cfg.n_batches = int(np.ceil(self.n_train * 1. / Cfg.batch_size))
 
-#        self.data_path = Cfg.dreyeve_img_folder
+        self.data_path = './data/dreyeve'
 #        self.norm_filenames = Cfg.dreyeve_norm_filenames
 #        self.out_filenames = Cfg.dreyeve_out_filenames
 
@@ -65,9 +65,11 @@ class DREYEVE_DataLoader(DataLoader):
         print("Loading data...")
 
         # load normal and outlier data
-        self._X_train = [img_to_array(load_img(Cfg.dreyeve_train_folder + filename) for filename in os.listdir(Cfg.dreyeve_train_folder))]
-        self._X_val = [img_to_array(load_img(Cfg.dreyeve_val_folder + filename) for filename in os.listdir(Cfg.dreyeve_val_folder))]
-        self._X_train = [img_to_array(load_img(Cfg.dreyeve_test_folder + filename) for filename in os.listdir(Cfg.dreyeve_test_folder))]
+        tmp = [load_img(Cfg.dreyeve_train_folder + filename) for filename in os.listdir(Cfg.dreyeve_train_folder)]
+        print(type(tmp[0]))
+        self._X_train = [img_to_array(load_img(Cfg.dreyeve_train_folder + filename)) for filename in os.listdir(Cfg.dreyeve_train_folder)]
+        self._X_val = [img_to_array(load_img(Cfg.dreyeve_val_folder + filename)) for filename in os.listdir(Cfg.dreyeve_val_folder)]
+        self._X_test = [img_to_array(load_img(Cfg.dreyeve_test_folder + filename)) for filename in os.listdir(Cfg.dreyeve_test_folder)]
         self._y_test = np.concatenate([np.zeros((Cfg.dreyeve_n_test_in,),dtype=np.int32),np.ones((Cfg.dreyeve_n_test-Cfg.dreyeve_n_test_in,),dtype=np.int32)])
         
         if Cfg.dreyeve_test_in_loc != "first": # outliers before inliers in test set
