@@ -612,7 +612,7 @@ class DREYEVE_DataLoader(DataLoader):
 
                 print("Added conv_layer %d" % nnet.n_conv_layers)
 
-            if dense_layer:
+            if dense_layer > 0:
                 addConvModule(nnet,
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
@@ -626,7 +626,7 @@ class DREYEVE_DataLoader(DataLoader):
                           stride = stride,
                           pad = pad,
                           )
-
+                print("Added conv_layer %d" % nnet.n_conv_layers)
                 # Dense layer
                 if Cfg.dropout:
                     nnet.addDropoutLayer()
@@ -635,6 +635,7 @@ class DREYEVE_DataLoader(DataLoader):
                 else:
                     nnet.addDenseLayer(num_units=zsize,
                                         b=None)
+                print("Added dense layer")
             else:
                 h = self.image_height / (2**(n_conv-1))
                 addConvModule(nnet,
@@ -651,11 +652,12 @@ class DREYEVE_DataLoader(DataLoader):
                           pad = (0,0),
                           )
 
+                print("Added conv_layer %d" % nnet.n_conv_layers)
 
             nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
 
             # Here we use upscaling, pad should be "same"
-            
+            n_deconv_layers = 0
             if dense_layer:
                 
                 h1 = self.image_height // (2**n_conv) # height = width of image going into first conv layer
@@ -663,7 +665,7 @@ class DREYEVE_DataLoader(DataLoader):
                 nnet.addDenseLayer(num_units = h1**2 * num_filters)
                 nnet.addReshapeLayer(shape=([0], num_filters, h1, h1))
                 num_filters = num_filters // 2
-
+                
                 addConvModule(nnet,
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
@@ -678,6 +680,9 @@ class DREYEVE_DataLoader(DataLoader):
                           pad = pad,
                           upscale = True
                           )
+                n_deconv_layers += 1
+                print("Added deconv_layer %d" % n_deconv_layers)
+
                 num_filters //=2
             else:
                 h2 = self.image_height // (2**(n_conv-1)) # height of image going in to second conv layer
@@ -696,7 +701,9 @@ class DREYEVE_DataLoader(DataLoader):
                           pad = (0,0),
                           upscale = True
                           )
-            
+                n_deconv_layers += 1
+                print("Added deconv_layer %d" % n_deconv_layers)
+
             # Add remaining deconv layers
             for i in range(n_conv-2):
                 addConvModule(nnet,
@@ -713,7 +720,22 @@ class DREYEVE_DataLoader(DataLoader):
                           pad = pad,
                           upscale = True
                           )
+                n_deconv_layers += 1
+                print("Added deconv_layer %d" % n_deconv_layers)
                 num_filters //=2
+
+            # add reconstruction layer
+            # reconstruction
+            if Cfg.dreyeve_bias:
+                nnet.addConvLayer(num_filters=self.channels,
+                                  filter_size=(ksize, ksize),
+                                  pad='same')
+            else:
+                nnet.addConvLayer(num_filters=self.channels,
+                                  filter_size=(ksize, ksize),
+                                  pad='same',
+                                  b=None)
+            print("Added reconstruction layer")
 
         if Cfg.dreyeve_architecture == 1:
             first_layer_n_filters = 16
