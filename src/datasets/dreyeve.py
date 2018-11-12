@@ -184,7 +184,7 @@ class DREYEVE_DataLoader(DataLoader):
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=Cfg.dreyeve_n_dict_learn)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=c1, filter_size=ksize, n_sample=Cfg.dreyeve_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -264,6 +264,8 @@ class DREYEVE_DataLoader(DataLoader):
                 units_multiplier = 2
             else:
                 units_multiplier = 1
+            # build architecture
+            nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
@@ -274,8 +276,6 @@ class DREYEVE_DataLoader(DataLoader):
             else:
                 W1_init = None
 
-            # build architecture
-            nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
             # conv1 : h_in 256 -> h_out 128
             addConvModule(nnet,
@@ -531,7 +531,7 @@ class DREYEVE_DataLoader(DataLoader):
                 nnet.addLeakyReLU()
             else:
                 nnet.addReLU()
-            
+
             # pool 5
             nnet.addMaxPool(pool_size=(2, 2))
 
@@ -587,17 +587,18 @@ class DREYEVE_DataLoader(DataLoader):
             else:
                 pad = (pad,pad)
 
+            # Build architecture
+            nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
+
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=8, filter_size=5, n_sample=Cfg.dreyeve_n_dict_learn)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=c_out, filter_size=ksize, n_sample=Cfg.dreyeve_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
             else:
                 W1_init = None
 
-            # Build architecture
-            nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
             # Add all but last conv. layer
             for i in range(n_conv-1):

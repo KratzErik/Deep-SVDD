@@ -9,9 +9,9 @@ class Configuration(object):
     floatX = np.float32
     seed = 0
 
-    n_pretrain_epochs = 10
-    plot_filters = False
-    plot_most_out_and_norm = False
+    n_pretrain_epochs = 500
+    plot_filters = True
+    plot_most_out_and_norm = True
 
     # BDD100K dataset parameters
     bdd100k_use_file_lists = True
@@ -56,7 +56,7 @@ class Configuration(object):
     dreyeve_save_name_lists=False
     dreyeve_rep_dim = 512
 #    dreyeve_architecture = 1
-    dreyeve_architecture = '1_2_1_8_256_5_1_0'
+    dreyeve_architecture = '1_5_1_8_512_5_1_0'
     dreyeve_bias = True
     dreyeve_n_dict_learn = min(500,dreyeve_n_train)
 

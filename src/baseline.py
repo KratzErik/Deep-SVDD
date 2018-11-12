@@ -412,9 +412,7 @@ def main():
     # If AD experiment, plot most anomalous and most normal
     if Cfg.ad_experiment and Cfg.plot_most_out_and_norm:
         n_img = 32
-        print 1
         plot_outliers_and_most_normal(nnet, n_img, Cfg.xp_path)
-        print 2
 
 if __name__ == '__main__':
     main()
