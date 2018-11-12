@@ -56,7 +56,7 @@ class Configuration(object):
     dreyeve_save_name_lists=False
     dreyeve_rep_dim = 512
 #    dreyeve_architecture = 1
-    dreyeve_architecture = '1_4_1_8_256_5_1_0'
+    dreyeve_architecture = '1_5_1_8_256_5_1_0'
     dreyeve_bias = True
     dreyeve_n_dict_learn = min(500,dreyeve_n_train)
 
