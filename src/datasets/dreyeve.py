@@ -54,6 +54,8 @@ class DREYEVE_DataLoader(DataLoader):
 
         # load data from disk
         self.load_data()
+        if Cfg.dreyeve_architecture not in (1,2,3,4):
+            self.print_architecture()
 
     def check_specific(self):
 
@@ -139,6 +141,26 @@ class DREYEVE_DataLoader(DataLoader):
         flush_last_line()
         print("Data loaded.")
 
+    def print_architecture(self):
+        tmp = Cfg.dreyeve_architecture.split("_")
+        use_pool = int(tmp[0]) # 1 or 0
+        n_conv = int(tmp[1])
+        n_dense = int(tmp[2])
+        c1 = int(tmp[3])
+        zsize = int(tmp[4])
+        ksize= int(tmp[5])
+        stride = int(tmp[6])
+        pad = int(tmp[7])
+
+        print("Architecture:\n")
+        print("Conv. layers: %d"%n_conv)
+        print("Dense layers: %d"%n_dense)
+        print("Channels out of first conv_layer: %d"%c1)
+        print("Latent dim: %d"%zsize)
+        print("Kernel, stride, pad: %d, %d, %d" % (ksize, stride, pad))
+
+
+
     def build_architecture(self, nnet):
         # implementation of different network architectures
         if Cfg.dreyeve_architecture not in (1,2,3):
@@ -170,6 +192,7 @@ class DREYEVE_DataLoader(DataLoader):
                 W1_init = None
 
             # Build architecture
+            nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
             # Add all but last conv. layer
             for i in range(n_conv-1):
@@ -229,6 +252,11 @@ class DREYEVE_DataLoader(DataLoader):
                           )
 
         elif Cfg.dreyeve_architecture == 1: # For 256by256 images
+
+            if Cfg.dropout:
+                units_multiplier = 2
+            else:
+                units_multiplier = 1
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
@@ -545,7 +573,7 @@ class DREYEVE_DataLoader(DataLoader):
             ksize= int(tmp[5])
             stride = int(tmp[6])
             pad = int(tmp[7])
-            num_filters = c1
+            num_filters = c_out
 
             if use_pool:
                 pad = 'same'
@@ -562,6 +590,7 @@ class DREYEVE_DataLoader(DataLoader):
                 W1_init = None
 
             # Build architecture
+            nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
             # Add all but last conv. layer
             for i in range(n_conv-1):
@@ -578,8 +607,11 @@ class DREYEVE_DataLoader(DataLoader):
                           stride = stride,
                           pad = pad,
                           )
+
                 num_filters *= 2
-            
+
+                print("Added conv_layer %d" % nnet.n_conv_layers)
+
             if dense_layer:
                 addConvModule(nnet,
                           num_filters=num_filters,
@@ -740,7 +772,7 @@ class DREYEVE_DataLoader(DataLoader):
                           use_batch_norm=Cfg.use_batch_norm)
 
             # Code Layer
-            if Cfg.mnist_bias:
+            if Cfg.dreyeve_bias:
                 nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim)
             else:
                 nnet.addDenseLayer(num_units=Cfg.dreyeve_rep_dim, b=None)
