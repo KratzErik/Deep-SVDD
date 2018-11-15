@@ -227,7 +227,29 @@ def plot_scores(nnet, xp_path, title_suffix, xlabel, file_prefix):
         plot_five_number_summary(scores, title=title, xlabel=xlabel, ylabel="Score",
                                  export_pdf=(xp_path + "/" + file_prefix + "scores_" + which_set))
 
+def plot_score_hist(nnet, xp_path, title_suffix, xlabel, file_prefix, epoch):
+    for which_set in ['train', 'val', 'test']:
 
+        if (which_set == 'val') & (nnet.data.n_val == 0):
+            continue
+        # suppress train and val outputs for now
+        if which_set == 'train':
+            #y = nnet.data._y_train
+            continue
+        if which_set == 'val':
+            #y = nnet.data._y_val
+            continue
+
+        if which_set == 'test':
+            y = nnet.data._y_test
+
+        # plot summary of scores
+        scores = OrderedDict([('normal', nnet.diag[which_set]['scores'][y == 0])])
+        if sum(y) > 0:
+            scores['outlier'] = nnet.diag[which_set]['scores'][y == 1]
+        print("plot_score_hist diagnostics:")
+        print(scores)
+        
 def plot_representation_norms(nnet, xp_path, title_suffix, xlabel, file_prefix):
     """
     plot norms of feature representations of train, val, and test set.
