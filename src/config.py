@@ -9,7 +9,7 @@ class Configuration(object):
     floatX = np.float32
     seed = 0
 
-    n_pretrain_epochs = 2500
+    n_pretrain_epochs = 10
     plot_filters = True
     plot_most_out_and_norm = True
 
