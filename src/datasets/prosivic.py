@@ -60,13 +60,15 @@ class PROSIVIC_DataLoader(DataLoader):
         # load normal and outlier data
         tmp = [load_img(Cfg.prosivic_train_folder + filename) for filename in os.listdir(Cfg.prosivic_train_folder)]
         print(type(tmp[0]))
-        self._X_train = [img_to_array(load_img(Cfg.prosivic_train_folder + filename)) for filename in os.listdir(Cfg.prosivic_train_folder)]
-        self._X_val = [img_to_array(load_img(Cfg.prosivic_val_folder + filename)) for filename in os.listdir(Cfg.prosivic_val_folder)]
-        self._X_test = [img_to_array(load_img(Cfg.prosivic_test_folder + filename)) for filename in os.listdir(Cfg.prosivic_test_folder)]
-        self._y_test = np.concatenate([np.zeros((Cfg.prosivic_n_test_in,),dtype=np.int32),np.ones((Cfg.prosivic_n_test-Cfg.prosivic_n_test_in,),dtype=np.int32)])
-        
-        if Cfg.prosivic_test_in_loc != "first": # outliers before inliers in test set
-            self._y_test = self._y_test[::-1] #  flip labels
+        self._X_train = [img_to_array(load_img(Cfg.prosivic_train_folder + filename)) for filename in os.listdir(Cfg.prosivic_train_folder)][:Cfg.prosivic_n_train]
+        self._X_val = [img_to_array(load_img(Cfg.prosivic_val_folder + filename)) for filename in os.listdir(Cfg.prosivic_val_folder)][:Cfg.prosivic_n_val]
+        n_test_out = Cfg.prosivic_n_test - Cfg.prosivic_n_test_in
+        _X_test_in = [img_to_array(load_img(Cfg.prosivic_test_in_folder + filename)) for filename in os.listdir(Cfg.prosivic_test_in_folder)][:Cfg.prosivic_n_test_in]
+        _X_test_out = [img_to_array(load_img(Cfg.prosivic_test_out_folder + filename)) for filename in os.listdir(Cfg.prosivic_test_out_folder)][:n_test_out]
+        _y_test_in  = np.zeros((Cfg.prosivic_n_test_in,),dtype=np.int32)
+        _y_test_out = np.ones((n_test_out,),dtype=np.int32)
+        self._X_test = np.concatenate([_X_test_in, _X_test_out])
+        self._y_test = np.concatenate([_y_test_in, _y_test_out])
 
         # tranpose to channels first
         self._X_train = np.moveaxis(self._X_train,-1,1)

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 device=$1
-xp_dir=../log/$2
+xp_dir=../log/dreyeve/$2
 seed=$3
 solver=$4
 lr=$5

@@ -18,7 +18,7 @@ from utils.visualization.images_plot import plot_outliers_and_most_normal
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset",
                     help="dataset name",
-                    type=str, choices=["mnist", "cifar10", "gtsrb", "bdd100k", "dreyeve"])
+                    type=str, choices=["mnist", "cifar10", "gtsrb", "bdd100k", "dreyeve", "prosivic"])
 parser.add_argument("--solver",
                     help="solver", type=str,
                     choices=["sgd", "momentum", "nesterov", "adagrad", "rmsprop", "adadelta", "adam", "adamax"])
