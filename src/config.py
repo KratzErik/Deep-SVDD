@@ -9,9 +9,12 @@ class Configuration(object):
     floatX = np.float32
     seed = 0
 
-    n_pretrain_epochs = 500
+    n_pretrain_epochs = 2500
     plot_filters = True
     plot_most_out_and_norm = True
+
+
+
 
     # BDD100K dataset parameters
     bdd100k_use_file_lists = True
@@ -42,21 +45,21 @@ class Configuration(object):
     bdd100k_bias = True
     bdd100k_n_dict_learn = min(500,bdd100k_n_train)
 
-    dreyeve_train_folder = "../data/dreyeve/highway_morning_sunny_vs_rainy/train/"
-    dreyeve_val_folder = "../data/dreyeve/highway_morning_sunny_vs_rainy/val/"
-    dreyeve_test_folder = "../data/dreyeve/highway_morning_sunny_vs_rainy/test/"   
+    dreyeve_train_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/train/"
+    dreyeve_val_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/val/"
+    dreyeve_test_in_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/in/"
+    dreyeve_test_out_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/out/"
     dreyeve_n_train = 100
     dreyeve_n_val = 50
     dreyeve_n_test = 100
     dreyeve_n_test_in = 50
-    dreyeve_test_in_loc = "first"
     dreyeve_image_height = 256
     dreyeve_image_width = 256
     dreyeve_channels = 3
     dreyeve_save_name_lists=False
     dreyeve_rep_dim = 512
 #    dreyeve_architecture = 1
-    dreyeve_architecture = '1_5_1_8_512_5_1_0'
+    dreyeve_architecture = '1_4_1_8_512_5_1_0'
     dreyeve_bias = True
     dreyeve_n_dict_learn = min(500,dreyeve_n_train)
 
