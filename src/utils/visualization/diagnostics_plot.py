@@ -29,6 +29,7 @@ def plot_diagnostics(nnet, xp_path, title_suffix, xlabel="Epochs", file_prefix="
 
         # plot scores
         plot_scores(nnet, xp_path, title_suffix, xlabel, file_prefix)
+        plot_score_hist(nnet, xp_path, title_suffix, xlabel, file_prefix, nnet.n_epochs-1)
 
         # plot norms of feature representations
         plot_representation_norms(nnet, xp_path, title_suffix, xlabel, file_prefix)
@@ -249,7 +250,7 @@ def plot_score_hist(nnet, xp_path, title_suffix, xlabel, file_prefix, epoch):
             scores['outlier'] = nnet.diag[which_set]['scores'][y == 1]
         print("plot_score_hist diagnostics:")
         print(scores)
-        
+
 def plot_representation_norms(nnet, xp_path, title_suffix, xlabel, file_prefix):
     """
     plot norms of feature representations of train, val, and test set.
