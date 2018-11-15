@@ -13,8 +13,43 @@ class Configuration(object):
     plot_filters = True
     plot_most_out_and_norm = True
 
+    # Dr(eye)ve parameters
+    dreyeve_train_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/train/"
+    dreyeve_val_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/val/"
+    dreyeve_test_in_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/in/"
+    dreyeve_test_out_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/out/"
+    dreyeve_n_train = 100
+    dreyeve_n_val = 50
+    dreyeve_n_test = 100
+    dreyeve_n_test_in = 50
+    dreyeve_image_height = 256
+    dreyeve_image_width = 256
+    dreyeve_channels = 3
+    dreyeve_save_name_lists=False
+    dreyeve_rep_dim = 512
+#    dreyeve_architecture = 1
+    dreyeve_architecture = '1_4_1_8_512_5_1_0'
+    dreyeve_bias = True
+    dreyeve_n_dict_learn = min(500,dreyeve_n_train)
 
-
+    # Pro-SiVIC parameters
+    prosivic_train_folder = "../../weather_detection_data/prosivic/train/"
+    prosivic_val_folder = "../../weather_detection_data/prosivic/val/"
+    prosivic_test_in_folder = "../../weather_detection_data/prosivic/test/in/"
+    prosivic_test_out_folder = "../../weather_detection_data/prosivic/test/out/"
+    prosivic_n_train = 100
+    prosivic_n_val = 50
+    prosivic_n_test = 100
+    prosivic_n_test_in = 50
+    prosivic_image_height = 256
+    prosivic_image_width = 256
+    prosivic_channels = 3
+    prosivic_save_name_lists=False
+    prosivic_rep_dim = 512
+#    prosivic_architecture = 1
+    prosivic_architecture = '1_4_1_8_512_5_1_0'
+    prosivic_bias = True
+    prosivic_n_dict_learn = min(500,prosivic_n_train)
 
     # BDD100K dataset parameters
     bdd100k_use_file_lists = True
@@ -44,24 +79,6 @@ class Configuration(object):
     bdd100k_architecture = 1
     bdd100k_bias = True
     bdd100k_n_dict_learn = min(500,bdd100k_n_train)
-
-    dreyeve_train_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/train/"
-    dreyeve_val_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/val/"
-    dreyeve_test_in_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/in/"
-    dreyeve_test_out_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/out/"
-    dreyeve_n_train = 100
-    dreyeve_n_val = 50
-    dreyeve_n_test = 100
-    dreyeve_n_test_in = 50
-    dreyeve_image_height = 256
-    dreyeve_image_width = 256
-    dreyeve_channels = 3
-    dreyeve_save_name_lists=False
-    dreyeve_rep_dim = 512
-#    dreyeve_architecture = 1
-    dreyeve_architecture = '1_4_1_8_512_5_1_0'
-    dreyeve_bias = True
-    dreyeve_n_dict_learn = min(500,dreyeve_n_train)
 
     # Final Layer
     softmax_loss = False
