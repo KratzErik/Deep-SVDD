@@ -126,8 +126,16 @@ def log_exp_config(xp_path, dataset):
 
     log_file = "{}/log.txt".format(xp_path)
     log = open(log_file, "a")
-    log.write("Start of experiment: %s" % (datetime.datetime.now().strftime('%Y-%m-%d, %H:%M:%S.%f')))
+    log.write("Start of experiment: %s\n" % (datetime.datetime.now().strftime('%Y-%m-%d, %H:%M:%S.%f')))
     log.write("Experiment configuration\n")
+    n_train = 0
+    if self['dataset_name'] == 'dreyeve':
+        architecture = Cfg.dreyeve_n_train
+    elif self['dataset_name'] == 'prosivic':
+        architecture = Cfg.prosivic_n_train
+    elif self['dataset_name'] == 'bdd100k':
+        architecture = Cfg.bdd100k_n_train
+    log.write("Training set size: %d\n" % n_train)
     log.write("Dataset: {}\n".format(dataset))
     log.write("Seed: {}\n".format(Cfg.seed))
     log.write("Fraction of Outliers: {}\n".format(Cfg.out_frac))
@@ -177,6 +185,16 @@ def log_NeuralNet(xp_path, loss, solver, learning_rate, momentum, rho, n_epochs,
     log = open(log_file, "a")
 
     log.write("NeuralNet configuration\n")
+
+    architecture = None
+    if self['dataset_name'] == 'dreyeve':
+        architecture = Cfg.dreyeve_architecture
+    elif self['dataset_name'] == 'prosivic':
+        architecture = Cfg.prosivic_architecture
+    elif self['dataset_name'] == 'bdd100k':
+        architecture = Cfg.bdd100k_architecture
+    log.write("Architecture: %s\n"%architecture)
+
     log.write("Loss: {}\n".format(loss))
     log.write("Pre-training? {}\n".format(Cfg.pretrain))
     log.write("Solver: {}\n".format(solver))
@@ -201,6 +219,7 @@ def log_NeuralNet(xp_path, loss, solver, learning_rate, momentum, rho, n_epochs,
 
     if Cfg.pretrain:
         log.write("Pre-Training Configuration:\n")
+        log.write("Pre-Training epochs" % Cfg.n_pretrain_epochs)
         log.write("Reconstruction loss: {}\n".format(Cfg.ae_loss))
         log.write("Learning rate drop? {}\n".format(Cfg.ae_lr_drop))
         log.write("Learning rate drop in epoch: {}\n".format(Cfg.ae_lr_drop_in_epoch))
