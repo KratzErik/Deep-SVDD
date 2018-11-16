@@ -37,10 +37,10 @@ class Configuration(object):
     prosivic_val_folder = "../../weather_detection_data/prosivic/val/"
     prosivic_test_in_folder = "../../weather_detection_data/prosivic/test/in/"
     prosivic_test_out_folder = "../../weather_detection_data/prosivic/test/out/"
-    prosivic_n_train = 100
-    prosivic_n_val = 50
-    prosivic_n_test = 100
-    prosivic_n_test_in = 50
+    prosivic_n_train = 7000
+    prosivic_n_val = 1400
+    prosivic_n_test = 784*2
+    prosivic_n_test_in = 784
     prosivic_image_height = 256
     prosivic_image_width = 256
     prosivic_channels = 3

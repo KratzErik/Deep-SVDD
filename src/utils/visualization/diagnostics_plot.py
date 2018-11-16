@@ -29,7 +29,7 @@ def plot_diagnostics(nnet, xp_path, title_suffix, xlabel="Epochs", file_prefix="
 
         # plot scores
         plot_scores(nnet, xp_path, title_suffix, xlabel, file_prefix)
-        plot_score_hist(nnet, xp_path, title_suffix, xlabel, file_prefix, nnet.n_epochs-1)
+        plot_scores_hist(nnet, xp_path, title_suffix, xlabel, file_prefix, nnet.n_epochs-1)
 
         # plot norms of feature representations
         plot_representation_norms(nnet, xp_path, title_suffix, xlabel, file_prefix)
@@ -228,7 +228,7 @@ def plot_scores(nnet, xp_path, title_suffix, xlabel, file_prefix):
         plot_five_number_summary(scores, title=title, xlabel=xlabel, ylabel="Score",
                                  export_pdf=(xp_path + "/" + file_prefix + "scores_" + which_set))
 
-def plot_score_hist(nnet, xp_path, title_suffix, xlabel, file_prefix, epoch):
+def plot_scores_hist(nnet, xp_path, title_suffix, xlabel, file_prefix, epoch):
     for which_set in ['train', 'val', 'test']:
 
         if (which_set == 'val') & (nnet.data.n_val == 0):
@@ -248,8 +248,9 @@ def plot_score_hist(nnet, xp_path, title_suffix, xlabel, file_prefix, epoch):
         scores = OrderedDict([('normal', nnet.diag[which_set]['scores'][y == 0])])
         if sum(y) > 0:
             scores['outlier'] = nnet.diag[which_set]['scores'][y == 1]
-        print("plot_score_hist diagnostics:")
-        print(scores)
+        print("plot_scores_hist diagnostics:")
+        print("Normals: " , scores['normal'].shape)
+        print("Outliers: ", scores['outlier'].shape)
 
 def plot_representation_norms(nnet, xp_path, title_suffix, xlabel, file_prefix):
     """
