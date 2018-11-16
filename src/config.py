@@ -9,7 +9,7 @@ class Configuration(object):
     floatX = np.float32
     seed = 0
 
-    n_pretrain_epochs = 10
+    n_pretrain_epochs = 50
     plot_filters = True
     plot_most_out_and_norm = True
 
@@ -86,7 +86,7 @@ class Configuration(object):
     reconstruction_loss = False
 
     # Optimization
-    batch_size = 10
+    batch_size = 64
     learning_rate = theano.shared(floatX(1e-4), name="learning rate")
     lr_decay = False
     lr_decay_after_epoch = 10
@@ -136,7 +136,7 @@ class Configuration(object):
 
     # Data preprocessing
     out_frac = floatX(.1)
-    ad_experiment = False
+    ad_experiment = True
     pca = False
     unit_norm_used = "l2"  # "l2" or "l1"
     gcn = False
