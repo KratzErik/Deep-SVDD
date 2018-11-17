@@ -9,7 +9,7 @@ class Configuration(object):
     floatX = np.float32
     seed = 0
 
-    n_pretrain_epochs = 50
+    n_pretrain_epochs = 1000
     plot_filters = True
     plot_most_out_and_norm = True
 
@@ -47,7 +47,7 @@ class Configuration(object):
     prosivic_save_name_lists=False
     prosivic_rep_dim = 512
 #    prosivic_architecture = 1
-    prosivic_architecture = '1_4_1_8_512_5_1_0'
+    prosivic_architecture = '1_4_1_16_512_5_1_0'
     prosivic_bias = True
     prosivic_n_dict_learn = min(500,prosivic_n_train)
 
