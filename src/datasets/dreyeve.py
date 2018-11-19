@@ -69,13 +69,12 @@ class DREYEVE_DataLoader(DataLoader):
         # load normal and outlier data
         tmp = [load_img(Cfg.dreyeve_train_folder + filename) for filename in os.listdir(Cfg.dreyeve_train_folder)]
         print(type(tmp[0]))
-        self._X_train = [img_to_array(load_img(Cfg.dreyeve_train_folder + filename)) for filename in os.listdir(Cfg.dreyeve_train_folder)]
-        self._X_val = [img_to_array(load_img(Cfg.dreyeve_val_folder + filename)) for filename in os.listdir(Cfg.dreyeve_val_folder)]
-        self._X_test = [img_to_array(load_img(Cfg.dreyeve_test_folder + filename)) for filename in os.listdir(Cfg.dreyeve_test_folder)]
-        self._y_test = np.concatenate([np.zeros((Cfg.dreyeve_n_test_in,),dtype=np.int32),np.ones((Cfg.dreyeve_n_test-Cfg.dreyeve_n_test_in,),dtype=np.int32)])
-        
-        if Cfg.dreyeve_test_in_loc != "first": # outliers before inliers in test set
-            self._y_test = self._y_test[::-1] #  flip labels
+        self._X_train = [img_to_array(load_img(Cfg.dreyeve_train_folder + filename)) for filename in os.listdir(Cfg.dreyeve_train_folder)][:Cfg.dreyeve_n_train]
+        self._X_val = [img_to_array(load_img(Cfg.dreyeve_val_folder + filename)) for filename in os.listdir(Cfg.dreyeve_val_folder)][:Cfg.dreyeve_n_val]
+        self._X_test = [img_to_array(load_img(Cfg.dreyeve_test_folder + filename)) for filename in os.listdir(Cfg.dreyeve_test_folder)][:Cfg.dreyeve_n_test_in]
+        n_test_out = Cfg.dreyeve_n_test - Cfg.dreyeve_n_test_in
+        self._y_test = np.concatenate([np.zeros((Cfg.dreyeve_n_test_in,),dtype=np.int32),np.ones((Cfg.dreyeve_n_test-Cfg.dreyeve_n_test_in,),dtype=np.int32)])[:n_test_out]
+        self.out_frac = Cfg.out_frac
 
         # tranpose to channels first
         self._X_train = np.moveaxis(self._X_train,-1,1)

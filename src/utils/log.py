@@ -24,6 +24,7 @@ class Log(dict):
         self['train_accuracy'] = []
         self['train_emp_loss'] = []
         self['train_auc'] = []
+        self['train_aupr'] = []
         self['train_outlier_scores_summary'] = []
         self['train_normal_scores_summary'] = []
         self['train_outlier_rep_norm_summary'] = []
@@ -33,6 +34,7 @@ class Log(dict):
         self['val_accuracy'] = []
         self['val_emp_loss'] = []
         self['val_auc'] = []
+        self['val_aupr'] = []
         self['val_outlier_scores_summary'] = []
         self['val_normal_scores_summary'] = []
         self['val_outlier_rep_norm_summary'] = []
@@ -42,6 +44,7 @@ class Log(dict):
         self['test_accuracy'] = []
         self['test_emp_loss'] = []
         self['test_auc'] = []
+        self['test_aupr'] = []
         self['test_outlier_scores_summary'] = []
         self['test_normal_scores_summary'] = []
         self['test_outlier_rep_norm_summary'] = []
@@ -101,13 +104,16 @@ class AD_Log(dict):
         self['date_and_time'] = time.strftime('%d-%m-%Y--%H-%M-%S')
 
         self['train_auc'] = 0
+        self['train_aupr'] = 0
         self['train_accuracy'] = 0
         self['train_time'] = 0
 
         self['val_auc'] = 0
+        self['val_aupr'] = 0
         self['val_accuracy'] = 0
 
         self['test_auc'] = 0
+        self['test_aupr'] = 0
         self['test_accuracy'] = 0
         self['test_time'] = 0
 
@@ -320,13 +326,16 @@ def log_AD_results(xp_path, learner):
     log.write("Results\n\n")
 
     log.write("Train AUC: {} %\n".format(round(learner.diag['train']['auc'][-1]*100, 4)))
+    log.write("Train AUPR: {} %\n".format(round(learner.diag['train']['aupr'][-1]*100, 4)))
     log.write("Train accuracy: {} %\n".format(round(learner.diag['train']['acc'][-1], 4)))
     log.write("Train time: {}\n\n".format(round(learner.train_time, 4)))
 
     log.write("Val AUC: {} %\n".format(round(learner.diag['val']['auc'][-1] * 100, 4)))
+    log.write("Val AUPR: {} %\n".format(round(learner.diag['val']['aupr'][-1] * 100, 4)))
     log.write("Val accuracy: {} %\n\n".format(round(learner.diag['val']['acc'][-1], 4)))
 
     log.write("Test AUC: {} %\n".format(round(learner.diag['test']['auc'][-1]*100, 4)))
+    log.write("Test AUPR: {} %\n".format(round(learner.diag['test']['aupr'][-1]*100, 4)))
     log.write("Test accuracy: {} %\n".format(round(learner.diag['test']['acc'][-1], 4)))
     log.write("Test time: {}\n".format(round(learner.test_time, 4)))
 

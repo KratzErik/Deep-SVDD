@@ -169,6 +169,28 @@ def train_network(nnet):
     if nnet.data.n_classes == 2:
         nnet.dump_best_weights("{}/weights_best_ep.p".format(Cfg.xp_path))
 
+def test_network(nnet): # untested. TODO: remove if not used
+    nnet.initialize_diagnostics(1)
+
+    # perform forward passes on train, val, and test set
+    print("Get final performance...")
+
+    train_objective, train_accuracy = performance(nnet, which_set='train', epoch=0, print_=True)
+    if nnet.data.n_val > 0:
+        val_objective, val_accuracy = performance(nnet, which_set='val', epoch=0, print_=True)
+    test_objective, test_accuracy = performance(nnet, which_set='test', epoch=0, print_=True)
+
+    print("Evaluation completed.")
+
+    # log performance
+    nnet.log['train_objective'].append(train_objective)
+    nnet.log['train_accuracy'].append(train_accuracy)
+    if nnet.data.n_val > 0:
+        nnet.log['val_objective'].append(val_objective)
+        nnet.log['val_accuracy'].append(val_accuracy)
+    nnet.log['test_objective'].append(test_objective)
+    nnet.log['test_accuracy'].append(test_accuracy)
+    nnet.log['time_stamp'].append(time.time() - nnet.clock)
 
 def decay_learning_rate(nnet, epoch):
     """

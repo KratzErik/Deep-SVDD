@@ -9,6 +9,7 @@ class Configuration(object):
     floatX = np.float32
     seed = 0
 
+    dataset = "dreyeve"
     n_pretrain_epochs = 1000
     plot_filters = True
     plot_most_out_and_norm = True
@@ -51,7 +52,7 @@ class Configuration(object):
     prosivic_bias = True
     prosivic_n_dict_learn = min(500,prosivic_n_train)
 
-    # BDD100K dataset parameters
+    # BDD100K parameters
     bdd100k_use_file_lists = True
     bdd100k_file_list_normal = 'clear_overcast_partlycloudy_highway_daytime.txt'
     bdd100k_file_list_outlier = 'rainy_foggy_snowy_highway_anytime.txt'
@@ -80,6 +81,24 @@ class Configuration(object):
     bdd100k_bias = True
     bdd100k_n_dict_learn = min(500,bdd100k_n_train)
 
+
+    if dataset == "bdd100k":
+        n_train = bdd100k_n_train
+        n_val = bdd100k_n_val
+        n_test = bdd100k_n_test
+        n_test_in = int(n_test*(1-bdd100k_out_frac))
+    elif dataset == "dreyeve":
+        n_train = dreyeve_n_train
+        n_val = dreyeve_n_val
+        n_test = dreyeve_n_test
+        n_test_in = dreyeve_n_test_in
+    elif dataset == "prosivic":
+        n_train = prosivic_n_train
+        n_val = prosivic_n_val
+        n_test = prosivic_n_test
+        n_test_in = prosivic_n_test_in
+    
+    
     # Final Layer
     softmax_loss = False
     svdd_loss = False
@@ -135,14 +154,17 @@ class Configuration(object):
     warm_up_n_epochs = 10  # iterations until R and c are also getting optimized
 
     # Data preprocessing
-    out_frac = floatX(.1)
+    if dataset in ("bdd100k", "prosivic", "dreyeve"):
+        out_frac = floatX((n_test - n_test_out)/n_test)
+    else:
+        out_frac = floatX(.1)
     ad_experiment = True
     pca = False
     unit_norm_used = "l2"  # "l2" or "l1"
     gcn = False
     zca_whitening = False
 
-    # MNIST dataset parameters
+    # MNIST parameters
     mnist_val_frac = 1./6
     mnist_bias = True
     mnist_rep_dim = 32
@@ -150,7 +172,7 @@ class Configuration(object):
     mnist_normal = 0
     mnist_outlier = -1
 
-    # CIFAR-10 dataset parameters
+    # CIFAR-10 parameters
     cifar10_val_frac = 1./5
     cifar10_bias = True
     cifar10_rep_dim = 128
@@ -158,11 +180,11 @@ class Configuration(object):
     cifar10_normal = 1
     cifar10_outlier = -1
 
-    # GTSRB dataset parameters
+    # GTSRB parameters
     gtsrb_rep_dim = 32
 
     # Plot parameters
-    xp_path = "../log/"
+    xp_path = "../log/" + dataset + "/"
     title_suffix = ""
 
     # SVM parameters

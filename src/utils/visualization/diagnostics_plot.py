@@ -24,8 +24,9 @@ def plot_diagnostics(nnet, xp_path, title_suffix, xlabel="Epochs", file_prefix="
     plot_parameter_norms(nnet, xp_path, title_suffix, xlabel, file_prefix)
 
     if nnet.data.n_classes == 2:
-        # plot auc
+        # plot auc and aupr
         plot_auc(nnet, xp_path, title_suffix, xlabel, file_prefix)
+        plot_aupr(nnet, xp_path, title_suffix, xlabel, file_prefix)
 
         # plot scores
         plot_scores(nnet, xp_path, title_suffix, xlabel, file_prefix)
@@ -54,9 +55,9 @@ def plot_ae_diagnostics(nnet, xp_path, title_suffix):
     # plot train, validation, and test objective
     plot_objective_with_parts(nnet, xp_path, title_suffix, xlabel, file_prefix, pretrain=True)
 
-    # plot auc
+    # plot auc and aupr
     plot_auc(nnet, xp_path, title_suffix, xlabel, file_prefix)
-
+    plot_aupr(nnet, xp_path, title_suffix, xlabel, file_prefix)
     # plot scores
     plot_scores(nnet, xp_path, title_suffix, xlabel, file_prefix)
 
@@ -139,6 +140,30 @@ def plot_auc(nnet, xp_path, title_suffix, xlabel, file_prefix):
     plot_line(auc, title="AUC " + title_suffix, xlabel=xlabel, ylabel="AUC", y_min=-0.05, y_max=1.05,
               export_pdf=(xp_path + "/" + file_prefix + "auc"))
 
+def plot_aupr(nnet, xp_path, title_suffix, xlabel, file_prefix):
+    """
+    plot aupr time series of train, val, and test set.
+    """
+
+    aupr = OrderedDict()
+
+    for which_set in ['train', 'val', 'test']:
+
+        if (which_set == 'val') & (nnet.data.n_val == 0):
+            continue
+
+        if which_set == 'train':
+            y = nnet.data._y_train
+        if which_set == 'val':
+            y = nnet.data._y_val
+        if which_set == 'test':
+            y = nnet.data._y_test
+
+        if sum(y) > 0:
+            aupr[which_set] = nnet.diag[which_set]['aupr']
+
+    plot_line(aupr, title="AUPR " + title_suffix, xlabel=xlabel, ylabel="AUPR", y_min=-0.05, y_max=1.05,
+              export_pdf=(xp_path + "/" + file_prefix + "aupr"))
 
 def plot_center_c_diagnostics(nnet, xp_path, title_suffix, xlabel, file_prefix):
     """

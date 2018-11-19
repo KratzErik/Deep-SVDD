@@ -13,6 +13,7 @@ class NNetDataDiag(dict):
         dict.__init__(self)
 
         self['auc'] = np.zeros(n_epochs, dtype=Cfg.floatX)
+        self['aupr'] = np.zeros(n_epochs, dtype=Cfg.floatX)
         self['acc'] = np.zeros(n_epochs, dtype=Cfg.floatX)
         self['objective'] = np.zeros(n_epochs, dtype=Cfg.floatX)
         self['reconstruction_penalty'] = np.zeros(n_epochs, dtype=Cfg.floatX)

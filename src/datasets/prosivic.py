@@ -69,6 +69,7 @@ class PROSIVIC_DataLoader(DataLoader):
         _y_test_out = np.ones((n_test_out,),dtype=np.int32)
         self._X_test = np.concatenate([_X_test_in, _X_test_out])
         self._y_test = np.concatenate([_y_test_in, _y_test_out])
+        self.out_frac = Cfg.out_frac
 
         # tranpose to channels first
         self._X_train = np.moveaxis(self._X_train,-1,1)

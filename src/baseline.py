@@ -277,7 +277,7 @@ def main():
     save_at = args.n_epochs if not args.save_at else args.save_at
 
     save_to = "{}_weights.p".format(base_file)
-    weights = "../log/{}.p".format(args.in_name) if args.in_name else None
+    weights = "{}/{}.p".format(args.xp_dir,args.in_name) if args.in_name else None
     print(weights)
 
     # update config data
@@ -370,49 +370,70 @@ def main():
     Cfg.e1_diagnostics = bool(args.e1_diagnostics)
     Cfg.ae_diagnostics = bool(args.ae_diagnostics)
 
-    # train
-    nnet = NeuralNet(dataset=args.dataset, use_weights=weights, pretrain=Cfg.pretrain)
-    # pre-train weights via autoencoder, if specified
-    if Cfg.pretrain:
-        nnet.pretrain(solver="adam", lr=0.0001, n_epochs=Cfg.n_pretrain_epochs)
+    if not Cfg.only_test: # Run original DSVDD code, both training and testing in one
+        # train
+        nnet = NeuralNet(dataset=args.dataset, use_weights=weights, pretrain=Cfg.pretrain)
+        # pre-train weights via autoencoder, if specified
+        if Cfg.pretrain:
+            nnet.pretrain(solver="adam", lr=0.0001, n_epochs=Cfg.n_pretrain_epochs)
 
-    nnet.train(solver=args.solver, n_epochs=args.n_epochs, save_at=save_at, save_to=save_to)
+        nnet.train(solver=args.solver, n_epochs=args.n_epochs, save_at=save_at, save_to=save_to)
 
-    # pickle/serialize AD results
-    if Cfg.ad_experiment:
-        nnet.log_results(filename=Cfg.xp_path + "/AD_results.p")
+        # pickle/serialize AD results
+        if Cfg.ad_experiment:
+            nnet.log_results(filename=Cfg.xp_path + "/AD_results.p")
 
-    # text log
-    nnet.log.save_to_file("{}_results.p".format(base_file))  # save log
-    log_exp_config(Cfg.xp_path, args.dataset)
-    log_NeuralNet(Cfg.xp_path, args.loss, args.solver, args.lr, args.momentum, None, args.n_epochs, args.C, args.C_rec,
-                  args.nu)
-    if Cfg.ad_experiment:
-        log_AD_results(Cfg.xp_path, nnet)
+        # text log
+        nnet.log.save_to_file("{}_results.p".format(base_file))  # save log
+        log_exp_config(Cfg.xp_path, args.dataset)
+        log_NeuralNet(Cfg.xp_path, args.loss, args.solver, args.lr, args.momentum, None, args.n_epochs, args.C, args.C_rec,
+                    args.nu)
+        if Cfg.ad_experiment:
+            log_AD_results(Cfg.xp_path, nnet)
 
-    # plot diagnostics
-    if Cfg.nnet_diagnostics:
-        # common suffix for plot titles
-        str_lr = "lr = " + str(args.lr)
-        C = int(args.C)
-        if not Cfg.weight_decay:
-            C = None
-        str_C = "C = " + str(C)
-        Cfg.title_suffix = "(" + args.solver + ", " + str_C + ", " + str_lr + ")"
+        # plot diagnostics
+        if Cfg.nnet_diagnostics:
+            # common suffix for plot titles
+            str_lr = "lr = " + str(args.lr)
+            C = int(args.C)
+            if not Cfg.weight_decay:
+                C = None
+            str_C = "C = " + str(C)
+            Cfg.title_suffix = "(" + args.solver + ", " + str_C + ", " + str_lr + ")"
 
-        if args.loss == 'autoencoder':
-            plot_ae_diagnostics(nnet, Cfg.xp_path, Cfg.title_suffix)
-        else:
-            plot_diagnostics(nnet, Cfg.xp_path, Cfg.title_suffix)
+            if args.loss == 'autoencoder':
+                plot_ae_diagnostics(nnet, Cfg.xp_path, Cfg.title_suffix)
+            else:
+                plot_diagnostics(nnet, Cfg.xp_path, Cfg.title_suffix)
 
-    if Cfg.plot_filters:
-        print("Plotting filters")
-        plot_filters(nnet, Cfg.xp_path, Cfg.title_suffix)
+        if Cfg.plot_filters:
+            print("Plotting filters")
+            plot_filters(nnet, Cfg.xp_path, Cfg.title_suffix)
 
-    # If AD experiment, plot most anomalous and most normal
-    if Cfg.ad_experiment and Cfg.plot_most_out_and_norm:
-        n_img = 32
-        plot_outliers_and_most_normal(nnet, n_img, Cfg.xp_path)
+        # If AD experiment, plot most anomalous and most normal
+        if Cfg.ad_experiment and Cfg.plot_most_out_and_norm:
+            n_img = 32
+            plot_outliers_and_most_normal(nnet, n_img, Cfg.xp_path)
+
+    else: # Load previous network and run only test 
+
+        # Load parameters from previous training
+        nnet = NeuralNet(dataset=args.dataset, use_weights="{}/weights_best_ep.p".format(args.xp_dir))
+
+        nnet.evaluate(solver = args.solver)
+
+        # pickle/serialize AD results
+        if Cfg.ad_experiment:
+            nnet.log_results(filename=Cfg.xp_path + "/AD_results.p")
+
+        # text log
+        nnet.log.save_to_file("{}_results.p".format(base_file))  # save log
+        log_exp_config(Cfg.xp_path, args.dataset)
+        log_NeuralNet(Cfg.xp_path, args.loss, args.solver, args.lr, args.momentum, None, args.n_epochs, args.C, args.C_rec,
+                    args.nu)
+        if Cfg.ad_experiment:
+            log_AD_results(Cfg.xp_path, nnet)
+        
 
 if __name__ == '__main__':
     main()

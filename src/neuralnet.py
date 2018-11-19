@@ -8,7 +8,7 @@ import opt.sgd.train
 import opt.sgd.updates
 
 from opt.sgd.updates import update_R, update_R_c
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, auc as compute_auc, precision_recall_curve, roc_curve
 from datasets.main import load_dataset
 from utils.monitoring import performance
 from utils.misc import get_five_number_summary
@@ -244,13 +244,16 @@ class NeuralNet:
         """
 
         self.ad_log['train_auc'] = self.diag['train']['auc'][-1]
+        self.ad_log['train_aupr'] = self.diag['train']['aupr'][-1]
         self.ad_log['train_accuracy'] = self.diag['train']['acc'][-1]
         self.ad_log['train_time'] = self.train_time
 
         self.ad_log['val_auc'] = self.diag['val']['auc'][-1]
+        self.ad_log['val_aupr'] = self.diag['val']['aupr'][-1]
         self.ad_log['val_accuracy'] = self.diag['val']['acc'][-1]
 
         self.ad_log['test_auc'] = self.diag['test']['auc'][-1]
+        self.ad_log['test_aupr'] = self.diag['test']['aupr'][-1]
         self.ad_log['test_accuracy'] = self.diag['test']['acc'][-1]
         self.ad_log['test_time'] = self.test_time
 
@@ -536,6 +539,8 @@ class NeuralNet:
         # Best results (highest AUC on test set)
         self.auc_best = 0
         self.auc_best_epoch = 0  # determined by highest AUC on test set
+        self.aupr_best = 0
+        self.aupr_best_epoch = 0  # determined by highest AUPR on test set
         self.best_weight_dict = None
 
 
@@ -619,12 +624,26 @@ class NeuralNet:
 
     def track_best_results(self, epoch):
         """
-        Save network parameters where AUC on the test set was highest.
+        Save network parameters where AUC and AUPR on the test set was highest.
         """
 
         if self.diag['test']['auc'][epoch] > self.auc_best:
             self.auc_best = self.diag['test']['auc'][epoch]
             self.auc_best_epoch = epoch
+
+            self.best_weight_dict = dict()
+
+            for layer in self.trainable_layers:
+                self.best_weight_dict[layer.name + "_w"] = layer.W.get_value()
+                if layer.b is not None:
+                    self.best_weight_dict[layer.name + "_b"] = layer.b.get_value()
+
+            if Cfg.svdd_loss:
+                self.best_weight_dict["R"] = self.Rvar.get_value()
+
+        if self.diag['test']['aupr'][epoch] > self.aupr_best:
+            self.aupr_best = self.diag['test']['aupr'][epoch]
+            self.aupr_best_epoch = epoch
 
             self.best_weight_dict = dict()
 
@@ -667,6 +686,12 @@ class NeuralNet:
                 self.diag[which_set]['auc'][epoch] = AUC
                 self.log[which_set + '_auc'].append(float(AUC))
                 print("{:32} {:.2f}%".format(which_set.title() + ' AUC:', 100. * AUC))
+
+                pr,rc, _ = precision_recall_curve(y, scores)
+                AUPR = compute_auc(rc,pr)
+                self.diag[which_set]['aupr'][epoch] = AUPR
+                self.log[which_set + '_aupr'].append(float(AUPR))
+                print("{:32} {:.2f}%".format(which_set.title() + ' AUPR:', 100. * AUPR))
 
             scores_normal = scores[y == 0]
             scores_outlier = scores[y == 1]
@@ -737,3 +762,7 @@ class NeuralNet:
             if sum(y) > 0:
                 AUC = roc_auc_score(y, scores)
                 self.diag[which_set]['auc'][epoch] = AUC
+
+                pr,rc, _ = precision_recall_curve(y, scores)
+                AUPR = compute_auc(rc,pr)
+                self.diag[which_set]['aupr'][epoch] = AUPR
