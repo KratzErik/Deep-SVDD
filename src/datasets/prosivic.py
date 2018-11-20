@@ -58,8 +58,9 @@ class PROSIVIC_DataLoader(DataLoader):
         print("Loading data...")
 
         # load normal and outlier data
-        tmp = [load_img(Cfg.prosivic_train_folder + filename) for filename in os.listdir(Cfg.prosivic_train_folder)]
-        print(type(tmp[0]))
+        # tmp = [load_img(Cfg.prosivic_train_folder + filename) for filename in os.listdir(Cfg.prosivic_train_folder)]
+        # print(type(tmp[0]))
+
         self._X_train = [img_to_array(load_img(Cfg.prosivic_train_folder + filename)) for filename in os.listdir(Cfg.prosivic_train_folder)][:Cfg.prosivic_n_train]
         self._X_val = [img_to_array(load_img(Cfg.prosivic_val_folder + filename)) for filename in os.listdir(Cfg.prosivic_val_folder)][:Cfg.prosivic_n_val]
         n_test_out = Cfg.prosivic_n_test - Cfg.prosivic_n_test_in
@@ -668,7 +669,8 @@ class PROSIVIC_DataLoader(DataLoader):
                 nnet.addReshapeLayer(shape=([0], num_filters, h1, h1))
                 num_filters = num_filters // 2
 
-                nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
+                if use_pool:
+                    nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
 
                 addConvModule(nnet,
                           num_filters=num_filters,
@@ -689,8 +691,7 @@ class PROSIVIC_DataLoader(DataLoader):
 
                 num_filters //=2
             else:
-                nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
-
+                
                 h2 = self.image_height // (2**(n_conv-1)) # height of image going in to second conv layer
                 num_filters = c_out * (2**(n_conv-2))
                 addConvModule(nnet,

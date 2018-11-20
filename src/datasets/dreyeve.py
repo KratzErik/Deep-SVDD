@@ -694,7 +694,8 @@ class DREYEVE_DataLoader(DataLoader):
 
                 num_filters //=2
             else:
-                nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
+                if use_pool:
+                    nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
 
                 h2 = self.image_height // (2**(n_conv-1)) # height of image going in to second conv layer
                 num_filters = c_out * (2**(n_conv-2))
