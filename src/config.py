@@ -10,7 +10,8 @@ class Configuration(object):
     seed = 0
 
     dataset = "dreyeve"
-    n_pretrain_epochs = 1000
+    n_pretrain_epochs = 100
+    pretrain_learning_rate = 0.0001 # standard DSVDD was 0.0001
     plot_filters = True
     plot_most_out_and_norm = True
 
@@ -114,7 +115,7 @@ class Configuration(object):
     lr_drop_in_epoch = 50
     momentum = theano.shared(floatX(0.9), name="momentum")
     rho = theano.shared(floatX(0.9), name="rho")
-    use_batch_norm = False  # apply batch normalization
+    use_batch_norm = True  # apply batch normalization
 
     eps = floatX(1e-8)
 

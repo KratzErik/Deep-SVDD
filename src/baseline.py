@@ -375,7 +375,7 @@ def main():
         nnet = NeuralNet(dataset=args.dataset, use_weights=weights, pretrain=Cfg.pretrain)
         # pre-train weights via autoencoder, if specified
         if Cfg.pretrain:
-            nnet.pretrain(solver="adam", lr=0.0001, n_epochs=Cfg.n_pretrain_epochs)
+            nnet.pretrain(solver="adam", lr=Cfg.pretrain_learning_rate, n_epochs=Cfg.n_pretrain_epochs)
 
         nnet.train(solver=args.solver, n_epochs=args.n_epochs, save_at=save_at, save_to=save_to)
 
