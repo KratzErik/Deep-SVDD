@@ -16,7 +16,8 @@ def train_network(nnet):
     print("Starting training from checkpoint at epoch %d"%nnet.checkpoint_epoch)
     print("Starting training with %s" % nnet.sgd_solver)
 
-    if nnet.checkpoint_epoch == 0:
+    epoch = nnet.checkpoint_epoch
+    if epoch == 0:
         # save initial network parameters for diagnostics
         nnet.save_initial_parameters()
         if Cfg.nnet_diagnostics & Cfg.e1_diagnostics:
@@ -28,8 +29,6 @@ def train_network(nnet):
         # initialize c from mean of network feature representations in deep SVDD if specified
         if Cfg.svdd_loss and Cfg.c_mean_init:
             initialize_c_as_mean(nnet, Cfg.c_mean_init_n_batches)
-
-    epoch = nnet.checkpoint_epoch+1
 
     while epoch < nnet.n_epochs:
 
@@ -132,15 +131,15 @@ def train_network(nnet):
         print("Epoch {} of {} took {:.3f}s".format(epoch + 1, nnet.n_epochs, time.time() - start_time))
         print('')
 
-        # Save checkpoint
-        if Cfg.use_checkpoint and epoch % Cfg.checkpoint_interval == 0:
-            nnet.save_checkpoint(epoch)
-
         # # save model as required
         # if epoch + 1 == nnet.save_at:
         #     nnet.dump_weights(nnet.save_to)
 
         epoch += 1
+
+        # Save checkpoint
+        if Cfg.use_checkpoint and epoch % Cfg.checkpoint_interval == 0:
+            nnet.save_checkpoint(epoch)
 
     # save train time
     nnet.train_time = time.time() - nnet.clock

@@ -2,7 +2,7 @@ import cPickle as pickle
 from config import Configuration as Cfg
 
 
-def dump_weights(nnet, filename=None, pretrain=False):
+def dump_weights(nnet, filename=None, pretrain=False, epoch = 0):
 
     if filename is None:
         filename = nnet.pickle_filename
@@ -23,6 +23,9 @@ def dump_weights(nnet, filename=None, pretrain=False):
 
     if Cfg.svdd_loss and not pretrain:
             weight_dict["R"] = nnet.Rvar.get_value()
+
+    if "checkpoint" in filename:
+        weight_dict["checkpoint_epoch"] = epoch
 
     with open(filename, 'wb') as f:
         pickle.dump(weight_dict, f)
@@ -53,6 +56,9 @@ def load_weights(nnet, filename=None):
     if Cfg.svdd_loss:
         if "R" in weight_dict:
             nnet.R_init = weight_dict["R"]
+    
+    if "checkpoint" in filename:
+        nnet.checkpoint_epoch = weight_dict["checkpoint_epoch"]
 
     print("Parameters loaded in network")
 

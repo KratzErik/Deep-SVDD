@@ -92,14 +92,12 @@ class NeuralNet:
     def save_checkpoint(self, epoch):
         self.checkpoint_epoch = epoch
         filename = Cfg.xp_path+"/checkpoint.p"
-        with open(filename, 'wb') as f:
-            pickle.dump(self, f)
+        dump_weights(self, filename, pretrain = False)
     
     def save_ae_checkpoint(self, epoch):
         self.ae_checkpoint_epoch = epoch
         filename = Cfg.xp_path+"/ae_checkpoint.p"
-        with open(filename, 'wb') as f:
-            pickle.dump(self, f)
+        dump_weights(self,filename, pretrain=True)
 
     def load_data(self, data_loader=None, pretrain=False):
 
@@ -493,9 +491,9 @@ class NeuralNet:
         """
         setattr(self, "feature_layer", self.all_layers[-1])
 
-    def dump_weights(self, filename=None, pretrain=False):
+    def dump_weights(self, filename=None, pretrain=False), epoch = 0:
 
-        dump_weights(self, filename, pretrain=pretrain)
+        dump_weights(self, filename, pretrain=pretrain, epoch = epoch)
 
     def load_weights(self, filename=None):
 
