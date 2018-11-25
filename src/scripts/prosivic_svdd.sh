@@ -14,7 +14,7 @@ in_name=${11}
 batch_size=${12}
 weight_dict_init=${13}
 
-mkdir $xp_dir;
+mkdir -p $xp_dir;
 
 # BDD100K training
 python baseline.py --dataset prosivic --solver $solver --loss svdd --lr $lr --lr_drop 1 --lr_drop_in_epoch 50 \

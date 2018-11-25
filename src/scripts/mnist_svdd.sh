@@ -12,7 +12,7 @@ pretrain=$9
 mnist_normal=${10}
 mnist_outlier=${11}
 
-mkdir $xp_dir;
+mkdir -p $xp_dir;
 
 # MNIST training
 python baseline.py --dataset mnist --solver $solver --loss svdd --lr $lr --lr_drop 1 --lr_drop_in_epoch 50 \

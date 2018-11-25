@@ -246,7 +246,8 @@ class NeuralNet:
         self.ad_log['train_auc'] = self.diag['train']['auc'][-1]
         self.ad_log['train_aupr'] = self.diag['train']['aupr'][-1]
         self.ad_log['train_accuracy'] = self.diag['train']['acc'][-1]
-        self.ad_log['train_time'] = self.train_time
+        if not Cfg.only_test:
+            self.ad_log['train_time'] = self.train_time
 
         self.ad_log['val_auc'] = self.diag['val']['auc'][-1]
         self.ad_log['val_aupr'] = self.diag['val']['aupr'][-1]
@@ -486,7 +487,7 @@ class NeuralNet:
         assert filename
         print filename
         assert os.path.exists(filename)
-
+        print("Loading weights from %s" % filename)
         load_weights(self, filename)
 
     def update_R(self):
@@ -638,22 +639,19 @@ class NeuralNet:
                 if layer.b is not None:
                     self.best_weight_dict[layer.name + "_b"] = layer.b.get_value()
 
+            for layer in self.all_layers:
+                if layer.isbatchnorm:
+                    self.best_weight_dict[layer.name + "_beta"] = layer.beta.get_value()
+                    self.best_weight_dict[layer.name + "_gamma"] = layer.gamma.get_value()
+                    self.best_weight_dict[layer.name + "_mean"] = layer.mean.get_value()
+                    self.best_weight_dict[layer.name + "_inv_std"] = layer.inv_std.get_value()
+
             if Cfg.svdd_loss:
                 self.best_weight_dict["R"] = self.Rvar.get_value()
 
         if self.diag['test']['aupr'][epoch] > self.aupr_best:
             self.aupr_best = self.diag['test']['aupr'][epoch]
             self.aupr_best_epoch = epoch
-
-            self.best_weight_dict = dict()
-
-            for layer in self.trainable_layers:
-                self.best_weight_dict[layer.name + "_w"] = layer.W.get_value()
-                if layer.b is not None:
-                    self.best_weight_dict[layer.name + "_b"] = layer.b.get_value()
-
-            if Cfg.svdd_loss:
-                self.best_weight_dict["R"] = self.Rvar.get_value()
 
     def dump_best_weights(self, filename):
         """

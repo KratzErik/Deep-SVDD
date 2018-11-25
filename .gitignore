@@ -86,3 +86,4 @@ cnn.sublime-project
 # Added by Kratz
 data/cifar-10-python.tar.gz
 .vscode/
+log/

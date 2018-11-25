@@ -14,7 +14,7 @@ in_name=${11}
 batch_size=${12}
 weight_dict_init=${13}
 
-mkdir $xp_dir;
+mkdir -p $xp_dir;
 
 # BDD100K training
 python baseline.py --dataset dreyeve --solver $solver --loss svdd --lr $lr --lr_drop 1 --lr_drop_in_epoch 50 \
@@ -27,4 +27,4 @@ python baseline.py --dataset dreyeve --solver $solver --loss svdd --lr $lr --lr_
 
 # Experiment config is mainly set in bdd100k part of config.py, but parameters that change a lot can be added in baseline.py and specified here for convenience.
 
-# Run experiment with sh bdd100k_svdd.sh gpu bdd100k/your_folder_spec 0 adam 0.0001 150 1 0 1 0 inlier_class_name 100
+# Run experiment with sh dreyeve_svdd.sh gpu folder_spec 0 adam lr 150 1 0 1 0 inlier_class_name batch_size 0

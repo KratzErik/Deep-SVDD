@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 import theano
+import time
 
 from neuralnet import NeuralNet
 from config import Configuration as Cfg
@@ -266,7 +267,7 @@ def main():
         base_file = "{}/{}_{}_{}".format(args.xp_dir, args.dataset, args.solver, args.loss)
 
     # if pickle file already there, consider run already done
-    if (os.path.exists("{}_weights.p".format(base_file)) and os.path.exists("{}_results.p".format(base_file))):
+    if not Cfg.only_test and (os.path.exists("{}_weights.p".format(base_file)) and os.path.exists("{}_results.p".format(base_file))):
         sys.exit()
 
     # computation device
@@ -387,7 +388,7 @@ def main():
         nnet.log.save_to_file("{}_results.p".format(base_file))  # save log
         log_exp_config(Cfg.xp_path, args.dataset)
         log_NeuralNet(Cfg.xp_path, args.loss, args.solver, args.lr, args.momentum, None, args.n_epochs, args.C, args.C_rec,
-                    args.nu)
+                    args.nu, args.dataset)
         if Cfg.ad_experiment:
             log_AD_results(Cfg.xp_path, nnet)
 
@@ -421,7 +422,7 @@ def main():
         nnet = NeuralNet(dataset=args.dataset, use_weights="{}/weights_best_ep.p".format(args.xp_dir))
 
         nnet.evaluate(solver = args.solver)
-
+        nnet.test_time = time.time() - nnet.clock
         # pickle/serialize AD results
         if Cfg.ad_experiment:
             nnet.log_results(filename=Cfg.xp_path + "/AD_results.p")
@@ -430,7 +431,7 @@ def main():
         nnet.log.save_to_file("{}_results.p".format(base_file))  # save log
         log_exp_config(Cfg.xp_path, args.dataset)
         log_NeuralNet(Cfg.xp_path, args.loss, args.solver, args.lr, args.momentum, None, args.n_epochs, args.C, args.C_rec,
-                    args.nu)
+                    args.nu, args.dataset)
         if Cfg.ad_experiment:
             log_AD_results(Cfg.xp_path, nnet)
         

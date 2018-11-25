@@ -182,7 +182,7 @@ def log_exp_config(xp_path, dataset):
     log.close()
 
 
-def log_NeuralNet(xp_path, loss, solver, learning_rate, momentum, rho, n_epochs, C, C_rec, nu):
+def log_NeuralNet(xp_path, loss, solver, learning_rate, momentum, rho, n_epochs, C, C_rec, nu, dataset_name):
     """
     log configuration of NeuralNet-class instance
     """
@@ -193,11 +193,11 @@ def log_NeuralNet(xp_path, loss, solver, learning_rate, momentum, rho, n_epochs,
     log.write("NeuralNet configuration\n")
 
     architecture = None
-    if self['dataset_name'] == 'dreyeve':
+    if dataset_name == 'dreyeve':
         architecture = Cfg.dreyeve_architecture
-    elif self['dataset_name'] == 'prosivic':
+    elif dataset_name == 'prosivic':
         architecture = Cfg.prosivic_architecture
-    elif self['dataset_name'] == 'bdd100k':
+    elif dataset_name == 'bdd100k':
         architecture = Cfg.bdd100k_architecture
     log.write("Architecture: %s\n"%architecture)
 
@@ -225,7 +225,7 @@ def log_NeuralNet(xp_path, loss, solver, learning_rate, momentum, rho, n_epochs,
 
     if Cfg.pretrain:
         log.write("Pre-Training Configuration:\n")
-        log.write("Pre-Training epochs" % Cfg.n_pretrain_epochs)
+        log.write("Pre-Training epochs: %d\n" % Cfg.n_pretrain_epochs)
         log.write("Reconstruction loss: {}\n".format(Cfg.ae_loss))
         log.write("Learning rate drop? {}\n".format(Cfg.ae_lr_drop))
         log.write("Learning rate drop in epoch: {}\n".format(Cfg.ae_lr_drop_in_epoch))
@@ -328,7 +328,8 @@ def log_AD_results(xp_path, learner):
     log.write("Train AUC: {} %\n".format(round(learner.diag['train']['auc'][-1]*100, 4)))
     log.write("Train AUPR: {} %\n".format(round(learner.diag['train']['aupr'][-1]*100, 4)))
     log.write("Train accuracy: {} %\n".format(round(learner.diag['train']['acc'][-1], 4)))
-    log.write("Train time: {}\n\n".format(round(learner.train_time, 4)))
+    if not Cfg.only_test:
+        log.write("Train time: {}\n\n".format(round(learner.train_time, 4)))
 
     log.write("Val AUC: {} %\n".format(round(learner.diag['val']['auc'][-1] * 100, 4)))
     log.write("Val AUPR: {} %\n".format(round(learner.diag['val']['aupr'][-1] * 100, 4)))

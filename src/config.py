@@ -9,17 +9,22 @@ class Configuration(object):
     floatX = np.float32
     seed = 0
 
+    only_test = True
     dataset = "dreyeve"
-    n_pretrain_epochs = 100
-    pretrain_learning_rate = 0.0001 # standard DSVDD was 0.0001
+    n_pretrain_epochs = 5
+    pretrain_learning_rate = 0.0002 # standard DSVDD was 0.0001
     plot_filters = True
     plot_most_out_and_norm = True
 
     # Dr(eye)ve parameters
-    dreyeve_train_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/train/"
-    dreyeve_val_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/val/"
-    dreyeve_test_in_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/in/"
-    dreyeve_test_out_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/out/"
+    dreyeve_train_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/train/"
+    dreyeve_val_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/val/"
+    dreyeve_test_in_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/in/"
+    dreyeve_test_out_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/out/"
+    #dreyeve_train_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/train/"
+    #dreyeve_val_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/val/"
+    #dreyeve_test_in_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/in/"
+    #dreyeve_test_out_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/out/"
     dreyeve_n_train = 100
     dreyeve_n_val = 50
     dreyeve_n_test = 100
@@ -156,6 +161,7 @@ class Configuration(object):
 
     # Data preprocessing
     if dataset in ("bdd100k", "prosivic", "dreyeve"):
+        n_test_out  = n_test-n_test_in
         out_frac = floatX((n_test - n_test_out)/n_test)
     else:
         out_frac = floatX(.1)
