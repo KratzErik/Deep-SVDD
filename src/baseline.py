@@ -373,7 +373,15 @@ def main():
 
     if not Cfg.only_test: # Run original DSVDD code, both training and testing in one
         # train
-        nnet = NeuralNet(dataset=args.dataset, use_weights=weights, pretrain=Cfg.pretrain)
+        # load from checkpoint if available
+        if Cfg.pretrain:
+            if os.path.exists(args.xp_dir+"/ae_checkpoint.p"):
+                nnet = NeuralNet(dataset=args.dataset, use_weights="{}/ae_checkpoint.p".format(args.xp_dir))
+        elif os.path.exists(args.xp_dir+"/checkpoint.p"):
+            nnet = NeuralNet(dataset=args.dataset, use_weights="{}/checkpoint.p".format(args.xp_dir))
+        else:
+            nnet = NeuralNet(dataset=args.dataset, use_weights=weights, pretrain=Cfg.pretrain)
+        
         # pre-train weights via autoencoder, if specified
         if Cfg.pretrain:
             nnet.pretrain(solver="adam", lr=Cfg.pretrain_learning_rate, n_epochs=Cfg.n_pretrain_epochs)

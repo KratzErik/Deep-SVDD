@@ -69,6 +69,9 @@ class NeuralNet:
 
         self.dense_layers, self.conv_layers, = [], []
 
+        self.ae_checkpoint_epoch = 0
+        self.checkpoint_epoch = 0
+
     def compile_updates(self):
         """ create network from architecture given in modules (determined by dataset)
         create Theano compiled functions
