@@ -89,6 +89,18 @@ class NeuralNet:
         opt.sgd.updates.create_autoencoder(self)
         print("Autoencoder compiled.")
 
+    def save_checkpoint(self, epoch):
+        self.checkpoint_epoch = epoch
+        filename = Cfg.xp_path+"/checkpoint.p"
+        with open(filename, 'wb') as f:
+            pickle.dump(self, f)
+    
+    def save_ae_checkpoint(self, epoch):
+        self.ae_checkpoint_epoch = epoch
+        filename = Cfg.xp_path+"/ae_checkpoint.p"
+        with open(filename, 'wb') as f:
+            pickle.dump(self, f)
+
     def load_data(self, data_loader=None, pretrain=False):
 
         self.data = data_loader()

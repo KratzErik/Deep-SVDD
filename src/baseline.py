@@ -377,11 +377,11 @@ def main():
         start_new_nnet = False
         if Cfg.pretrain:
             if os.path.exists(args.xp_dir+"/ae_checkpoint.p"):
-                nnet = NeuralNet(dataset=args.dataset, use_weights="{}/ae_checkpoint.p".format(args.xp_dir))
+                nnet = pickle.load(open(args.xp_dir+"/ae_checkpoint.p", 'rb'))
             else:
                 start_new_nnet = True
         elif os.path.exists(args.xp_dir+"/checkpoint.p"):
-            nnet = NeuralNet(dataset=args.dataset, use_weights="{}/checkpoint.p".format(args.xp_dir))
+            nnet = pickle.load(open(args.xp_dir+"/checkpoint.p", 'rb'))  
         else:
             start_new_nnet = True
 
