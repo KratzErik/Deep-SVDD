@@ -11,11 +11,12 @@ class Configuration(object):
 
     only_test = False
     dataset = "dreyeve"
-    n_pretrain_epochs = 500
+    n_pretrain_epochs = 20
     pretrain_learning_rate = 0.0001 # standard DSVDD was 0.0001
     plot_filters = True
     plot_most_out_and_norm = True
-
+    use_checkpoint = True
+    checkpoint_interval = 5
     # Dr(eye)ve parameters
     dreyeve_train_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/train/"
     dreyeve_val_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/val/"
@@ -25,7 +26,7 @@ class Configuration(object):
     #dreyeve_val_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/val/"
     #dreyeve_test_in_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/in/"
     #dreyeve_test_out_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/out/"
-    divisor = 6
+    divisor = 60
     dreyeve_n_train = 6000 // divisor
     dreyeve_n_val = 600 // divisor
     dreyeve_n_test = 1200 // divisor

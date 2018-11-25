@@ -134,7 +134,7 @@ def train_network(nnet):
 
         # Save checkpoint
         if Cfg.use_checkpoint and epoch % Cfg.checkpoint_interval == 0:
-            checkpoint_name = Cfg.xp_path + "/checkpoint.p
+            checkpoint_name = Cfg.xp_path + "/checkpoint.p"
             nnet.dump_weights(checkpoint_name, pretrain = True)
             nnet.checkpoint_epoch = epoch
 
@@ -275,7 +275,7 @@ def train_autoencoder(nnet):
         if Cfg.ae_diagnostics:
             nnet.initialize_ae_diagnostics(nnet.ae_n_epochs)
 
-    epoch = nnnet.ae_checkpoint_epoch+1
+    epoch = nnet.ae_checkpoint_epoch+1
 
     while epoch < nnet.ae_n_epochs:
 
@@ -321,7 +321,7 @@ def train_autoencoder(nnet):
 
         # Save checkpoint
         if Cfg.use_checkpoint and epoch % Cfg.checkpoint_interval == 0:
-            checkpoint_name = Cfg.xp_path + "/ae_checkpoint.p
+            checkpoint_name = Cfg.xp_path + "/ae_checkpoint.p"
             nnet.dump_weights(checkpoint_name, pretrain = True)
             nnet.ae_checkpoint_epoch = epoch
 
