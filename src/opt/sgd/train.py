@@ -28,8 +28,8 @@ def train_network(nnet):
         # initialize c from mean of network feature representations in deep SVDD if specified
         if Cfg.svdd_loss and Cfg.c_mean_init:
             initialize_c_as_mean(nnet, Cfg.c_mean_init_n_batches)
-    else:
-        epoch = nnet.checkpoint_epoch+1
+
+    epoch = nnet.checkpoint_epoch+1
 
     while epoch < nnet.n_epochs:
 
@@ -271,11 +271,11 @@ def train_autoencoder(nnet):
     print("Starting training from checkpoint at epoch %d"%nnet.ae_checkpoint_epoch)
     print("Starting training autoencoder with %s" % nnet.sgd_solver)
 
-    if nnet.checkpoint_epoch == 0:
+    if nnet.ae_checkpoint_epoch == 0:
         if Cfg.ae_diagnostics:
             nnet.initialize_ae_diagnostics(nnet.ae_n_epochs)
 
-    epoch = nnnet.ae_checkpoint_epoch
+    epoch = nnnet.ae_checkpoint_epoch+1
 
     while epoch < nnet.ae_n_epochs:
 
