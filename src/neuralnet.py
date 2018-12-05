@@ -16,7 +16,7 @@ from utils.pickle import dump_weights, load_weights
 from utils.log import Log, AD_Log
 from utils.diag import NNetDataDiag, NNetParamDiag
 from layers import ConvLayer, ReLU, LeakyReLU, MaxPool, Upscale, DenseLayer, BatchNorm, DropoutLayer, Dimshuffle, \
-    Reshape, Sigmoid, Softmax, Norm, Abs
+    Reshape, Sigmoid, Softmax, Norm, Abs, Pad, ConvTransposeLayer
 from config import Configuration as Cfg
 
 
@@ -298,6 +298,29 @@ class NeuralNet:
             self.n_bn_layers += 1
             name = "bn%i" % self.n_bn_layers
             self.all_layers += (BatchNorm(new_layer, name=name),)
+    
+      def addConvTransposeLayer(self, use_batch_norm=False, **kwargs):
+        """
+        Add convolutional layer.
+        If batch norm flag is True, the convolutional layer
+        will be followed by a batch-normalization layer
+        """
+
+        input_layer = self.input_layer if not self.all_layers \
+            else self.all_layers[-1]
+
+        self.n_conv_layers += 1
+        name = "conv%i" % self.n_conv_layers
+
+        new_layer = ConvTransposeLayer(input_layer, name=name, **kwargs)
+
+        self.all_layers += (new_layer,)
+        self.trainable_layers += (new_layer,)
+
+        if use_batch_norm:
+            self.n_bn_layers += 1
+            name = "bn%i" % self.n_bn_layers
+            self.all_layers += (BatchNorm(new_layer, name=name),)
 
     def addDenseLayer(self, use_batch_norm=False, **kwargs):
         """
@@ -321,6 +344,18 @@ class NeuralNet:
             self.n_bn_layers += 1
             name = "bn%i" % self.n_bn_layers
             self.all_layers += (BatchNorm(new_layer, name=name),)
+
+    def addPadLayer(self,**kwargs):
+        """ 
+        Add padding layer.
+        """
+        input_layer = self.input_layer if not self.all_layers \
+            else self.all_layers[-1]
+        new_layer = Pad(input_layer, **kwargs)
+
+        self.all_layers += (new_layer,)
+
+        self.n_layers = len(self.all_layers)
 
     def addSigmoidLayer(self, **kwargs):
         """
