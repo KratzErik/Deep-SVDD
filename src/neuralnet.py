@@ -55,6 +55,7 @@ class NeuralNet:
         self.n_dimshuffle_layers = 0
         self.n_reshape_layers = 0
         self.R_init = 0
+        self.cvar = None
 
         self.learning_rate_init = Cfg.learning_rate.get_value()
 
@@ -677,7 +678,7 @@ class NeuralNet:
         if self.diag['test']['auc'][epoch] > self.auc_best:
             self.auc_best = self.diag['test']['auc'][epoch]
             self.auc_best_epoch = epoch
-
+            print("New best AUROC: %.5f. Saving parameters" % self.auc_best)
             self.best_weight_dict = dict()
 
             for layer in self.trainable_layers:
@@ -694,6 +695,7 @@ class NeuralNet:
 
             if Cfg.svdd_loss:
                 self.best_weight_dict["R"] = self.Rvar.get_value()
+                self.best_weight_dict["c"] = self.cvar.get_value()
 
         if self.diag['test']['aupr'][epoch] > self.aupr_best:
             self.aupr_best = self.diag['test']['aupr'][epoch]

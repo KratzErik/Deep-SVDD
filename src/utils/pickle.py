@@ -1,6 +1,6 @@
 import cPickle as pickle
 from config import Configuration as Cfg
-
+from theano import shared
 
 def dump_weights(nnet, filename=None, pretrain=False, epoch = 0):
 
@@ -23,6 +23,7 @@ def dump_weights(nnet, filename=None, pretrain=False, epoch = 0):
 
     if Cfg.svdd_loss and not pretrain:
             weight_dict["R"] = nnet.Rvar.get_value()
+            weight_dict["c"] = nnet.cvar.get_value()
 
     if "checkpoint" in filename:
         print("Saving checkpoint at epoch ", epoch)
@@ -48,17 +49,26 @@ def load_weights(nnet, filename=None):
         layer.W.set_value(weight_dict[layer.name + "_w"])
         if layer.b is not None:
             layer.b.set_value(weight_dict[layer.name + "_b"])
-
+    print("\tLoaded trainable layers")
     for layer in nnet.all_layers:
         if layer.isbatchnorm:
             layer.beta.set_value(weight_dict[layer.name + "_beta"])
             layer.gamma.set_value(weight_dict[layer.name + "_gamma"])
             layer.mean.set_value(weight_dict[layer.name + "_mean"])
             layer.inv_std.set_value(weight_dict[layer.name + "_inv_std"])
+    print("\tLoaded all layers")
 
     if Cfg.svdd_loss:
         if "R" in weight_dict:
             nnet.R_init = weight_dict["R"]
+            print("\tSet R value to saved: %.1f"%nnet.R_init)
+        else:
+            print("\tNo R value saved")
+        if "c" in weight_dict:
+            nnet.cvar = shared(weight_dict["c"])
+            print("Set c to saved value")
+        else:
+            print("\tNo c value saved")
 
     if "ae_checkpoint" in filename:
         nnet.ae_checkpoint_epoch = weight_dict["checkpoint_epoch"]

@@ -5,14 +5,14 @@ from datasets import loadbdd100k
 
 
 class Configuration(object):
+    only_test = True
+
+    dataset = "dreyeve"
 
     floatX = np.float32
     seed = 0
 
-    only_test = False
-
-    dataset = "dreyeve"
-    n_pretrain_epochs = 750
+    n_pretrain_epochs = 10
     pretrain_learning_rate = 0.0001 # standard DSVDD was 0.0001
     plot_filters = True
     plot_most_out_and_norm = True
@@ -159,7 +159,7 @@ class Configuration(object):
     R_update_lp_obj = "primal" # on which objective ("primal" or "dual") should R be optimized if LP?
     center_fixed = True  # determine if center c should be fixed or not (in which case c is an optimization parameter)
     QP_solver = 'cvxopt'  # the library to use for solving the QP (or LP). One of ("cvxopt" or "gurobi")
-    warm_up_n_epochs = 10  # iterations until R and c are also getting optimized
+    warm_up_n_epochs = 0  # iterations until R and c are also getting optimized
 
     # Data preprocessing
     if dataset in ("bdd100k", "prosivic", "dreyeve"):

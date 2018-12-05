@@ -221,7 +221,8 @@ def compile_update_svdd(nnet, inputs, targets):
     rep_dim = feature_layer.num_units
     # nnet.cvar = shared(floatX(np.ones(rep_dim) * (1. / (rep_dim ** 0.5))),
     #                    name="c")
-    nnet.cvar = shared(floatX(np.ones(rep_dim) * 0.5), name="c")
+    if nnet.cvar is None:
+        nnet.cvar = shared(floatX(np.ones(rep_dim) * 0.5), name="c")
 
     dist = T.sum(((rep - nnet.cvar.dimshuffle('x', 0)) ** 2), axis=1, dtype='floatX')
     scores = dist - nnet.Rvar
