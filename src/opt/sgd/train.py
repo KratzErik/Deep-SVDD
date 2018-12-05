@@ -26,7 +26,7 @@ def train_network(nnet):
         nnet.initialize_diagnostics(nnet.n_epochs)
 
     # initialize c from mean of network feature representations in deep SVDD if specified
-    if Cfg.svdd_loss and Cfg.c_mean_init:
+    if Cfg.svdd_loss and Cfg.c_mean_init and nnet.cvar is None:
         initialize_c_as_mean(nnet, Cfg.c_mean_init_n_batches)
 
     if epoch == 0:

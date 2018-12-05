@@ -377,6 +377,7 @@ def main():
         start_new_nnet = False
         if os.path.exists(args.xp_dir+"/ae_pretrained_weights.p"):
                 print("Pretrained AE found")
+                Cfg.pretrain = False
                 nnet = NeuralNet(dataset=args.dataset, use_weights=args.xp_dir+"/ae_pretrained_weights.p", pretrain=False)
         elif Cfg.pretrain:
             if os.path.exists(args.xp_dir+"/ae_checkpoint.p"):
