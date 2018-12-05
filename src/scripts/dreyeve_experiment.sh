@@ -28,4 +28,6 @@ python baseline.py --dataset dreyeve --solver $solver --loss $loss --lr $lr --lr
 
 # Experiment config is mainly set in bdd100k part of config.py, but parameters that change a lot can be added in baseline.py and specified here for convenience.
 
-# Run experiment with sh dreyeve_svdd.sh gpu folder_spec 0 adam lr 150 1 0 1 0 inlier_class_name batch_size 0 svdd
+# Run experiment with:      sh dreyeve_svdd.sh gpu folder_spec 0 adam lr 150 1 0 1 0 inlier_class_name batch_size 0 svdd
+# Without center fixed:     sh dreyeve_svdd.sh gpu folder_spec 0 adam lr 150 1 0 0 0 inlier_class_name batch_size 0 svdd
+# 
