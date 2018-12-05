@@ -170,46 +170,42 @@ class NeuralNet:
         """
         pre-train weights with an autoencoder
         """
-        # Train only if trained AE does not exist
-        # otherwise, skip training and load trained autoencoder
-        if os.path.exists(Cfg.xp_path + "/ae_pretrained_weights.p"):
-            print("Found pretrained autoencoder: initializing network from it")
-        else:
-            self.ae_solver = solver.lower()
-            self.ae_learning_rate = lr
-            self.ae_n_epochs = n_epochs
 
-            # set learning rate
-            lr_tmp = Cfg.learning_rate.get_value()
-            Cfg.learning_rate.set_value(Cfg.floatX(lr))
+        self.ae_solver = solver.lower()
+        self.ae_learning_rate = lr
+        self.ae_n_epochs = n_epochs
 
-            self.compile_autoencoder()
+        # set learning rate
+        lr_tmp = Cfg.learning_rate.get_value()
+        Cfg.learning_rate.set_value(Cfg.floatX(lr))
 
-            from opt.sgd.train import train_autoencoder
-            train_autoencoder(self)
+        self.compile_autoencoder()
 
-            # remove layer attributes, re-initialize network and reset learning rate
+        from opt.sgd.train import train_autoencoder
+        train_autoencoder(self)
+
+        # remove layer attributes, re-initialize network and reset learning rate
+        for layer in self.all_layers:
+            delattr(self, layer.name + "_layer")
+        self.initialize_variables(self.data.dataset_name)
+        Cfg.learning_rate.set_value(Cfg.floatX(lr_tmp))
+        self.pretrained = True  # set to True that dictionary initialization mustn't be repeated
+
+        # load network architecture
+        if Cfg.svdd_loss and Cfg.reconstruction_penalty:
+            self.data.build_autoencoder(self)
+
             for layer in self.all_layers:
-                delattr(self, layer.name + "_layer")
-            self.initialize_variables(self.data.dataset_name)
-            Cfg.learning_rate.set_value(Cfg.floatX(lr_tmp))
-            self.pretrained = True  # set to True that dictionary initialization mustn't be repeated
+                setattr(self, layer.name + "_layer", layer)
 
-            # load network architecture
-            if Cfg.svdd_loss and Cfg.reconstruction_penalty:
-                self.data.build_autoencoder(self)
+            self.log.store_architecture(self)
+        else:
+            self.data.build_architecture(self)
 
-                for layer in self.all_layers:
-                    setattr(self, layer.name + "_layer", layer)
+            for layer in self.all_layers:
+                setattr(self, layer.name + "_layer", layer)
 
-                self.log.store_architecture(self)
-            else:
-                self.data.build_architecture(self)
-
-                for layer in self.all_layers:
-                    setattr(self, layer.name + "_layer", layer)
-
-                self.log.store_architecture(self)
+            self.log.store_architecture(self)
 
         # load weights learned by autoencoder
         self.load_weights(Cfg.xp_path + "/ae_pretrained_weights.p")
