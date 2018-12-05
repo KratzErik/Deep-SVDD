@@ -10,13 +10,14 @@ class Configuration(object):
     seed = 0
 
     only_test = False
+
     dataset = "dreyeve"
-    n_pretrain_epochs = 20
+    n_pretrain_epochs = 750
     pretrain_learning_rate = 0.0001 # standard DSVDD was 0.0001
     plot_filters = True
     plot_most_out_and_norm = True
     use_checkpoint = True
-    checkpoint_interval = 5
+    checkpoint_interval = 10
     # Dr(eye)ve parameters
     dreyeve_train_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/train/"
     dreyeve_val_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/val/"
@@ -26,7 +27,7 @@ class Configuration(object):
     #dreyeve_val_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/val/"
     #dreyeve_test_in_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/in/"
     #dreyeve_test_out_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/out/"
-    divisor = 60
+    divisor = 3
     dreyeve_n_train = 6000 // divisor
     dreyeve_n_val = 600 // divisor
     dreyeve_n_test = 1200 // divisor
@@ -36,7 +37,7 @@ class Configuration(object):
     dreyeve_channels = 3
     dreyeve_rep_dim = 512
 #    dreyeve_architecture = 1
-    dreyeve_architecture = '1_5_1_32_512_5_1_0'
+    dreyeve_architecture = '1_5_1_32_1024_5_1_0'
     dreyeve_bias = True
     dreyeve_n_dict_learn = min(500,dreyeve_n_train)
 

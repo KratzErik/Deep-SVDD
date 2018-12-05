@@ -25,6 +25,7 @@ def dump_weights(nnet, filename=None, pretrain=False, epoch = 0):
             weight_dict["R"] = nnet.Rvar.get_value()
 
     if "checkpoint" in filename:
+        print("Saving checkpoint at epoch ", epoch)
         weight_dict["checkpoint_epoch"] = epoch
 
     with open(filename, 'wb') as f:
@@ -37,6 +38,8 @@ def load_weights(nnet, filename=None):
 
     if filename is None:
         filename = nnet.pickle_filename
+
+    print("Loading weights from ", filename)
 
     with open(filename, 'rb') as f:
         weight_dict = pickle.load(f)
@@ -56,10 +59,13 @@ def load_weights(nnet, filename=None):
     if Cfg.svdd_loss:
         if "R" in weight_dict:
             nnet.R_init = weight_dict["R"]
-    
-    if "checkpoint" in filename:
-        nnet.checkpoint_epoch = weight_dict["checkpoint_epoch"]
 
+    if "ae_checkpoint" in filename:
+        nnet.ae_checkpoint_epoch = weight_dict["checkpoint_epoch"]
+        print("AE checkpoint at ", nnet.ae_checkpoint_epoch)
+    elif "checkpoint" in filename:
+        nnet.checkpoint_epoch = weight_dict["checkpoint_epoch"]
+        print("Checkpoint at ", nnet.checkpoint_epoch)
     print("Parameters loaded in network")
 
 

@@ -13,11 +13,12 @@ block_coordinate=${10}
 in_name=${11}
 batch_size=${12}
 weight_dict_init=${13}
+loss=${14}
 
 mkdir -p $xp_dir;
 
 # BDD100K training
-python baseline.py --dataset dreyeve --solver $solver --loss svdd --lr $lr --lr_drop 1 --lr_drop_in_epoch 50 \
+python baseline.py --dataset dreyeve --solver $solver --loss $loss --lr $lr --lr_drop 1 --lr_drop_in_epoch 50 \
     --seed $seed --lr_drop_factor 10 --block_coordinate $block_coordinate --center_fixed $center_fixed \
     --use_batch_norm 1 --pretrain 1 --batch_size $batch_size --n_epochs $n_epochs --device $device \
     --xp_dir $xp_dir --leaky_relu 1 --weight_decay 1 --C 1e6 --reconstruction_penalty 0 --c_mean_init 1 \
@@ -27,4 +28,4 @@ python baseline.py --dataset dreyeve --solver $solver --loss svdd --lr $lr --lr_
 
 # Experiment config is mainly set in bdd100k part of config.py, but parameters that change a lot can be added in baseline.py and specified here for convenience.
 
-# Run experiment with sh dreyeve_svdd.sh gpu folder_spec 0 adam lr 150 1 0 1 0 inlier_class_name batch_size 0
+# Run experiment with sh dreyeve_svdd.sh gpu folder_spec 0 adam lr 150 1 0 1 0 inlier_class_name batch_size 0 svdd

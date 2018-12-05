@@ -377,11 +377,15 @@ def main():
         start_new_nnet = False
         if Cfg.pretrain:
             if os.path.exists(args.xp_dir+"/ae_checkpoint.p"):
+                print("AE checkpoint found")
                 nnet = NeuralNet(dataset=args.dataset, use_weights=args.xp_dir+"/ae_checkpoint.p", pretrain=Cfg.pretrain)
             else:
                 start_new_nnet = True
         elif os.path.exists(args.xp_dir+"/checkpoint.p"):
+            print("Checkpoint found")
             nnet = NeuralNet(dataset=args.dataset, use_weights=args.xp_dir+"/checkpoint.p", pretrain=Cfg.pretrain)
+        elif os.path.exists(args.xp_dir + "/ae_pretrained_weights.p"):
+            nnet = NeuralNet(dataset=args.dataset, use_weights=args.xp_dir+"/ae_pretrained_weights.p", pretrain=Cfg.pretrain)
         else:
             start_new_nnet = True
 

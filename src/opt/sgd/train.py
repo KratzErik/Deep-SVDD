@@ -13,22 +13,26 @@ def train_network(nnet):
         train_autoencoder(nnet)
         return
 
-    print("Starting training from checkpoint at epoch %d"%nnet.checkpoint_epoch)
-    print("Starting training with %s" % nnet.sgd_solver)
+    print("Using %s solver" % nnet.sgd_solver)
 
     epoch = nnet.checkpoint_epoch
-    if epoch == 0:
-        # save initial network parameters for diagnostics
-        nnet.save_initial_parameters()
-        if Cfg.nnet_diagnostics & Cfg.e1_diagnostics:
-            # initialize diagnostics for first epoch (detailed diagnostics per batch)
-            nnet.initialize_diagnostics(Cfg.n_batches + 1)
-        else:
-            nnet.initialize_diagnostics(nnet.n_epochs)
 
-        # initialize c from mean of network feature representations in deep SVDD if specified
-        if Cfg.svdd_loss and Cfg.c_mean_init:
-            initialize_c_as_mean(nnet, Cfg.c_mean_init_n_batches)
+    # save initial network parameters for diagnostics
+    nnet.save_initial_parameters()
+    if Cfg.nnet_diagnostics & Cfg.e1_diagnostics:
+        # initialize diagnostics for first epoch (detailed diagnostics per batch)
+        nnet.initialize_diagnostics(Cfg.n_batches + 1)
+    else:
+        nnet.initialize_diagnostics(nnet.n_epochs)
+
+    # initialize c from mean of network feature representations in deep SVDD if specified
+    if Cfg.svdd_loss and Cfg.c_mean_init:
+        initialize_c_as_mean(nnet, Cfg.c_mean_init_n_batches)
+
+    if epoch == 0:
+        print("No earlier checkpoint, starting training from initialization")
+    else:
+        print("Starting training from checkpoint at epoch %d"%nnet.checkpoint_epoch)
 
     while epoch < nnet.n_epochs:
 
@@ -265,14 +269,16 @@ def initialize_c_as_mean(nnet, n_batches, eps=0.1):
 
 def train_autoencoder(nnet):
 
-    print("Starting training from checkpoint at epoch %d"%nnet.ae_checkpoint_epoch)
-    print("Starting training autoencoder with %s" % nnet.sgd_solver)
+    print("Training autoencoder with %s solver" % nnet.sgd_solver)
+    epoch = nnet.ae_checkpoint_epoch
 
-    if nnet.ae_checkpoint_epoch == 0:
-        if Cfg.ae_diagnostics:
-            nnet.initialize_ae_diagnostics(nnet.ae_n_epochs)
+    if Cfg.ae_diagnostics:
+        nnet.initialize_ae_diagnostics(nnet.ae_n_epochs)
 
-    epoch = nnet.ae_checkpoint_epoch+1
+    if epoch == 0:
+        print("No ae checkpoint, starting from initialization")
+    else:
+        print("Starting training from checkpoint at epoch %d"%(epoch+1))
 
     while epoch < nnet.ae_n_epochs:
 
@@ -316,9 +322,6 @@ def train_autoencoder(nnet):
                 val_err = ae_performance(nnet, which_set='val', epoch=epoch)
             test_err = ae_performance(nnet, which_set='test', epoch=epoch)
 
-        # Save checkpoint
-        if Cfg.use_checkpoint and epoch % Cfg.checkpoint_interval == 0:
-            nnet.save_ae_checkpoint(epoch)
         # print results for epoch
         print("{:32} {:.5f}".format("Train error:", train_err))
         if Cfg.ae_diagnostics:
@@ -329,6 +332,10 @@ def train_autoencoder(nnet):
         print("")
 
         epoch += 1
+        if Cfg.use_checkpoint and epoch % Cfg.checkpoint_interval == 0:
+            nnet.save_ae_checkpoint(epoch)
+
+        # Save checkpoint
 
     # Get final performance in last epoch if no running diagnostics are taken
     if not Cfg.ae_diagnostics:

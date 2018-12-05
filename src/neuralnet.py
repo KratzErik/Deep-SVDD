@@ -35,7 +35,7 @@ class NeuralNet:
         # load dataset
         load_dataset(self, dataset.lower(), pretrain)
 
-        if use_weights and not pretrain:
+        if use_weights:
             self.load_weights(use_weights)
 
     def initialize_variables(self, dataset):
@@ -90,14 +90,12 @@ class NeuralNet:
         print("Autoencoder compiled.")
 
     def save_checkpoint(self, epoch):
-        self.checkpoint_epoch = epoch
         filename = Cfg.xp_path+"/checkpoint.p"
-        dump_weights(self, filename, pretrain = False)
+        dump_weights(self, filename, pretrain = False, epoch = epoch)
     
     def save_ae_checkpoint(self, epoch):
-        self.ae_checkpoint_epoch = epoch
         filename = Cfg.xp_path+"/ae_checkpoint.p"
-        dump_weights(self,filename, pretrain=True)
+        dump_weights(self,filename, pretrain=True, epoch = epoch)
 
     def load_data(self, data_loader=None, pretrain=False):
 
@@ -491,7 +489,7 @@ class NeuralNet:
         """
         setattr(self, "feature_layer", self.all_layers[-1])
 
-    def dump_weights(self, filename=None, pretrain=False), epoch = 0:
+    def dump_weights(self, filename=None, pretrain=False, epoch = 0):
 
         dump_weights(self, filename, pretrain=pretrain, epoch = epoch)
 
