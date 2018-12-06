@@ -61,7 +61,8 @@ def addConvTransposeModule(nnet, num_filters, filter_size, W_init=None, bias=Tru
         nnet.addDropoutLayer(p=p_dropout)
 
     if inpad > 0:
-        nnet.addPadLayer(width=((inpad,0),(0, inpad))
+        print("Adding assymmetric input padding: %d"%inpad)
+        nnet.addPadLayer(width=((inpad,0),(0, inpad)))
 
     nnet.addConvTransposeLayer(use_batch_norm=use_batch_norm,
                       num_filters=num_filters,
@@ -71,7 +72,8 @@ def addConvTransposeModule(nnet, num_filters, filter_size, W_init=None, bias=Tru
                       stride=stride, crop=crop)
 
     if outpad > 0:
-        nnet.addPadLayer(width=outpad)
+        print("Adding assymmetric output padding: %d"%outpad)
+        nnet.addPadLayer(width=((outpad,0),(0,outpad)))
 
     if Cfg.leaky_relu:
         nnet.addLeakyReLU()

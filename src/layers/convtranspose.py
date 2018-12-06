@@ -14,7 +14,7 @@ class ConvTransposeLayer(lasagne.layers.TransposedConv2DLayer):
 
         lasagne.layers.TransposedConv2DLayer.__init__(self, incoming_layer, num_filters,
                                             filter_size, name=name,
-                                            stride=stride, crop=crop,
+                                            stride=stride, crop='full',
                                             untie_biases=False, W=W, b=b,
                                             nonlinearity=None,
                                             flip_filters=flip_filters)

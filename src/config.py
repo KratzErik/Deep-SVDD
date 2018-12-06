@@ -12,8 +12,8 @@ class Configuration(object):
     floatX = np.float32
     seed = 0
 
-    n_pretrain_epochs = 10
-    pretrain_learning_rate = 0.0001 # standard DSVDD was 0.0001
+    n_pretrain_epochs = 2
+    pretrain_learning_rate = 0.001 # standard DSVDD was 0.0001
     plot_filters = True
     plot_most_out_and_norm = True
     use_checkpoint = True
@@ -46,7 +46,7 @@ class Configuration(object):
     prosivic_val_folder = "../../weather_detection_data/prosivic/val/"
     prosivic_test_in_folder = "../../weather_detection_data/prosivic/test/in/"
     prosivic_test_out_folder = "../../weather_detection_data/prosivic/test/out/foggy/"
-    prosivic_data_div = 350
+    prosivic_data_div = 1
     prosivic_n_train = 7000 // prosivic_data_div
     prosivic_n_val = 1400 // prosivic_data_div
     prosivic_n_test = 784*2 // prosivic_data_div
@@ -58,7 +58,6 @@ class Configuration(object):
     prosivic_rep_dim = 512
 #    prosivic_architecture = 1
     prosivic_architecture = '0_4_1_16_512_5_2_2'
-    prosivic_architecture = '0_1_1_16_512_5_2_2'
     prosivic_bias = True
     prosivic_n_dict_learn = min(500,prosivic_n_train)
 

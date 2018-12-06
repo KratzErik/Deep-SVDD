@@ -55,6 +55,7 @@ class NeuralNet:
         self.n_dropout_layers = 0
         self.n_dimshuffle_layers = 0
         self.n_reshape_layers = 0
+        self.n_pad_layers = 0
         self.R_init = 0
         self.cvar = None
 
@@ -353,7 +354,10 @@ class NeuralNet:
         """
         input_layer = self.input_layer if not self.all_layers \
             else self.all_layers[-1]
-        new_layer = Pad(input_layer, name = "padlayer", **kwargs)
+        self.n_pad_layers += 1
+        name = 'pad%i'%self.n_pad_layers
+
+        new_layer = Pad(input_layer, name = name, **kwargs)
 
         self.all_layers += (new_layer,)
 

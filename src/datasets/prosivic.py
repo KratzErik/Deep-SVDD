@@ -582,11 +582,13 @@ class PROSIVIC_DataLoader(DataLoader):
                 pad = 'same'
             else:
                 print("Using strided convolutions")
-                #outpad =(ksize-stride)%2
-                outpad = 0
-                deconvinpad = (ksize-stride+outpad)//2
+                outpad =(ksize-stride)%2
+                #outpad = 0
                 #deconvinpad = 0
                 convinpad = (ksize-stride+1)//2
+                deconvinpad = (ksize-stride+outpad)//2
+                #outpad = 0
+                #deconvinpad = (2*convinpad-ksize)%stride
                 print("Conv pad: %d, deconv inpad: %d, outpad: %d"%(convinpad, deconvinpad, outpad))
 
             # Build architecture
@@ -674,6 +676,7 @@ class PROSIVIC_DataLoader(DataLoader):
                 num_filters =  c_out * (2**(n_conv-1))
                 nnet.addDenseLayer(num_units = h1**2 * num_filters)
                 nnet.addReshapeLayer(shape=([0], num_filters, h1, h1))
+                print("Reshaping to (None, %d, %d, %d)"%(num_filters, h1, h1))
                 num_filters = num_filters // 2
                 print("Added dense layer")
                 if use_pool:
@@ -683,7 +686,6 @@ class PROSIVIC_DataLoader(DataLoader):
                               num_filters=num_filters,
                               filter_size=(ksize,ksize),
                               W_init=W1_init,
-                             # pad = "valid",
                               bias=Cfg.prosivic_bias,
                               pool_size=(2,2),
                               use_batch_norm=Cfg.use_batch_norm,
