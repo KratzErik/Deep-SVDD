@@ -43,6 +43,7 @@ class NeuralNet:
         self.all_layers, self.trainable_layers = (), ()
 
         self.n_conv_layers = 0
+        self.n_convtranspose_layers = 0
         self.n_dense_layers = 0
         self.n_relu_layers = 0
         self.n_leaky_relu_layers = 0
@@ -299,8 +300,8 @@ class NeuralNet:
             self.n_bn_layers += 1
             name = "bn%i" % self.n_bn_layers
             self.all_layers += (BatchNorm(new_layer, name=name),)
-    
-      def addConvTransposeLayer(self, use_batch_norm=False, **kwargs):
+
+    def addConvTransposeLayer(self, use_batch_norm = False, **kwargs):
         """
         Add convolutional layer.
         If batch norm flag is True, the convolutional layer
@@ -310,8 +311,8 @@ class NeuralNet:
         input_layer = self.input_layer if not self.all_layers \
             else self.all_layers[-1]
 
-        self.n_conv_layers += 1
-        name = "conv%i" % self.n_conv_layers
+        self.n_convtranspose_layers += 1
+        name = "convtranspose%i" % self.n_convtranspose_layers
 
         new_layer = ConvTransposeLayer(input_layer, name=name, **kwargs)
 
@@ -352,7 +353,7 @@ class NeuralNet:
         """
         input_layer = self.input_layer if not self.all_layers \
             else self.all_layers[-1]
-        new_layer = Pad(input_layer, **kwargs)
+        new_layer = Pad(input_layer, name = "padlayer", **kwargs)
 
         self.all_layers += (new_layer,)
 

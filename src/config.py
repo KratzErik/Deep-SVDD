@@ -5,9 +5,9 @@ from datasets import loadbdd100k
 
 
 class Configuration(object):
-    only_test = True
+    only_test = False
 
-    dataset = "dreyeve"
+    dataset = "prosivic"
 
     floatX = np.float32
     seed = 0
@@ -37,7 +37,7 @@ class Configuration(object):
     dreyeve_channels = 3
     dreyeve_rep_dim = 512
 #    dreyeve_architecture = 1
-    dreyeve_architecture = '1_5_1_32_1024_5_1_0'
+    dreyeve_architecture = '0_6_1_8_512_5_2_2'
     dreyeve_bias = True
     dreyeve_n_dict_learn = min(500,dreyeve_n_train)
 
@@ -45,18 +45,19 @@ class Configuration(object):
     prosivic_train_folder = "../../weather_detection_data/prosivic/train/"
     prosivic_val_folder = "../../weather_detection_data/prosivic/val/"
     prosivic_test_in_folder = "../../weather_detection_data/prosivic/test/in/"
-    prosivic_test_out_folder = "../../weather_detection_data/prosivic/test/out/"
-    prosivic_n_train = 7000
-    prosivic_n_val = 1400
-    prosivic_n_test = 784*2
-    prosivic_n_test_in = 784
+    prosivic_test_out_folder = "../../weather_detection_data/prosivic/test/out/foggy/"
+    prosivic_data_div = 350
+    prosivic_n_train = 7000 // prosivic_data_div
+    prosivic_n_val = 1400 // prosivic_data_div
+    prosivic_n_test = 784*2 // prosivic_data_div
+    prosivic_n_test_in = 784 // prosivic_data_div
     prosivic_image_height = 256
     prosivic_image_width = 256
     prosivic_channels = 3
     prosivic_save_name_lists=False
     prosivic_rep_dim = 512
 #    prosivic_architecture = 1
-    prosivic_architecture = '1_4_1_16_512_5_1_0'
+    prosivic_architecture = '0_4_1_16_512_5_2_2'
     prosivic_bias = True
     prosivic_n_dict_learn = min(500,prosivic_n_train)
 
@@ -135,10 +136,10 @@ class Configuration(object):
     weight_dict_init = False
     pretrain = False
     ae_loss = "l2"
-    ae_lr_drop = False  # separate into "region search" and "fine-tuning" stages
+    ae_lr_drop = True  # separate into "region search" and "fine-tuning" stages
     ae_lr_drop_factor = 10
-    ae_lr_drop_in_epoch = 50
-    ae_weight_decay = True
+    ae_lr_drop_in_epoch = int(n_pretrain_epochs * 2/3)
+    ae_weight_decay = False
     ae_C = theano.shared(floatX(1e3), name="ae_C")
 
     # Regularization

@@ -22,9 +22,9 @@ python baseline.py --dataset prosivic --solver $solver --loss svdd --lr $lr --lr
     --use_batch_norm 1 --pretrain 1 --batch_size $batch_size --n_epochs $n_epochs --device $device \
     --xp_dir $xp_dir --leaky_relu 1 --weight_decay 1 --C 1e6 --reconstruction_penalty 0 --c_mean_init 1 \
     --hard_margin $hard_margin --nu $nu --out_frac 0 --weight_dict_init $weight_dict_init --unit_norm_used l1 --gcn 1 --dreyeve_bias 0 \
-     --nnet_diagnostics 1 --e1_diagnostics 1 ;
+     --nnet_diagnostics 1 --e1_diagnostics 0 ;
 
 
 # Experiment config is mainly set in dataset specific part of config.py, but parameters that change a lot can be added in baseline.py and specified here for convenience.
 
-# Run experiment with sh prosivic_svdd.sh gpu experiment_specific_folder 0 adam 0.0001 150 1 0 1 0 inlier_class_name 100 0
+# Run experiment with sh scripts/prosivic_svdd.sh gpu experiment_specific_folder 0 adam 0.0001 50 1 0 0 1 sunny_highway 0

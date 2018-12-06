@@ -13,3 +13,5 @@ from .sigmoid import Sigmoid
 from .softmax import Softmax
 from .norm import Norm
 from .abs import Abs
+from .pad import Pad
+from .convtranspose import ConvTransposeLayer
