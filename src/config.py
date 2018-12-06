@@ -58,6 +58,7 @@ class Configuration(object):
     prosivic_rep_dim = 512
 #    prosivic_architecture = 1
     prosivic_architecture = '0_4_1_16_512_5_2_2'
+    prosivic_architecture = '0_1_1_16_512_5_2_2'
     prosivic_bias = True
     prosivic_n_dict_learn = min(500,prosivic_n_train)
 

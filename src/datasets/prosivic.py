@@ -582,10 +582,10 @@ class PROSIVIC_DataLoader(DataLoader):
                 pad = 'same'
             else:
                 print("Using strided convolutions")
-                outpad =(ksize-stride)%2
+                #outpad =(ksize-stride)%2
                 outpad = 0
                 deconvinpad = (ksize-stride+outpad)//2
-                deconvinpad = 0
+                #deconvinpad = 0
                 convinpad = (ksize-stride+1)//2
                 print("Conv pad: %d, deconv inpad: %d, outpad: %d"%(convinpad, deconvinpad, outpad))
 
@@ -678,28 +678,29 @@ class PROSIVIC_DataLoader(DataLoader):
                 print("Added dense layer")
                 if use_pool:
                     nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
+                if n_conv > 1:
+                    addConvTransposeModule(nnet,
+                              num_filters=num_filters,
+                              filter_size=(ksize,ksize),
+                              W_init=W1_init,
+                             # pad = "valid",
+                              bias=Cfg.prosivic_bias,
+                              pool_size=(2,2),
+                              use_batch_norm=Cfg.use_batch_norm,
+                              dropout=Cfg.dropout,
+                              p_dropout=0.2,
+                              use_maxpool = False,
+                              stride = stride,
+                              crop = convinpad,
+                              outpad = outpad,
+                              upscale = False,
+                              inpad = deconvinpad
+                              )
+                    n_deconv_layers += 1
+                    print("Added deconv_layer %d" % n_deconv_layers)
 
-                addConvTransposeModule(nnet,
-                          num_filters=num_filters,
-                          filter_size=(ksize,ksize),
-                          W_init=W1_init,
-                         # pad = "valid",
-                          bias=Cfg.prosivic_bias,
-                          pool_size=(2,2),
-                          use_batch_norm=Cfg.use_batch_norm,
-                          dropout=Cfg.dropout,
-                          p_dropout=0.2,
-                          use_maxpool = False,
-                          stride = stride,
-                          crop = 0,
-                          outpad = outpad,
-                          upscale = False
-                          )
-                n_deconv_layers += 1
-                print("Added deconv_layer %d" % n_deconv_layers)
-
-                num_filters //=2
-            else:
+                    num_filters //=2
+            elif n_conv > 1:
 
                 h2 = self.image_height // (2**(n_conv-1)) # height of image going in to second conv layer
                 num_filters = c_out * (2**(n_conv-2))
@@ -714,9 +715,10 @@ class PROSIVIC_DataLoader(DataLoader):
                           p_dropout=0.2,
                           use_maxpool = False,
                           stride = (1,1),
-                          crop = convinpad,
+                          crop = 0,
                           outpad = outpad,
-                          upscale = False
+                          upscale = False,
+                          inpad = deconvinpad
                           )
                 n_deconv_layers += 1
                 print("Added deconv_layer %d" % n_deconv_layers)
@@ -736,7 +738,8 @@ class PROSIVIC_DataLoader(DataLoader):
                           stride = stride,
                           crop = convinpad,
                           outpad = outpad,
-                          upscale = False
+                          upscale = False,
+                          inpad = deconvinpad
                           )
                 n_deconv_layers += 1
                 print("Added deconv_layer %d" % n_deconv_layers)
@@ -758,7 +761,8 @@ class PROSIVIC_DataLoader(DataLoader):
                       stride = stride,
                       crop = convinpad,
                       outpad = outpad,
-                      upscale = False
+                      upscale = False,
+                      inpad = deconvinpad
                       )
             print("Added reconstruction layer")
 
