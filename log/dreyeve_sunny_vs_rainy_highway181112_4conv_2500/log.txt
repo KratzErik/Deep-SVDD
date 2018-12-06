@@ -1,5 +1,5 @@
-Start of experiment: 2018-10-31, 13:40:37.990352Experiment configuration
-Dataset: bdd100k
+Start of experiment: 2018-11-12, 18:57:09.619976Experiment configuration
+Dataset: dreyeve
 Seed: 0
 Fraction of Outliers: 0.0
 First layer weight init by dictionary: False
@@ -22,7 +22,7 @@ Learning rate drop by factor: 10
 Momentum: 0.9
 Rho: None
 Use Batch Normalization? True
-Number of epochs: 10
+Number of epochs: 150
 Batch size: 10
 Leaky ReLU: True
 
@@ -59,14 +59,14 @@ Number of batches for mean initialization of c: all
 Results
 
 Train AUC: 0.0 %
-Train accuracy: 98.0 %
-Train time: 7.3028
+Train accuracy: 100.0 %
+Train time: 140.4681
 
 Val AUC: 0.0 %
-Val accuracy: 98.0 %
+Val accuracy: 100.0 %
 
-Test AUC: 70.76 %
-Test accuracy: 63.0 %
-Test time: 0.274
+Test AUC: 37.6 %
+Test accuracy: 50.0 %
+Test time: 0.0
 
 

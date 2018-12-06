@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 *.p
 *.pkl
-*.png
+.png
 
 # C extensions
 *.so
@@ -86,5 +86,5 @@ cnn.sublime-project
 # Added by Kratz
 data/cifar-10-python.tar.gz
 .vscode/
-log/
+#log/
 *.py.save

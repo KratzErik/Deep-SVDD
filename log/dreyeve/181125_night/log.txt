@@ -1,0 +1,303 @@
+Start of experiment: 2018-11-26, 07:08:40.369592
+Experiment configuration
+Training set size: 2000
+Dataset: dreyeve
+Seed: 0
+Fraction of Outliers: 0.0
+First layer weight init by dictionary: False
+PCA pre-processing? False
+Norm used: l1
+Global contrast normalization? True
+ZCA Whitening? False
+
+
+NeuralNet configuration
+Architecture: 1_5_1_32_1024_5_1_0
+Loss: svdd
+Pre-training? True
+Solver: adam
+Learning rate: 0.0001
+Learning rate decay? False
+Learning rate decay after epoch: 10
+Learning rate drop? True
+Learning rate drop in epoch: 50
+Learning rate drop by factor: 10
+Momentum: 0.9
+Rho: None
+Use Batch Normalization? True
+Number of epochs: 150
+Batch size: 64
+Leaky ReLU: True
+
+Regularization
+Weight decay: True
+C-parameter: 1000000.0
+Dropout: False
+Dropout architecture? False
+
+Pre-Training Configuration:
+Pre-Training epochs: 750
+Reconstruction loss: l2
+Learning rate drop? False
+Learning rate drop in epoch: 50
+Learning rate drop by factor: 10
+Weight decay: True
+C-parameter: 1000.0
+
+SVDD
+Hard margin objective? False
+Block coordinate descent used to solve R (and possibly c)? False
+Is center c fixed? True
+Solver for R: minimize_scalar
+Optimization method if minimize_scalar: bounded
+Objective on which R is optimized if LP: primal
+Block coordinate descent applied from epoch: 10
+(R,c) block update every k epoch with k=5
+Reconstruction regularization: False
+C_rec-parameter: 1000.0
+Nu-parameter: 1.0
+Mean initialization of c? True
+Number of batches for mean initialization of c: all
+
+
+Results
+
+Train AUC: 0.0 %
+Train AUPR: 0.0 %
+Train accuracy: 100.0 %
+Train time: 4202.2936
+
+Val AUC: 0.0 %
+Val AUPR: 0.0 %
+Val accuracy: 100.0 %
+
+Test AUC: 42.6775 %
+Test AUPR: 44.8506 %
+Test accuracy: 45.0893 %
+Test time: 0.0001
+
+
+Start of experiment: 2018-11-26, 07:13:47.466817
+Experiment configuration
+Training set size: 2000
+Dataset: dreyeve
+Seed: 0
+Fraction of Outliers: 0.0
+First layer weight init by dictionary: False
+PCA pre-processing? False
+Norm used: l1
+Global contrast normalization? True
+ZCA Whitening? False
+
+
+NeuralNet configuration
+Architecture: 1_5_1_32_1024_5_1_0
+Loss: svdd
+Pre-training? True
+Solver: adam
+Learning rate: 0.0001
+Learning rate decay? False
+Learning rate decay after epoch: 10
+Learning rate drop? True
+Learning rate drop in epoch: 50
+Learning rate drop by factor: 10
+Momentum: 0.9
+Rho: None
+Use Batch Normalization? True
+Number of epochs: 150
+Batch size: 64
+Leaky ReLU: True
+
+Regularization
+Weight decay: True
+C-parameter: 1000000.0
+Dropout: False
+Dropout architecture? False
+
+Pre-Training Configuration:
+Pre-Training epochs: 750
+Reconstruction loss: l2
+Learning rate drop? False
+Learning rate drop in epoch: 50
+Learning rate drop by factor: 10
+Weight decay: True
+C-parameter: 1000.0
+
+SVDD
+Hard margin objective? False
+Block coordinate descent used to solve R (and possibly c)? False
+Is center c fixed? True
+Solver for R: minimize_scalar
+Optimization method if minimize_scalar: bounded
+Objective on which R is optimized if LP: primal
+Block coordinate descent applied from epoch: 10
+(R,c) block update every k epoch with k=5
+Reconstruction regularization: False
+C_rec-parameter: 1000.0
+Nu-parameter: 1.0
+Mean initialization of c? True
+Number of batches for mean initialization of c: all
+
+
+Results
+
+Train AUC: 0.0 %
+Train AUPR: 0.0 %
+Train accuracy: 15.121 %
+Val AUC: 0.0 %
+Val AUPR: 0.0 %
+Val accuracy: 16.0156 %
+
+Test AUC: 58.8625 %
+Test AUPR: 52.9636 %
+Test accuracy: 60.4911 %
+Test time: 1543216427.46
+
+
+Start of experiment: 2018-12-05, 11:02:26.641671
+Experiment configuration
+Training set size: 2000
+Dataset: dreyeve
+Seed: 0
+Fraction of Outliers: 0.0
+First layer weight init by dictionary: False
+PCA pre-processing? False
+Norm used: l1
+Global contrast normalization? True
+ZCA Whitening? False
+
+
+NeuralNet configuration
+Architecture: 1_5_1_32_1024_5_1_0
+Loss: svdd
+Pre-training? False
+Solver: adam
+Learning rate: 0.0001
+Learning rate decay? False
+Learning rate decay after epoch: 10
+Learning rate drop? True
+Learning rate drop in epoch: 50
+Learning rate drop by factor: 10
+Momentum: 0.9
+Rho: None
+Use Batch Normalization? True
+Number of epochs: 150
+Batch size: 64
+Leaky ReLU: True
+
+Regularization
+Weight decay: True
+C-parameter: 1000000.0
+Dropout: False
+Dropout architecture? False
+
+SVDD
+Hard margin objective? False
+Block coordinate descent used to solve R (and possibly c)? True
+Is center c fixed? False
+Solver for R: minimize_scalar
+Optimization method if minimize_scalar: bounded
+Objective on which R is optimized if LP: primal
+Block coordinate descent applied from epoch: 10
+(R,c) block update every k epoch with k=5
+Reconstruction regularization: False
+C_rec-parameter: 1000.0
+Nu-parameter: 1.0
+Mean initialization of c? True
+Number of batches for mean initialization of c: all
+
+
+Results
+
+Train AUC: 0.0 %
+Train AUPR: 0.0 %
+Train accuracy: 99.0423 %
+Train time: 4754.8203
+
+Val AUC: 0.0 %
+Val AUPR: 0.0 %
+Val accuracy: 95.3125 %
+
+Test AUC: 80.385 %
+Test AUPR: 73.6745 %
+Test accuracy: 55.5804 %
+Test time: 0.0001
+
+
+Start of experiment: 2018-12-05, 11:13:47.020874
+Experiment configuration
+Training set size: 2000
+Dataset: dreyeve
+Seed: 0
+Fraction of Outliers: 0.0
+First layer weight init by dictionary: False
+PCA pre-processing? False
+Norm used: l1
+Global contrast normalization? True
+ZCA Whitening? False
+
+
+NeuralNet configuration
+Architecture: 1_5_1_32_1024_5_1_0
+Loss: svdd
+Pre-training? True
+Solver: adam
+Learning rate: 0.0001
+Learning rate decay? False
+Learning rate decay after epoch: 10
+Learning rate drop? True
+Learning rate drop in epoch: 50
+Learning rate drop by factor: 10
+Momentum: 0.9
+Rho: None
+Use Batch Normalization? True
+Number of epochs: 150
+Batch size: 64
+Leaky ReLU: True
+
+Regularization
+Weight decay: True
+C-parameter: 1000000.0
+Dropout: False
+Dropout architecture? False
+
+Pre-Training Configuration:
+Pre-Training epochs: 750
+Reconstruction loss: l2
+Learning rate drop? False
+Learning rate drop in epoch: 50
+Learning rate drop by factor: 10
+Weight decay: True
+C-parameter: 1000.0
+
+SVDD
+Hard margin objective? False
+Block coordinate descent used to solve R (and possibly c)? True
+Is center c fixed? False
+Solver for R: minimize_scalar
+Optimization method if minimize_scalar: bounded
+Objective on which R is optimized if LP: primal
+Block coordinate descent applied from epoch: 10
+(R,c) block update every k epoch with k=5
+Reconstruction regularization: False
+C_rec-parameter: 1000.0
+Nu-parameter: 1.0
+Mean initialization of c? True
+Number of batches for mean initialization of c: all
+
+
+Results
+
+Train AUC: 0.0 %
+Train AUPR: 0.0 %
+Train accuracy: 0.0 %
+Val AUC: 0.0 %
+Val AUPR: 0.0 %
+Val accuracy: 0.0 %
+
+Test AUC: 46.8675 %
+Test AUPR: 47.3892 %
+Test accuracy: 55.3571 %
+Test time: 1544008427.01
+
+
