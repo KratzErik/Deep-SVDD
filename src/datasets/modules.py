@@ -61,7 +61,7 @@ def addConvTransposeModule(nnet, num_filters, filter_size, W_init=None, bias=Tru
         nnet.addDropoutLayer(p=p_dropout)
 
     if inpad > 0:
-        nnet.addPadLayer(width=inpad)
+        nnet.addPadLayer(width=((inpad,0),(0, inpad))
 
     nnet.addConvTransposeLayer(use_batch_norm=use_batch_norm,
                       num_filters=num_filters,
