@@ -101,6 +101,7 @@ class PROSIVIC_DataLoader(DataLoader):
             self._y_train = self._y_train[perm_train]
             self._X_val = self._X_train[perm_val]
             self._y_val = self._y_train[perm_val]
+            print("Shuffled data")
 
             # Subset train set such that we only get batches of the same size
             assert(self.n_train >= Cfg.batch_size)

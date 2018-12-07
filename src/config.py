@@ -37,7 +37,7 @@ class Configuration(object):
     dreyeve_channels = 3
     dreyeve_rep_dim = 512
 #    dreyeve_architecture = 1
-    dreyeve_architecture = '0_6_1_8_512_5_2_2'
+    dreyeve_architecture = '0_6_1_8_512_4_2_1'
     dreyeve_bias = True
     dreyeve_n_dict_learn = min(500,dreyeve_n_train)
 
@@ -57,7 +57,7 @@ class Configuration(object):
     prosivic_save_name_lists=False
     prosivic_rep_dim = 512
 #    prosivic_architecture = 1
-    prosivic_architecture = '0_4_1_16_512_5_2_2'
+    prosivic_architecture = '0_4_1_16_512_4_2_1'
     prosivic_bias = True
     prosivic_n_dict_learn = min(500,prosivic_n_train)
 

@@ -113,6 +113,7 @@ class DREYEVE_DataLoader(DataLoader):
             self._y_train = self._y_train[perm_train]
             self._X_val = self._X_train[perm_val]
             self._y_val = self._y_train[perm_val]
+            print("Shuffled data")
 
             # Subset train set such that we only get batches of the same size
             assert(self.n_train >= Cfg.batch_size)
@@ -576,9 +577,9 @@ class DREYEVE_DataLoader(DataLoader):
     def build_autoencoder(self, nnet):
 
         # implementation of different network architectures
-        if Cfg.dreyeve_architecture not in (1,2,3):
+        if Cfg.prosivic_architecture not in (1,2,3):
             # architecture spec A_B_C_D_E_F_G_H
-            tmp = Cfg.dreyeve_architecture.split("_")
+            tmp = Cfg.prosivic_architecture.split("_")
             use_pool = int(tmp[0]) # 1 or 0
             n_conv = int(tmp[1])
             n_dense = int(tmp[2])
@@ -586,20 +587,28 @@ class DREYEVE_DataLoader(DataLoader):
             zsize = int(tmp[4])
             ksize= int(tmp[5])
             stride = int(tmp[6])
-            pad = int(tmp[7])
             num_filters = c_out
 
             if use_pool:
+                print("Using pooling and upscaling")
                 pad = 'same'
             else:
-                pad = (pad,pad)
+                print("Using strided convolutions")
+                outpad =(ksize-stride)%2
+                #outpad = 0
+                #deconvinpad = 0
+                convinpad = (ksize-stride+1)//2
+                deconvinpad = (ksize-stride+outpad)//2
+                #outpad = 0
+                #deconvinpad = (2*convinpad-ksize)%stride
+                print("Conv pad: %d, deconv inpad: %d, outpad: %d"%(convinpad, deconvinpad, outpad))
 
             # Build architecture
             nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
             if Cfg.weight_dict_init & (not nnet.pretrained):
                 # initialize first layer filters by atoms of a dictionary
-                W1_init = learn_dictionary(nnet.data._X_train, n_filters=c_out, filter_size=ksize, n_sample=Cfg.dreyeve_n_dict_learn)
+                W1_init = learn_dictionary(nnet.data._X_train, n_filters=c_out, filter_size=ksize, n_sample=Cfg.prosivic_n_dict_learn)
                 plot_mosaic(W1_init, title="First layer filters initialization",
                             canvas="black",
                             export_pdf=(Cfg.xp_path + "/filters_init"))
@@ -613,14 +622,14 @@ class DREYEVE_DataLoader(DataLoader):
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
                           W_init=W1_init,
-                          bias=Cfg.dreyeve_bias,
+                          bias=Cfg.prosivic_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout,
                           p_dropout=0.2,
                           use_maxpool = use_pool,
                           stride = stride,
-                          pad = pad,
+                          pad = convinpad,
                           )
 
                 num_filters *= 2
@@ -632,20 +641,20 @@ class DREYEVE_DataLoader(DataLoader):
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
                           W_init=W1_init,
-                          bias=Cfg.dreyeve_bias,
+                          bias=Cfg.prosivic_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout,
                           p_dropout=0.2,
                           use_maxpool = use_pool,
                           stride = stride,
-                          pad = pad,
+                          pad = convinpad,
                           )
                 print("Added conv_layer %d" % nnet.n_conv_layers)
                 # Dense layer
                 if Cfg.dropout:
                     nnet.addDropoutLayer()
-                if Cfg.dreyeve_bias:
+                if Cfg.prosivic_bias:
                     nnet.addDenseLayer(num_units=zsize)
                 else:
                     nnet.addDenseLayer(num_units=zsize,
@@ -657,7 +666,7 @@ class DREYEVE_DataLoader(DataLoader):
                           num_filters=zsize,
                           filter_size=(h,h),
                           W_init=W1_init,
-                          bias=Cfg.dreyeve_bias,
+                          bias=Cfg.prosivic_bias,
                           pool_size=(2,2),
                           use_batch_norm=False,
                           dropout=False,
@@ -679,66 +688,72 @@ class DREYEVE_DataLoader(DataLoader):
                 num_filters =  c_out * (2**(n_conv-1))
                 nnet.addDenseLayer(num_units = h1**2 * num_filters)
                 nnet.addReshapeLayer(shape=([0], num_filters, h1, h1))
+                print("Reshaping to (None, %d, %d, %d)"%(num_filters, h1, h1))
                 num_filters = num_filters // 2
-
-                nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
-
-                addConvModule(nnet,
-                          num_filters=num_filters,
-                          filter_size=(ksize,ksize),
-                          W_init=W1_init,
-                          bias=Cfg.dreyeve_bias,
-                          pool_size=(2,2),
-                          use_batch_norm=Cfg.use_batch_norm,
-                          dropout=Cfg.dropout,
-                          p_dropout=0.2,
-                          use_maxpool = False,
-                          stride = stride,
-                          pad = pad,
-                          upscale = True
-                          )
-                n_deconv_layers += 1
-                print("Added deconv_layer %d" % n_deconv_layers)
-
-                num_filters //=2
-            else:
+                print("Added dense layer")
                 if use_pool:
                     nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
+                if n_conv > 1:
+                    addConvTransposeModule(nnet,
+                              num_filters=num_filters,
+                              filter_size=(ksize,ksize),
+                              W_init=W1_init,
+                              bias=Cfg.prosivic_bias,
+                              pool_size=(2,2),
+                              use_batch_norm=Cfg.use_batch_norm,
+                              dropout=Cfg.dropout,
+                              p_dropout=0.2,
+                              use_maxpool = False,
+                              stride = stride,
+                              crop = convinpad,
+                              outpad = outpad,
+                              upscale = False,
+                              inpad = deconvinpad
+                              )
+                    n_deconv_layers += 1
+                    print("Added deconv_layer %d" % n_deconv_layers)
+
+                    num_filters //=2
+            elif n_conv > 1:
 
                 h2 = self.image_height // (2**(n_conv-1)) # height of image going in to second conv layer
                 num_filters = c_out * (2**(n_conv-2))
-                addConvModule(nnet,
+                addConvTransposeModule(nnet,
                           num_filters=num_filters,
                           filter_size=(h2,h2),
                           W_init=W1_init,
-                          bias=Cfg.dreyeve_bias,
+                          bias=Cfg.prosivic_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout,
                           p_dropout=0.2,
                           use_maxpool = False,
                           stride = (1,1),
-                          pad = (0,0),
-                          upscale = True
+                          crop = 0,
+                          outpad = outpad,
+                          upscale = False,
+                          inpad = deconvinpad
                           )
                 n_deconv_layers += 1
                 print("Added deconv_layer %d" % n_deconv_layers)
 
             # Add remaining deconv layers
             for i in range(n_conv-2):
-                addConvModule(nnet,
+                addConvTransposeModule(nnet,
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
                           W_init=W1_init,
-                          bias=Cfg.dreyeve_bias,
+                          bias=Cfg.prosivic_bias,
                           pool_size=(2,2),
                           use_batch_norm=Cfg.use_batch_norm,
                           dropout=Cfg.dropout,
                           p_dropout=0.2,
                           use_maxpool = False,
                           stride = stride,
-                          pad = pad,
-                          upscale = True
+                          crop = convinpad,
+                          outpad = outpad,
+                          upscale = False,
+                          inpad = deconvinpad
                           )
                 n_deconv_layers += 1
                 print("Added deconv_layer %d" % n_deconv_layers)
@@ -746,16 +761,25 @@ class DREYEVE_DataLoader(DataLoader):
 
             # add reconstruction layer
             # reconstruction
-            if Cfg.dreyeve_bias:
-                nnet.addConvLayer(num_filters=self.channels,
-                                  filter_size=(ksize, ksize),
-                                  pad='same')
-            else:
-                nnet.addConvLayer(num_filters=self.channels,
-                                  filter_size=(ksize, ksize),
-                                  pad='same',
-                                  b=None)
+            addConvTransposeModule(nnet,
+                      num_filters=self.channels,
+                      filter_size=(ksize,ksize),
+                      W_init=W1_init,
+                      #pad = "valid",
+                      bias=Cfg.prosivic_bias,
+                      pool_size=(2,2),
+                      use_batch_norm=Cfg.use_batch_norm,
+                      dropout=Cfg.dropout,
+                      p_dropout=0.2,
+                      use_maxpool = False,
+                      stride = stride,
+                      crop = convinpad,
+                      outpad = outpad,
+                      upscale = False,
+                      inpad = deconvinpad
+                      )
             print("Added reconstruction layer")
+
 
         if Cfg.dreyeve_architecture == 1:
             first_layer_n_filters = 16
