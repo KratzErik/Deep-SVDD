@@ -63,10 +63,10 @@ def train_network(nnet):
             if Cfg.nnet_diagnostics & Cfg.e1_diagnostics:
                 # Evaluation before training
                 if (epoch == 0) and (i_batch == 0):
-                    _, _ = performance(nnet, which_set='train', epoch=i_batch)
+                    _, _ , _ = performance(nnet, which_set='train', epoch=i_batch)
                     if nnet.data.n_val > 0:
-                        _, _ = performance(nnet, which_set='val', epoch=i_batch)
-                    _, _ = performance(nnet, which_set='test', epoch=i_batch)
+                        _, _ , _ = performance(nnet, which_set='val', epoch=i_batch)
+                    _, _ , _ = performance(nnet, which_set='test', epoch=i_batch)
 
             # train
             inputs, targets, _ = batch
@@ -84,10 +84,10 @@ def train_network(nnet):
             if Cfg.nnet_diagnostics & Cfg.e1_diagnostics:
                 # Get detailed diagnostics (per batch) for the first epoch
                 if epoch == 0:
-                    _, _ = performance(nnet, which_set='train', epoch=i_batch+1)
+                    _, _ , _ = performance(nnet, which_set='train', epoch=i_batch+1)
                     if nnet.data.n_val > 0:
-                        _, _ = performance(nnet, which_set='val', epoch=i_batch + 1)
-                    _, _ = performance(nnet, which_set='test', epoch=i_batch+1)
+                        _, _ , _ = performance(nnet, which_set='val', epoch=i_batch + 1)
+                    _, _ , _ = performance(nnet, which_set='test', epoch=i_batch+1)
                     nnet.copy_parameters()
                     i_batch += 1
 
@@ -99,7 +99,7 @@ def train_network(nnet):
             nnet.copy_initial_parameters_to_cache()
 
         # Performance on training set (use forward pass with deterministic=True) to get the exact training objective
-        train_objective, train_accuracy = performance(nnet, which_set='train', epoch=epoch, print_=True)
+        train_objective, train_accuracy , _ = performance(nnet, which_set='train', epoch=epoch, print_=True)
 
         # Adjust radius R for the SVDD hard-margin objective
         if Cfg.svdd_loss and (Cfg.hard_margin or (Cfg.block_coordinate and (epoch < Cfg.warm_up_n_epochs))):
@@ -119,8 +119,8 @@ def train_network(nnet):
         if Cfg.nnet_diagnostics:
             # Performance on validation and test set
             if nnet.data.n_val > 0:
-                val_objective, val_accuracy = performance(nnet, which_set='val', epoch=epoch, print_=True)
-            test_objective, test_accuracy = performance(nnet, which_set='test', epoch=epoch, print_=True)
+                val_objective, val_accuracy , _ = performance(nnet, which_set='val', epoch=epoch, print_=True)
+            test_objective, test_accuracy , _ = performance(nnet, which_set='test', epoch=epoch, print_=True)
 
             # log performance
             nnet.log['train_objective'].append(train_objective)
@@ -157,10 +157,10 @@ def train_network(nnet):
         # perform forward passes on train, val, and test set
         print("Get final performance...")
 
-        train_objective, train_accuracy = performance(nnet, which_set='train', epoch=0, print_=True)
+        train_objective, train_accuracy , _ = performance(nnet, which_set='train', epoch=0, print_=True)
         if nnet.data.n_val > 0:
-            val_objective, val_accuracy = performance(nnet, which_set='val', epoch=0, print_=True)
-        test_objective, test_accuracy = performance(nnet, which_set='test', epoch=0, print_=True)
+            val_objective, val_accuracy , _ = performance(nnet, which_set='val', epoch=0, print_=True)
+        test_objective, test_accuracy , _ = performance(nnet, which_set='test', epoch=0, print_=True)
 
         print("Evaluation completed.")
 
@@ -188,10 +188,10 @@ def test_network(nnet): # untested. TODO: remove if not used
     # perform forward passes on train, val, and test set
     print("Get final performance...")
 
-    train_objective, train_accuracy = performance(nnet, which_set='train', epoch=0, print_=True)
+    train_objective, train_accuracy , _ = performance(nnet, which_set='train', epoch=0, print_=True)
     if nnet.data.n_val > 0:
-        val_objective, val_accuracy = performance(nnet, which_set='val', epoch=0, print_=True)
-    test_objective, test_accuracy = performance(nnet, which_set='test', epoch=0, print_=True)
+        val_objective, val_accuracy , _ = performance(nnet, which_set='val', epoch=0, print_=True)
+    test_objective, test_accuracy , _ = performance(nnet, which_set='test', epoch=0, print_=True)
 
     print("Evaluation completed.")
 

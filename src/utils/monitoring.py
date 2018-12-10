@@ -75,19 +75,19 @@ def performance(nnet, which_set, epoch=None, print_=False):
         print_obj_and_acc(objective, accuracy, which_set)
 
     # save diagnostics
+        if epoch is not None:
+        nnet.save_objective_and_accuracy(epoch, which_set, objective, accuracy)
+        nnet.save_diagnostics(which_set, epoch, scores, rep_norm, rep, emp_loss, reconstruction_penalty)
 
-    nnet.save_objective_and_accuracy(epoch, which_set, objective, accuracy)
-    nnet.save_diagnostics(which_set, epoch, scores, rep_norm, rep, emp_loss, reconstruction_penalty)
+        # Save network parameter diagnostics (only once per epoch)
+        if which_set == 'train':
+            nnet.save_network_diagnostics(epoch, floatX(l2), floatX(R))
 
-    # Save network parameter diagnostics (only once per epoch)
-    if which_set == 'train':
-        nnet.save_network_diagnostics(epoch, floatX(l2), floatX(R))
+        # Track results of epoch with highest AUC on test set
+        if which_set == 'test' and (nnet.data.n_classes == 2):
+            nnet.track_best_results(epoch)
 
-    # Track results of epoch with highest AUC on test set
-    if which_set == 'test' and (nnet.data.n_classes == 2):
-        nnet.track_best_results(epoch)
-
-    return objective, accuracy
+    return objective, accuracy, scores
 
 
 def ae_performance(nnet, which_set, epoch=None):
@@ -119,6 +119,7 @@ def ae_performance(nnet, which_set, epoch=None):
     error /= n
 
     # # save diagnostics
-    nnet.save_ae_diagnostics(which_set, epoch, error, scores, l2)
+    if epoch is not None:
+        nnet.save_ae_diagnostics(which_set, epoch, error, scores, l2)
 
     return error

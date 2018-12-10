@@ -246,9 +246,9 @@ class NeuralNet:
         self.copy_parameters()
 
         # perform forward passes on training, val, and test set
-        _, _ = performance(self, which_set='train', epoch=0, print_=True)
-        _, _ = performance(self, which_set='val', epoch=0, print_=True)
-        _, _ = performance(self, which_set='test', epoch=0, print_=True)
+        _, _ , _ = performance(self, which_set='train', epoch=0, print_=True)
+        _, _ , _ = performance(self, which_set='val', epoch=0, print_=True)
+        _, _ , _ = performance(self, which_set='test', epoch=0, print_=True)
 
         print("Evaluation on train, val, and test set completed.")
 

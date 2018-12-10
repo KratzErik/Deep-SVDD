@@ -10,7 +10,10 @@ from utils.log import log_exp_config, log_NeuralNet, log_AD_results
 from utils.visualization.diagnostics_plot import plot_diagnostics, plot_ae_diagnostics
 from utils.visualization.filters_plot import plot_filters
 from utils.visualization.images_plot import plot_outliers_and_most_normal
-
+from utils.assertions import files_equal
+from shutil import copyfile
+from utils.monitoring import performance, ae_performance
+import pickle
 
 # ====================================================================
 # Parse arguments
@@ -371,9 +374,18 @@ def main():
     Cfg.e1_diagnostics = bool(args.e1_diagnostics)
     Cfg.ae_diagnostics = bool(args.ae_diagnostics)
 
+    # Check for previous copy of configuration and compare, abort if not equal
+    logged_config = args.xp_dir+"/configuration.py"
+    current_config = "./config.py"
+    if os.path.exists(logged_config):
+        assert(files_equal(logged_config,current_config))
+    else:
+        copyfile(current_config,logged_config)
+
     if not Cfg.only_test: # Run original DSVDD code, both training and testing in one
         # train
         # load from checkpoint if available
+        
         start_new_nnet = False
         if os.path.exists(args.xp_dir+"/ae_pretrained_weights.p"):
                 print("Pretrained AE found")
@@ -440,21 +452,48 @@ def main():
     else: # Load previous network and run only test 
 
         # Load parameters from previous training
+        ae_net = NeuralNet(dataset=args.dataset, use_weights=args.xp_dir+"/ae_pretrained_weights.p", pretrain=False)
         nnet = NeuralNet(dataset=args.dataset, use_weights="{}/weights_best_ep.p".format(args.xp_dir))
 
-        nnet.evaluate(solver = args.solver)
-        nnet.test_time = time.time() - nnet.clock
-        # pickle/serialize AD results
-        if Cfg.ad_experiment:
-            nnet.log_results(filename=Cfg.xp_path + "/AD_results.p")
+        # nnet.evaluate(solver = args.solver)
+        # nnet.test_time = time.time() - nnet.clock
+        # # pickle/serialize AD results
+        # if Cfg.ad_experiment:
+        #     nnet.log_results(filename=Cfg.xp_path + "/AD_results.p")
 
-        # text log
-        nnet.log.save_to_file("{}_results.p".format(base_file))  # save log
-        log_exp_config(Cfg.xp_path, args.dataset)
-        log_NeuralNet(Cfg.xp_path, args.loss, args.solver, args.lr, args.momentum, None, args.n_epochs, args.C, args.C_rec,
-                    args.nu, args.dataset)
-        if Cfg.ad_experiment:
-            log_AD_results(Cfg.xp_path, nnet)
+        # TODO retrieve labels and scores from evaluation
+        recon_errors = ae_performance(ae_net, 'test')
+        print("Computed reconstruction errors")
+        _, _, dsvdd_scores = performance(nnet,'test',print_ = True)
+        
+        labels = nnet.data._y_test
+
+        # # text log
+        # nnet.log.save_to_file("{}_results.p".format(base_file))  # save log
+        # log_exp_config(Cfg.xp_path, args.dataset)
+        # log_NeuralNet(Cfg.xp_path, args.loss, args.solver, args.lr, args.momentum, None, args.n_epochs, args.C, args.C_rec,
+        #             args.nu, args.dataset)
+        # if Cfg.ad_experiment:
+        #     log_AD_results(Cfg.xp_path, nnet)
+
+        # Save scores and labels for comparison with other experiments
+        
+        if Cfg.export_results:
+            for name in ("", "_recon_err"):
+                results_filepath = '/home/exjobb_resultat/data/%s_DSVDD%s.pkl'%(args.dataset,name)
+                with open(results_filepath,'wb') as f:
+                    if name is "_recon_err":
+                        pickle.dump([recon_errors,model.test_labels],f)
+                    else:
+                        pickle.dump([scores,model.test_labels],f)
+                print("Saved results to %s"%results_filepath)
+
+                # Update data source dict with experiment name
+                common_results_dict = pickle.load(open('/home/exjobb_resultat/data/name_dict.pkl','rb'))
+                exp_name = args.xp_dir.strip('../log/%s/'%args.dataset)
+                common_results_dict[args.dataset]["DSVDD%s"%name] == experiment_name
+                pickle.dump(common_results_dict,open('/home/exjobb_resultat/data/name_dict.pkl','wb'))
+
         
 
 if __name__ == '__main__':
