@@ -502,7 +502,7 @@ def main():
                 # Update data source dict with experiment name
                 common_results_dict = pickle.load(open('/home/exjobb_resultat/data/name_dict.pkl','rb'))
                 exp_name = args.xp_dir.strip('../log/%s/'%args.dataset)
-                common_results_dict[args.dataset]["DSVDD%s"%name] == experiment_name
+                common_results_dict[args.dataset]["DSVDD%s"%name] = exp_name
                 pickle.dump(common_results_dict,open('/home/exjobb_resultat/data/name_dict.pkl','wb'))
 
         
