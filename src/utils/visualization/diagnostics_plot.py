@@ -30,7 +30,7 @@ def plot_diagnostics(nnet, xp_path, title_suffix, xlabel="Epochs", file_prefix="
 
         # plot scores
         plot_scores(nnet, xp_path, title_suffix, xlabel, file_prefix)
-        plot_scores_hist(nnet, xp_path, title_suffix, xlabel, file_prefix, nnet.n_epochs-1)
+#        plot_scores_hist(nnet, xp_path, title_suffix, xlabel, file_prefix, nnet.n_epochs-1)
 
         # plot norms of feature representations
         plot_representation_norms(nnet, xp_path, title_suffix, xlabel, file_prefix)

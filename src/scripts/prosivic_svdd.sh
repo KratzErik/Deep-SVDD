@@ -27,4 +27,4 @@ python baseline.py --dataset prosivic --solver $solver --loss svdd --lr $lr --lr
 
 # Experiment config is mainly set in dataset specific part of config.py, but parameters that change a lot can be added in baseline.py and specified here for convenience.
 
-# Run experiment with sh scripts/prosivic_svdd.sh gpu experiment_specific_folder 0 adam 0.0001 50 1 0 0 1 sunny_highway 0
+# Run experiment with sh scripts/prosivic_svdd.sh gpu experiment_specific_folder 0 adam 0.0001 50 1 0 0 1 sunny_highway 64 0

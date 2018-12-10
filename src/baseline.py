@@ -378,7 +378,7 @@ def main():
     logged_config = args.xp_dir+"/configuration.py"
     current_config = "./config.py"
     if os.path.exists(logged_config):
-        assert(files_equal(logged_config,current_config))
+        assert(files_equal(logged_config,current_config, "dataset ="))
     else:
         copyfile(current_config,logged_config)
 
@@ -452,9 +452,22 @@ def main():
     else: # Load previous network and run only test 
 
         # Load parameters from previous training
-        ae_net = NeuralNet(dataset=args.dataset, use_weights=args.xp_dir+"/ae_pretrained_weights.p", pretrain=False)
-        nnet = NeuralNet(dataset=args.dataset, use_weights="{}/weights_best_ep.p".format(args.xp_dir))
+        ae_net = NeuralNet(dataset=args.dataset, use_weights=args.xp_dir+"/ae_pretrained_weights.p", pretrain=True)
+        ae_net.ae_solver = args.solver.lower()
+        #ae_net.ae_learning_rate = args.lr
+        #ae_net.ae_n_epochs = args.n_epochs
 
+        # set learning rate
+        #lr_tmp = Cfg.learning_rate.get_value()
+        #Cfg.learning_rate.set_value(Cfg.floatX(lr))
+        ae_net.compile_autoencoder()
+        recon_errors = ae_performance(ae_net, 'test')
+        print("Computed reconstruction errors")
+
+
+        nnet = NeuralNet(dataset=args.dataset, use_weights="{}/weights_best_ep.p".format(args.xp_dir))
+        nnet.solver = args.solver.lower()
+        nnet.compile_updates()
         # nnet.evaluate(solver = args.solver)
         # nnet.test_time = time.time() - nnet.clock
         # # pickle/serialize AD results
@@ -462,10 +475,8 @@ def main():
         #     nnet.log_results(filename=Cfg.xp_path + "/AD_results.p")
 
         # TODO retrieve labels and scores from evaluation
-        recon_errors = ae_performance(ae_net, 'test')
-        print("Computed reconstruction errors")
-        _, _, dsvdd_scores = performance(nnet,'test',print_ = True)
-        
+        _, _, dsvdd_scores = performance(nnet,'test')
+
         labels = nnet.data._y_test
 
         # # text log
@@ -483,9 +494,9 @@ def main():
                 results_filepath = '/home/exjobb_resultat/data/%s_DSVDD%s.pkl'%(args.dataset,name)
                 with open(results_filepath,'wb') as f:
                     if name is "_recon_err":
-                        pickle.dump([recon_errors,model.test_labels],f)
+                        pickle.dump([recon_errors,labels],f)
                     else:
-                        pickle.dump([scores,model.test_labels],f)
+                        pickle.dump([dsvdd_scores,labels],f)
                 print("Saved results to %s"%results_filepath)
 
                 # Update data source dict with experiment name

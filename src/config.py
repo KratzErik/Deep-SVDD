@@ -5,8 +5,8 @@ from datasets import loadbdd100k
 
 
 class Configuration(object):
-    only_test = True
-    export_results = True # 
+    only_test = bool(1)
+    export_results = bool(1)
     dataset = "prosivic"
 
     floatX = np.float32
@@ -37,7 +37,7 @@ class Configuration(object):
     dreyeve_channels = 3
     dreyeve_rep_dim = 512
 #    dreyeve_architecture = 1
-    dreyeve_architecture = '0_6_1_8_512_4_2_1'
+    dreyeve_architecture = '0_6_1_8_512_5_2_2'
     dreyeve_bias = True
     dreyeve_n_dict_learn = min(500,dreyeve_n_train)
 
@@ -46,7 +46,7 @@ class Configuration(object):
     prosivic_val_folder = "../../weather_detection_data/prosivic/val/"
     prosivic_test_in_folder = "../../weather_detection_data/prosivic/test/in/"
     prosivic_test_out_folder = "../../weather_detection_data/prosivic/test/out/foggy/"
-    prosivic_data_div = 1
+    prosivic_data_div = 70
     prosivic_n_train = 7000 // prosivic_data_div
     prosivic_n_val = 1400 // prosivic_data_div
     prosivic_n_test = 784*2 // prosivic_data_div
@@ -57,7 +57,7 @@ class Configuration(object):
     prosivic_save_name_lists=False
     prosivic_rep_dim = 512
 #    prosivic_architecture = 1
-    prosivic_architecture = '0_4_1_16_512_4_2_1'
+    prosivic_architecture = '0_4_1_16_512_5_2_2'
     prosivic_bias = True
     prosivic_n_dict_learn = min(500,prosivic_n_train)
 

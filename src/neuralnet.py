@@ -293,7 +293,6 @@ class NeuralNet:
         name = "conv%i" % self.n_conv_layers
 
         new_layer = ConvLayer(input_layer, name=name, **kwargs)
-        print("Conv layer shape: ", )
         self.all_layers += (new_layer,)
         self.trainable_layers += (new_layer,)
 

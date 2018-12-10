@@ -58,9 +58,6 @@ class PROSIVIC_DataLoader(DataLoader):
         print("Loading data...")
 
         # load normal and outlier data
-        # tmp = [load_img(Cfg.prosivic_train_folder + filename) for filename in os.listdir(Cfg.prosivic_train_folder)]
-        # print(type(tmp[0]))
-
         self._X_train = [img_to_array(load_img(Cfg.prosivic_train_folder + filename)) for filename in os.listdir(Cfg.prosivic_train_folder)][:Cfg.prosivic_n_train]
         self._X_val = [img_to_array(load_img(Cfg.prosivic_val_folder + filename)) for filename in os.listdir(Cfg.prosivic_val_folder)][:Cfg.prosivic_n_val]
         n_test_out = Cfg.prosivic_n_test - Cfg.prosivic_n_test_in
