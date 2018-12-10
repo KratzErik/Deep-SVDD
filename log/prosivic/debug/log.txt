@@ -1,6 +1,6 @@
-Start of experiment: 2018-12-06, 12:20:56.581911
+Start of experiment: 2018-12-10, 10:16:28.290498
 Experiment configuration
-Training set size: 7000
+Training set size: 100
 Dataset: prosivic
 Seed: 0
 Fraction of Outliers: 0.0
@@ -14,7 +14,7 @@ ZCA Whitening? False
 NeuralNet configuration
 Architecture: 0_4_1_16_512_5_2_2
 Loss: svdd
-Pre-training? False
+Pre-training? True
 Solver: adam
 Learning rate: 0.0001
 Learning rate decay? False
@@ -25,7 +25,7 @@ Learning rate drop by factor: 10
 Momentum: 0.9
 Rho: None
 Use Batch Normalization? True
-Number of epochs: 2
+Number of epochs: 10
 Batch size: 64
 Leaky ReLU: True
 
@@ -34,6 +34,15 @@ Weight decay: True
 C-parameter: 1000000.0
 Dropout: False
 Dropout architecture? False
+
+Pre-Training Configuration:
+Pre-Training epochs: 2
+Reconstruction loss: l2
+Learning rate drop? False
+Learning rate drop in epoch: 50
+Learning rate drop by factor: 10
+Weight decay: True
+C-parameter: 1000.0
 
 SVDD
 Hard margin objective? False
@@ -55,16 +64,16 @@ Results
 
 Train AUC: 0.0 %
 Train AUPR: 0.0 %
-Train accuracy: 49.1399 %
-Train time: 35.623
+Train accuracy: 92.1875 %
+Train time: 7.8732
 
 Val AUC: 0.0 %
 Val AUPR: 0.0 %
 Val accuracy: 0.0 %
 
-Test AUC: 92.9155 %
-Test AUPR: 82.264 %
-Test accuracy: 51.0 %
+Test AUC: 71.9008 %
+Test AUPR: 74.7454 %
+Test accuracy: 50.0 %
 Test time: 0.0
 
 
