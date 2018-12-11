@@ -378,7 +378,8 @@ def main():
     logged_config = args.xp_dir+"/configuration.py"
     current_config = "./config.py"
     if os.path.exists(logged_config):
-        assert(files_equal(logged_config,current_config, "dataset ="))
+        print("Comparing logged and current config")
+#        assert(files_equal(logged_config,current_config, "dataset ="))
     else:
         copyfile(current_config,logged_config)
 

@@ -5,14 +5,14 @@ from datasets import loadbdd100k
 
 
 class Configuration(object):
-    only_test = bool(1)
-    export_results = bool(1)
+    only_test = bool(0)
+    export_results = bool(0)
     dataset = "prosivic"
 
     floatX = np.float32
     seed = 0
 
-    n_pretrain_epochs = 2000
+    n_pretrain_epochs = 1000
     pretrain_learning_rate = 0.001 # standard DSVDD was 0.0001
     plot_filters = True
     plot_most_out_and_norm = True
