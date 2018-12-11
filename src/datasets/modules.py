@@ -41,7 +41,7 @@ def addConvModule(nnet, num_filters, filter_size, pad='valid', W_init=None, bias
         nnet.addMaxPool(pool_size=pool_size)
 
 def addConvTransposeModule(nnet, num_filters, filter_size, W_init=None, bias=True, use_maxpool = False, pool_size=(2,2),
-                  use_batch_norm=False, dropout=False, p_dropout=0.5, upscale=False, stride = (1,1), crop=0, outpad=0, inpad=0):
+                  use_batch_norm=False, dropout=False, p_dropout=0.5, upscale=False, stride = (1,1), crop=0, outpad=0, inpad=0, output_size = None):
     """
     add a convolutional module (convolutional layer + (leaky) ReLU + MaxPool) to the network  
     """
@@ -69,7 +69,7 @@ def addConvTransposeModule(nnet, num_filters, filter_size, W_init=None, bias=Tru
                       filter_size=filter_size,
                       W=W,
                       b=b,
-                      stride=stride, crop=crop)
+                      stride=stride, crop=crop, output_size = output_size)
 
     if outpad > 0:
         print("Adding assymmetric output padding: %d"%outpad)

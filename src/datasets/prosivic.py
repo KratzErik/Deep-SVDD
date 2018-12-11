@@ -679,6 +679,9 @@ class PROSIVIC_DataLoader(DataLoader):
                 print("Added dense layer")
                 if use_pool:
                     nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
+                    output_size = None
+                else: 
+                    output_size = h1
                 if n_conv > 1:
                     addConvTransposeModule(nnet,
                               num_filters=num_filters,
@@ -693,13 +696,17 @@ class PROSIVIC_DataLoader(DataLoader):
                               stride = stride,
                               crop = convinpad,
                               outpad = outpad,
-                              upscale = False,
-                              inpad = deconvinpad
+                              upscale = use_pool,
+                              inpad = deconvinpad,
+                              output_size = output_size
                               )
                     n_deconv_layers += 1
                     print("Added deconv_layer %d" % n_deconv_layers)
 
                     num_filters //=2
+                    if not use_pool:
+                        output_size *= 2
+
             elif n_conv > 1:
 
                 h2 = self.image_height // (2**(n_conv-1)) # height of image going in to second conv layer
@@ -717,14 +724,17 @@ class PROSIVIC_DataLoader(DataLoader):
                           stride = (1,1),
                           crop = 0,
                           outpad = outpad,
-                          upscale = False,
+                          upscale = use_pool,
                           inpad = deconvinpad
                           )
                 n_deconv_layers += 1
                 print("Added deconv_layer %d" % n_deconv_layers)
 
             # Add remaining deconv layers
+            
             for i in range(n_conv-2):
+                if not use pool:
+                    output_size *= 2
                 addConvTransposeModule(nnet,
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
@@ -738,8 +748,9 @@ class PROSIVIC_DataLoader(DataLoader):
                           stride = stride,
                           crop = convinpad,
                           outpad = outpad,
-                          upscale = False,
-                          inpad = deconvinpad
+                          upscale = use_pool,
+                          inpad = deconvinpad,
+                          output_size = output_size
                           )
                 n_deconv_layers += 1
                 print("Added deconv_layer %d" % n_deconv_layers)
@@ -747,6 +758,8 @@ class PROSIVIC_DataLoader(DataLoader):
 
             # add reconstruction layer
             # reconstruction
+            if not use pool:
+                output_size *= 2
             addConvTransposeModule(nnet,
                       num_filters=self.channels,
                       filter_size=(ksize,ksize),
@@ -762,7 +775,8 @@ class PROSIVIC_DataLoader(DataLoader):
                       crop = convinpad,
                       outpad = outpad,
                       upscale = False,
-                      inpad = deconvinpad
+                      inpad = deconvinpad,
+                      output_size = output_size
                       )
             print("Added reconstruction layer")
 
