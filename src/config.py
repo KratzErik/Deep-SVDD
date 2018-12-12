@@ -129,7 +129,7 @@ class Configuration(object):
     ae_loss = "l2"
     ae_lr_drop = True  # separate into "region search" and "fine-tuning" stages
     ae_lr_drop_factor = 10
-    ae_lr_drop_in_epoch = int(n_pretrain_epochs * 2/3)
+    ae_lr_drop_in_epoch = int(n_pretrain_epochs * 3/4)
     ae_weight_decay = False
     ae_C = theano.shared(floatX(1e3), name="ae_C")
 

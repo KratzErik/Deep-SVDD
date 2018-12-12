@@ -49,13 +49,13 @@ parser.add_argument("--lr_drop_factor",
                     type=int, default=Cfg.lr_drop_factor)
 parser.add_argument("--momentum",
                     help="momentum rate if optimization with momentum",
-                    type=float, default=0.9)
+                    type=float, default=Cfg.momentum)
 parser.add_argument("--block_coordinate",
                     help="specify if radius R and center c (if c is not fixed) should be solved for via the dual",
-                    type=int, default=0)
+                    type=int, default=Cfg.block_coordinate)
 parser.add_argument("--k_update_epochs",
                     help="update R and c in block coordinate descent only every k iterations",
-                    type=int, default=5)
+                    type=int, default=Cfg.k_update_epochs)
 parser.add_argument("--center_fixed",
                     help="specify if center c should be fixed or not",
                     type=int, default=Cfg.center_fixed)
@@ -63,35 +63,35 @@ parser.add_argument("--R_update_solver",
                     help="Solver for solving R",
                     type=str,
                     choices=["minimize_scalar", "lp"],
-                    default="minimize_scalar")
+                    default=Cfg.R_update_solver)
 parser.add_argument("--R_update_scalar_method",
                     help="Optimization method if minimize_scalar for solving R",
                     type=str,
                     choices=["brent", "bounded", "golden"],
-                    default="bounded")
+                    default=Cfg.R_update_scalar_method)
 parser.add_argument("--R_update_lp_obj",
                     help="Objective used for searching R in a block coordinate descent via LP (primal or dual)",
                     type=str,
                     choices=["primal", "dual"],
-                    default="primal")
+                    default=Cfg.R_update_scalar_method)
 parser.add_argument("--warm_up_n_epochs",
                     help="specify the first epoch the QP solver should be applied",
-                    type=int, default=10)
+                    type=int, default=Cfg.warm_up_n_epochs)
 parser.add_argument("--use_batch_norm",
                     help="specify if Batch Normalization should be applied in the network",
-                    type=int, default=0)
+                    type=int, default=Cfg.use_batch_norm)
 parser.add_argument("--pretrain",
                     help="specify if weights should be pre-trained via autoenc",
-                    type=int, default=0)
+                    type=int, default=Cfg.pretrain)
 parser.add_argument("--nnet_diagnostics",
                     help="specify if diagnostics should be captured (faster training without)",
-                    type=int, default=1)
+                    type=int, default=Cfg.nnet_diagnostics)
 parser.add_argument("--e1_diagnostics",
                     help="specify if diagnostics of first epoch per batch should be captured",
-                    type=int, default=1)
+                    type=int, default=Cfg.e1_diagnostics)
 parser.add_argument("--ae_diagnostics",
                     help="specify if diagnostics should be captured in autoencoder (faster training without)",
-                    type=int, default=1)
+                    type=int, default=Cfg.ae_diagnostics)
 parser.add_argument("--ae_loss",
                     help="specify the reconstruction loss of the autoencoder",
                     type=str, default=Cfg.ae_loss)
@@ -109,10 +109,10 @@ parser.add_argument("--ae_weight_decay",
                     type=int, default=Cfg.ae_weight_decay)
 parser.add_argument("--ae_C",
                     help="regularization hyper-parameter in pretrain",
-                    type=float, default=1e3)
+                    type=float, default=Cfg.ae_C)
 parser.add_argument("--batch_size",
                     help="batch size",
-                    type=int, default=200)
+                    type=int, default=Cfg.batch_size)
 parser.add_argument("--n_epochs",
                     help="number of epochs",
                     type=int)
@@ -133,31 +133,31 @@ parser.add_argument("--out_name",
                     type=str, default="")
 parser.add_argument("--leaky_relu",
                     help="specify if ReLU layer should be leaky",
-                    type=int, default=1)
+                    type=int, default=Cfg.leaky_relu)
 parser.add_argument("--weight_decay",
                     help="specify if weight decay should be used",
-                    type=int, default=0)
+                    type=int, default=Cfg.weight_decay)
 parser.add_argument("--C",
                     help="regularization hyper-parameter",
-                    type=float, default=1e3)
+                    type=float, default=Cfg.C)
 parser.add_argument("--reconstruction_penalty",
                     help="specify if a reconstruction (autoencoder) penalty should be used",
-                    type=int, default=0)
+                    type=int, default=Cfg.reconstruction_penalty)
 parser.add_argument("--C_rec",
                     help="reconstruction (autoencoder) penalty hyperparameter",
-                    type=float, default=1e3)
+                    type=float, default=Cfg.C_rec)
 parser.add_argument("--dropout",
                     help="specify if dropout layers should be applied",
-                    type=int, default=0)
+                    type=int, default=Cfg.dropout)
 parser.add_argument("--dropout_arch",
                     help="specify if dropout architecture should be used",
-                    type=int, default=0)
+                    type=int, default=Cfg.dropout_architecture)
 parser.add_argument("--c_mean_init",
                     help="specify if center c should be initialized as mean",
-                    type=int, default=1)
+                    type=int, default=Cfg.c_mean_init)
 parser.add_argument("--c_mean_init_n_batches",
                     help="from how many batches should the mean be computed?",
-                    type=int, default=-1)  # default=-1 means "all"
+                    type=int, default=Cfg.c_mean_init_n_batches)  # default=-1 means "all"
 parser.add_argument("--hard_margin",
                     help="Train deep SVDD with hard-margin algorithm",
                     type=int, default=0)
