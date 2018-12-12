@@ -134,13 +134,7 @@ def log_exp_config(xp_path, dataset):
     log = open(log_file, "a")
     log.write("Start of experiment: %s\n" % (datetime.datetime.now().strftime('%Y-%m-%d, %H:%M:%S.%f')))
     log.write("Experiment configuration\n")
-    n_train = 0
-    if dataset == 'dreyeve':
-        n_train = Cfg.dreyeve_n_train
-    elif dataset == 'prosivic':
-        n_train = Cfg.prosivic_n_train
-    elif dataset == 'bdd100k':
-        n_train = Cfg.bdd100k_n_train
+    n_train = Cfg.n_train
     log.write("Training set size: %d\n" % n_train)
     log.write("Dataset: {}\n".format(dataset))
     log.write("Seed: {}\n".format(Cfg.seed))
@@ -192,13 +186,7 @@ def log_NeuralNet(xp_path, loss, solver, learning_rate, momentum, rho, n_epochs,
 
     log.write("NeuralNet configuration\n")
 
-    architecture = None
-    if dataset_name == 'dreyeve':
-        architecture = Cfg.dreyeve_architecture
-    elif dataset_name == 'prosivic':
-        architecture = Cfg.prosivic_architecture
-    elif dataset_name == 'bdd100k':
-        architecture = Cfg.bdd100k_architecture
+    architecture = Cfg.architecture
     log.write("Architecture: %s\n"%architecture)
 
     log.write("Loss: {}\n".format(loss))

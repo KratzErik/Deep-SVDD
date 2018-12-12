@@ -40,7 +40,7 @@ def load_weights(nnet, filename=None):
     if filename is None:
         filename = nnet.pickle_filename
 
-    print("Loading weights from ", filename)
+    print("Loading weights from %s"%filename)
 
     with open(filename, 'rb') as f:
         weight_dict = pickle.load(f)
@@ -61,12 +61,12 @@ def load_weights(nnet, filename=None):
     if Cfg.svdd_loss:
         if "R" in weight_dict:
             nnet.R_init = weight_dict["R"]
-            print("\tSet R value to saved: %.1f"%nnet.R_init)
+            #print("\tSet R value to saved: %.f"%nnet.R_init)
         else:
             print("\tNo R value saved")
         if "c" in weight_dict:
             nnet.cvar = shared(weight_dict["c"])
-            print("Set c to saved value")
+            #print("\tSet c value to saved: %.f"%nnet.cvar)
         else:
             print("\tNo c value saved")
 

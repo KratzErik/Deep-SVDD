@@ -12,7 +12,7 @@ class Configuration(object):
     floatX = np.float32
     seed = 0
 
-    n_pretrain_epochs = 2
+    n_pretrain_epochs = 2000
     pretrain_learning_rate = 0.001 # standard DSVDD was 0.0001
     plot_filters = bool(0)
     plot_most_out_and_norm = bool(0)
@@ -50,7 +50,7 @@ class Configuration(object):
         val_folder = "../../weather_detection_data/prosivic/val/"
         test_in_folder = "../../weather_detection_data/prosivic/test/in/"
         test_out_folder = "../../weather_detection_data/prosivic/test/out/foggy/"
-        data_div = 70
+        data_div = 1
         n_train = 7000 // data_div
         n_val = 1400 // data_div
         n_test = 784*2 // data_div
@@ -200,3 +200,4 @@ class Configuration(object):
     nnet_diagnostics = True  # diagnostics for neural networks in general (including Deep SVDD)
     e1_diagnostics = True  # diagnostics for neural networks in first epoch
     ae_diagnostics = True  # diagnostics for autoencoders
+    print_options = False

@@ -319,8 +319,8 @@ def train_autoencoder(nnet):
 
             # Performance on validation and test set
             if nnet.data.n_val > 0:
-                val_err = ae_performance(nnet, which_set='val', epoch=epoch)
-            test_err = ae_performance(nnet, which_set='test', epoch=epoch)
+                val_err, _ = ae_performance(nnet, which_set='val', epoch=epoch)
+            test_err, _ = ae_performance(nnet, which_set='test', epoch=epoch)
 
         # print results for epoch
         print("{:32} {:.5f}".format("Train error:", train_err))
@@ -344,10 +344,10 @@ def train_autoencoder(nnet):
         # perform forward passes on train, val, and test set
         print("Get final performance...")
 
-        _ = ae_performance(nnet, which_set='train', epoch=0)
+        _, _ = ae_performance(nnet, which_set='train', epoch=0)
         if nnet.data.n_val > 0:
-            _ = ae_performance(nnet, which_set='val', epoch=0)
-        _ = ae_performance(nnet, which_set='test', epoch=0)
+            _, _ = ae_performance(nnet, which_set='val', epoch=0)
+        _, _ = ae_performance(nnet, which_set='test', epoch=0)
 
         print("Evaluation completed.")
 

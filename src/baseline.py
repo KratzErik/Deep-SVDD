@@ -14,7 +14,7 @@ from utils.assertions import files_equal
 from shutil import copyfile
 from utils.monitoring import performance, ae_performance
 import pickle
-
+from sklearn.metrics import roc_auc_score, precision_recall_curve, auc
 # ====================================================================
 # Parse arguments
 # --------------------------------------------------------------------
@@ -257,9 +257,10 @@ parser.add_argument("--bdd100k_n_test",
 def main():
 
     args = parser.parse_args()
-    print('Options:')
-    for (key, value) in vars(args).iteritems():
-        print("{:16}: {}".format(key, value))
+    if Cfg.print_options:
+        print('Options:')
+        for (key, value) in vars(args).iteritems():
+            print("{:16}: {}".format(key, value))
 
     assert os.path.exists(args.xp_dir)
 
@@ -462,7 +463,7 @@ def main():
         #lr_tmp = Cfg.learning_rate.get_value()
         #Cfg.learning_rate.set_value(Cfg.floatX(lr))
         ae_net.compile_autoencoder()
-        recon_errors = ae_performance(ae_net, 'test')
+        _, recon_errors = ae_performance(ae_net, 'test')
         print("Computed reconstruction errors")
 
 
@@ -506,7 +507,22 @@ def main():
                 common_results_dict[args.dataset]["DSVDD%s"%name] = exp_name
                 pickle.dump(common_results_dict,open('/home/exjobb_resultat/data/name_dict.pkl','wb'))
 
-        
+        # print test results to console
+        print("\nOutliers from %s"%Cfg.test_out_folder)
+        print("%d inliers, %d outliers"%(Cfg.n_test_in, Cfg.n_test-Cfg.n_test_in))
+        print("Test results:\n")
+        print("\t\tAUROC\tAUPRC\n")
+
+        # Compute test metrics before printing
+        auroc_recon = roc_auc_score(labels, recon_errors)
+        auroc_dsvdd = roc_auc_score(labels, dsvdd_scores)
+        pr, rc, _ = precision_recall_curve(labels, recon_errors)
+        auprc_recon = auc(rc,pr)
+        pr, rc, _ = precision_recall_curve(labels, dsvdd_scores)
+        auprc_dsvdd = auc(rc,pr)
+
+        print("Recon.err:\t%.4f\t%.4f"%(auroc_recon,auprc_recon))
+        print("DSVDD:\t\t%.4f\t%.4f"%(auroc_dsvdd,auprc_dsvdd))
 
 if __name__ == '__main__':
     main()

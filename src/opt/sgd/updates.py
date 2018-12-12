@@ -195,6 +195,13 @@ def compile_update_svdd(nnet, inputs, targets):
     """
     create a Deep SVDD loss for network given in argument
     """
+    if Cfg.debug_architecture_layers:
+        print("\nCNN forward: ")
+        for layer in nnet.all_layers:
+            if "conv" in layer.name or "input" in layer.name or "dense" in layer.name:
+                print(layer.name, ": -> ",lasagne.layers.get_output_shape(layer))
+        print("\n")
+
 
     floatX = Cfg.floatX
 
@@ -316,7 +323,6 @@ def compile_update_svdd(nnet, inputs, targets):
                                     floatX(0.5) * test_rec_penalty, test_rep,
                                     test_rep_norm, test_reconstruction, test_loss, nnet.Rvar],
                                    on_unused_input='warn')
-
 
 def update_R_c(rep, rep_norm, solver='cvxopt', tol=1e-6):
     """
@@ -573,6 +579,12 @@ def create_autoencoder(nnet):
 
     test_scores = T.sum(test_loss, axis=range(1, ndim), dtype='floatX')
     test_loss = T.mean(test_scores)
-
     nnet.ae_forward = theano.function([inputs],
                                       [test_loss, l2_penalty, test_scores, test_prediction])
+
+    if Cfg.debug_architecture_layers:
+        print("\n\nAe forward: ")
+        for layer in nnet.all_layers:
+            if "conv" in layer.name or "input" in layer.name or "dense" in layer.name:
+                print(layer.name, " ->", lasagne.layers.get_output_shape(layer))
+        print("\n\n")

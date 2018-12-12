@@ -115,11 +115,10 @@ def ae_performance(nnet, which_set, epoch=None):
         error += err * inputs.shape[0]
         scores[start_idx:stop_idx] = b_scores.flatten()
         batches += 1
-
     error /= n
 
     # # save diagnostics
     if epoch is not None:
         nnet.save_ae_diagnostics(which_set, epoch, error, scores, l2)
 
-    return error
+    return error, scores

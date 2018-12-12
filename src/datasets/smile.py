@@ -203,7 +203,7 @@ class SMILE_DataLoader(DataLoader):
                           )
                 num_filters *= 2
 
-                print("Added conv_layer %d" % nnet.n_conv_layers)
+                if Cfg.debug_architecture_layers: print("Added conv_layer %d" % nnet.n_conv_layers)
 
             if n_dense > 0:
                 addConvModule(nnet,
@@ -219,9 +219,8 @@ class SMILE_DataLoader(DataLoader):
                           stride = stride,
                           pad = pad,
                           )
-                print("Added conv_layer %d" % nnet.n_conv_layers)
+                if Cfg.debug_architecture_layers: print("Added conv_layer %d" % nnet.n_conv_layers)
 
-                #shape_in = (None,self.image_height,W_in,num_filters)
                 # Dense layer
                 if Cfg.dropout:
                     nnet.addDropoutLayer()
@@ -230,7 +229,7 @@ class SMILE_DataLoader(DataLoader):
                 else:
                     nnet.addDenseLayer(num_units=zsize,
                                         b=None)
-                print("Added dense layer")
+                if Cfg.debug_architecture_layers: print("Added dense layer")
 
             else:
                 h = self.image_height / (2**(n_conv-1))
@@ -248,8 +247,17 @@ class SMILE_DataLoader(DataLoader):
                           pad = (0,0),
                           )
 
-                print("Added conv_layer %d" % nnet.n_conv_layers)
-   
+                if Cfg.debug_architecture_layers: print("Added conv_layer %d" % nnet.n_conv_layers)
+
+            # Add ouput/feature layer
+            if Cfg.softmax_loss:
+                nnet.addDenseLayer(num_units=1)
+                nnet.addSigmoidLayer()
+            elif Cfg.svdd_loss:
+                nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
+            else:
+                raise ValueError("No valid choice of loss for dataset " + self.dataset_name)
+
     def build_autoencoder(self, nnet):
 
         # implementation of different network architectures
@@ -270,18 +278,12 @@ class SMILE_DataLoader(DataLoader):
                 pad = 'same'
                 crop = 'same'
             else:
-                print("Using strided convolutions")
-                outpad =(ksize-stride)%2
+                print("Using strided convolutions for dim. reduction/upscaling")
                 deconvinpad = 0
-                convinpad = 0
-                crop = 'valid'
-                # convinpad = (ksize-stride+1)//2
-                # deconvinpad = (ksize-stride+outpad)//2
-                # crop = convinpad
+                convinpad = (ksize-stride+1)//2
+                crop = convinpad
                 outpad = 0
-                #deconvinpad = (2*convinpad-ksize)%stride
-                print("Conv pad: %d, deconv inpad: %d, outpad: %d"%(convinpad, deconvinpad, outpad))
-            
+
             # Build architecture
             nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
@@ -313,7 +315,7 @@ class SMILE_DataLoader(DataLoader):
 
                 num_filters *= 2
 
-                print("Added conv_layer %d" % nnet.n_conv_layers)
+                if Cfg.debug_architecture_layers: print("Added conv_layer %d" % nnet.n_conv_layers)
 
             if n_dense > 0:
                 addConvModule(nnet,
@@ -329,7 +331,8 @@ class SMILE_DataLoader(DataLoader):
                           stride = stride,
                           pad = convinpad,
                           )
-                print("Added conv_layer %d" % nnet.n_conv_layers)
+                if Cfg.debug_architecture_layers: print("Added conv_layer %d" % nnet.n_conv_layers)
+
                 # Dense layer
                 if Cfg.dropout:
                     nnet.addDropoutLayer()
@@ -338,7 +341,7 @@ class SMILE_DataLoader(DataLoader):
                 else:
                     nnet.addDenseLayer(num_units=zsize,
                                         b=None)
-                print("Added dense layer")
+                if Cfg.debug_architecture_layers: print("Added dense layer")
             else:
                 h = self.image_height / (2**(n_conv-1))
                 addConvModule(nnet,
@@ -355,10 +358,10 @@ class SMILE_DataLoader(DataLoader):
                           pad = (0,0),
                           )
                 
-                print("Added conv_layer %d" % nnet.n_conv_layers)
+                if Cfg.debug_architecture_layers: print("Added conv_layer %d" % nnet.n_conv_layers)
             # Now image (channels, height, width) = (zsize,1,1), 
             nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
-            print("Feature layer here")
+            if Cfg.debug_architecture_layers: print("Feature layer here")
 
             n_deconv_layers = 0
             if n_dense > 0:
@@ -366,15 +369,17 @@ class SMILE_DataLoader(DataLoader):
                 h1 = self.image_height // (2**n_conv) # height = width of image going into first conv layer
                 num_filters =  c_out * (2**(n_conv-1))
                 nnet.addDenseLayer(num_units = h1**2 * num_filters)
+                if Cfg.debug_architecture_layers: print("Added dense layer")
                 nnet.addReshapeLayer(shape=([0], num_filters, h1, h1))
-                print("Reshaping to (None, %d, %d, %d)"%(num_filters, h1, h1))
+                if Cfg.debug_architecture_layers: print("Reshaping to (None, %d, %d, %d)"%(num_filters, h1, h1))
                 num_filters = num_filters // 2
-                print("Added dense layer")
+
                 if use_pool:
                     nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
                     output_size = None
-                else: 
+                else:
                     output_size = h1*2
+
                 if n_conv > 1:
                     addConvTransposeModule(nnet,
                               num_filters=num_filters,
@@ -394,8 +399,8 @@ class SMILE_DataLoader(DataLoader):
                               output_size = output_size
                               )
                     n_deconv_layers += 1
-                    print("Added deconv_layer %d" % n_deconv_layers)
-
+                    #print("Added deconv_layer %d" % n_deconv_layers)
+                    if Cfg.debug_architecture_layers: print("Added deconv_layer %d: (None, %d, %d, %d)" % (n_deconv_layers, num_filters, output_size,output_size))
                     num_filters //=2
                     if not use_pool:
                         output_size *= 2
@@ -421,7 +426,7 @@ class SMILE_DataLoader(DataLoader):
                           inpad = deconvinpad
                           )
                 n_deconv_layers += 1
-                print("Added deconv_layer %d" % n_deconv_layers)
+                if Cfg.debug_architecture_layers: print("Added deconv_layer %d" % n_deconv_layers)
                 output_size = h2*2
                 num_filters //= 2
 
@@ -430,7 +435,7 @@ class SMILE_DataLoader(DataLoader):
                     output_size = None
                 else:
                     output_size = self.image_height # only conv layer will be reconstruction layer
-            
+
             # Add remaining deconv layers
             for i in range(n_conv-2):
                 addConvTransposeModule(nnet,
@@ -451,13 +456,14 @@ class SMILE_DataLoader(DataLoader):
                           output_size = output_size
                           )
                 n_deconv_layers += 1
-                print("Added deconv_layer %d" % n_deconv_layers)
+
+                if Cfg.debug_architecture_layers: print("Added deconv_layer %d" % n_deconv_layers)
+
                 if not use_pool:
                     output_size *= 2
                 num_filters //=2
 
             # add reconstruction layer
-            # reconstruction
             addConvTransposeModule(nnet,
                       num_filters=self.channels,
                       filter_size=(ksize,ksize),
@@ -476,4 +482,4 @@ class SMILE_DataLoader(DataLoader):
                       inpad = deconvinpad,
                       output_size = output_size
                       )
-            print("Added reconstruction layer")
+            if Cfg.debug_architecture_layers: print("Added reconstruction layer")
