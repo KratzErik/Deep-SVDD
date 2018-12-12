@@ -141,11 +141,11 @@ class Configuration(object):
 
     # SVDD
     nu = theano.shared(floatX(.2), name="nu")
-    c_mean_init = False
+    c_mean_init = True
     c_mean_init_n_batches = "all"
     hard_margin = False
     block_coordinate = False
-    k_update_epochs = 5  # update R and c only every k epochs, i.e. always train the network for k epochs in one block.
+    k_update_epochs = 10  # update R and c only every k epochs, i.e. always train the network for k epochs in one block.
     R_update_solver = "minimize_scalar"  # "minimize_scalar" (default) or "lp" (linear program)
     R_update_scalar_method = "bounded"  # optimization method used in minimize_scalar ('brent', 'bounded', or 'golden')
     R_update_lp_obj = "primal" # on which objective ("primal" or "dual") should R be optimized if LP?
