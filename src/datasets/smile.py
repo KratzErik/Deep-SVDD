@@ -274,7 +274,7 @@ class SMILE_DataLoader(DataLoader):
                 outpad =(ksize-stride)%2
                 deconvinpad = 0
                 convinpad = 0
-                crop = 'same'
+                crop = 'valid'
                 # convinpad = (ksize-stride+1)//2
                 # deconvinpad = (ksize-stride+outpad)//2
                 # crop = convinpad
