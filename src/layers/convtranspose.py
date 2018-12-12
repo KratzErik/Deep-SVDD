@@ -14,14 +14,14 @@ class ConvTransposeLayer(lasagne.layers.TransposedConv2DLayer):
         if output_size is None:
             lasagne.layers.TransposedConv2DLayer.__init__(self, incoming_layer, num_filters,
                                                 filter_size, name=name,
-                                                stride=stride, crop='full',
+                                                stride=stride, crop=crop,
                                                 untie_biases=False, W=W, b=b,
                                                 nonlinearity=None,
                                                 flip_filters=flip_filters)
         else:
             lasagne.layers.TransposedConv2DLayer.__init__(self, incoming_layer, num_filters,
                                                 filter_size, name=name,
-                                                stride=stride, crop='full',
+                                                stride=stride, crop=crop,
                                                 untie_biases=False, W=W, b=b,
                                                 nonlinearity=None,
                                                 flip_filters=flip_filters, output_size=output_size)
