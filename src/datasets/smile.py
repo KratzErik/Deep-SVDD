@@ -354,9 +354,9 @@ class SMILE_DataLoader(DataLoader):
                           stride = (1,1),
                           pad = (0,0),
                           )
-
+                
                 print("Added conv_layer %d" % nnet.n_conv_layers)
-
+            # Now image (channels, height, width) = (zsize,1,1), 
             nnet.setFeatureLayer()  # set the currently highest layer to be the SVDD feature layer
             print("Feature layer here")
 
@@ -374,7 +374,7 @@ class SMILE_DataLoader(DataLoader):
                     nnet.addUpscale(scale_factor=(2,2)) # since maxpool is after each conv. each upscale is before corresponding deconv
                     output_size = None
                 else: 
-                    output_size = h1
+                    output_size = h1*2
                 if n_conv > 1:
                     addConvTransposeModule(nnet,
                               num_filters=num_filters,
@@ -422,12 +422,17 @@ class SMILE_DataLoader(DataLoader):
                           )
                 n_deconv_layers += 1
                 print("Added deconv_layer %d" % n_deconv_layers)
+                output_size = h2*2
+                num_filters //= 2
 
-            # Add remaining deconv layers
+            else:
+                if use_pool:
+                    output_size = None
+                else:
+                    output_size = self.image_height # only conv layer will be reconstruction layer
             
+            # Add remaining deconv layers
             for i in range(n_conv-2):
-                if not use_pool:
-                    output_size *= 2
                 addConvTransposeModule(nnet,
                           num_filters=num_filters,
                           filter_size=(ksize,ksize),
@@ -447,12 +452,12 @@ class SMILE_DataLoader(DataLoader):
                           )
                 n_deconv_layers += 1
                 print("Added deconv_layer %d" % n_deconv_layers)
+                if not use_pool:
+                    output_size *= 2
                 num_filters //=2
 
             # add reconstruction layer
             # reconstruction
-            if not use_pool:
-                output_size *= 2
             addConvTransposeModule(nnet,
                       num_filters=self.channels,
                       filter_size=(ksize,ksize),
