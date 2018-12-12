@@ -5,6 +5,7 @@ from datasets.GTSRB import GTSRB_DataLoader
 from datasets.bdd100k import BDD100K_DataLoader
 from datasets.dreyeve import DREYEVE_DataLoader
 from datasets.prosivic import PROSIVIC_DataLoader
+from datasets.smile import SMILE_DataLoader
 
 def load_dataset(learner, dataset_name, pretrain=False):
 
@@ -23,10 +24,12 @@ def load_dataset(learner, dataset_name, pretrain=False):
         data_loader = BDD100K_DataLoader
 
     if dataset_name == "dreyeve":
-        data_loader = DREYEVE_DataLoader
+        #data_loader = DREYEVE_DataLoader
+        data_loader = SMILE_DataLoader
 
     if dataset_name == "prosivic":
-        data_loader = PROSIVIC_DataLoader
+        #data_loader = PROSIVIC_DataLoader
+        data_loader = SMILE_DataLoader
 
 
     # load data with data loader
