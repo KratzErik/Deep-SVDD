@@ -268,17 +268,20 @@ class SMILE_DataLoader(DataLoader):
             if use_pool:
                 print("Using pooling and upscaling")
                 pad = 'same'
+                crop = 'same'
             else:
                 print("Using strided convolutions")
                 outpad =(ksize-stride)%2
                 deconvinpad = 0
                 convinpad = 0
+                crop = 'same'
                 # convinpad = (ksize-stride+1)//2
                 # deconvinpad = (ksize-stride+outpad)//2
+                # crop = convinpad
                 outpad = 0
                 #deconvinpad = (2*convinpad-ksize)%stride
                 print("Conv pad: %d, deconv inpad: %d, outpad: %d"%(convinpad, deconvinpad, outpad))
-
+            
             # Build architecture
             nnet.addInputLayer(shape=(None, self.channels, self.image_height, self.image_width))
 
@@ -384,7 +387,7 @@ class SMILE_DataLoader(DataLoader):
                               p_dropout=0.2,
                               use_maxpool = False,
                               stride = stride,
-                              crop = convinpad,
+                              crop = crop,
                               outpad = outpad,
                               upscale = use_pool,
                               inpad = deconvinpad,
@@ -436,7 +439,7 @@ class SMILE_DataLoader(DataLoader):
                           p_dropout=0.2,
                           use_maxpool = False,
                           stride = stride,
-                          crop = convinpad,
+                          crop = crop,
                           outpad = outpad,
                           upscale = use_pool,
                           inpad = deconvinpad,
@@ -462,7 +465,7 @@ class SMILE_DataLoader(DataLoader):
                       p_dropout=0.2,
                       use_maxpool = False,
                       stride = stride,
-                      crop = convinpad,
+                      crop = crop,
                       outpad = outpad,
                       upscale = False,
                       inpad = deconvinpad,
