@@ -5,8 +5,8 @@ from datasets import loadbdd100k
 
 
 class Configuration(object):
-    only_test = False
-    export_results = False
+    only_test = bool(1)
+    export_results = bool(1)
     dataset = "prosivic"
 
     floatX = np.float32
@@ -18,50 +18,53 @@ class Configuration(object):
     plot_most_out_and_norm = True
     use_checkpoint = True
     checkpoint_interval = 10
-    # Dr(eye)ve parameters
-    dreyeve_train_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/train/"
-    dreyeve_val_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/val/"
-    dreyeve_test_in_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/in/"
-    dreyeve_test_out_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/out/"
-    #dreyeve_train_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/train/"
-    #dreyeve_val_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/val/"
-    #dreyeve_test_in_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/in/"
-    #dreyeve_test_out_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/out/"
-    divisor = 3
-    dreyeve_n_train = 6000 // divisor
-    dreyeve_n_val = 600 // divisor
-    dreyeve_n_test = 1200 // divisor
-    dreyeve_n_test_in = 600 // divisor
-    dreyeve_image_height = 256
-    dreyeve_image_width = 256
-    dreyeve_channels = 3
-    dreyeve_rep_dim = 512
-#    dreyeve_architecture = 1
-    dreyeve_architecture = '0_6_1_8_512_5_2_2'
-    dreyeve_bias = True
-    dreyeve_n_dict_learn = min(500,dreyeve_n_train)
 
-    # Pro-SiVIC parameters
-    prosivic_train_folder = "../../weather_detection_data/prosivic/train/"
-    prosivic_val_folder = "../../weather_detection_data/prosivic/val/"
-    prosivic_test_in_folder = "../../weather_detection_data/prosivic/test/in/"
-    prosivic_test_out_folder = "../../weather_detection_data/prosivic/test/out/foggy/"
-    prosivic_data_div = 70
-    prosivic_n_train = 7000 // prosivic_data_div
-    prosivic_n_val = 1400 // prosivic_data_div
-    prosivic_n_test = 784*2 // prosivic_data_div
-    prosivic_n_test_in = 784 // prosivic_data_div
-    prosivic_image_height = 256
-    prosivic_image_width = 256
-    prosivic_channels = 3
-    prosivic_save_name_lists=False
-    prosivic_rep_dim = 512
-#    prosivic_architecture = 1
-    prosivic_architecture = '0_4_1_16_512_5_2_2'
-    prosivic_bias = True
-    prosivic_n_dict_learn = min(500,prosivic_n_train)
+    if dataset == 'dreyeve':
+        # Dr(eye)ve parameters
+        train_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/train/"
+        val_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/val/"
+        test_in_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/in/"
+        test_out_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/out/"
+        #train_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/train/"
+        #val_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/val/"
+        #test_in_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/in/"
+        #test_out_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/out/"
+        data_div = 1
+        n_train = 6000 // data_div
+        n_val = 600 // data_div
+        n_test = 1200 // data_div
+        n_test_in = 600 // data_div
+        image_height = 256
+        image_width = 256
+        channels = 3
+        rep_dim = 512
+    #    architecture = 1
+        architecture = '0_6_1_16_512_5_2_2'
+        bias = True
+        n_dict_learn = min(500,n_train)
 
-    # BDD100K parameters
+    elif dataset == 'prosivic':
+        # Pro-SiVIC parameters
+        train_folder = "../../weather_detection_data/prosivic/train/"
+        val_folder = "../../weather_detection_data/prosivic/val/"
+        test_in_folder = "../../weather_detection_data/prosivic/test/in/"
+        test_out_folder = "../../weather_detection_data/prosivic/test/out/foggy/"
+        data_div = 70
+        n_train = 7000 // data_div
+        n_val = 1400 // data_div
+        n_test = 784*2 // data_div
+        n_test_in = 784 // data_div
+        image_height = 256
+        image_width = 256
+        channels = 3
+        rep_dim = 512
+    #    architecture = 1
+        architecture = '0_5_1_16_512_5_2_2'
+        bias = True
+        n_dict_learn = min(500,n_train)
+
+
+    # BDD100K parameters, currently not used
     bdd100k_use_file_lists = True
     bdd100k_file_list_normal = 'clear_overcast_partlycloudy_highway_daytime.txt'
     bdd100k_file_list_outlier = 'rainy_foggy_snowy_highway_anytime.txt'
@@ -90,24 +93,11 @@ class Configuration(object):
     bdd100k_bias = True
     bdd100k_n_dict_learn = min(500,bdd100k_n_train)
 
-
     if dataset == "bdd100k":
         n_train = bdd100k_n_train
         n_val = bdd100k_n_val
         n_test = bdd100k_n_test
         n_test_in = int(n_test*(1-bdd100k_out_frac))
-    elif dataset == "dreyeve":
-        n_train = dreyeve_n_train
-        n_val = dreyeve_n_val
-        n_test = dreyeve_n_test
-        n_test_in = dreyeve_n_test_in
-    elif dataset == "prosivic":
-        n_train = prosivic_n_train
-        n_val = prosivic_n_val
-        n_test = prosivic_n_test
-        n_test_in = prosivic_n_test_in
-    
-    
     # Final Layer
     softmax_loss = False
     svdd_loss = False

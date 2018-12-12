@@ -37,7 +37,7 @@ class SMILE_DataLoader(DataLoader):
 
         Cfg.n_batches = int(np.ceil(self.n_train * 1. / Cfg.batch_size))
 
-        self.data_path = './data/%s'%sel.dataset_name # not being used
+        self.data_path = './data/%s'%self.dataset_name # not being used
 
 
         self.on_memory = True
@@ -272,6 +272,7 @@ class SMILE_DataLoader(DataLoader):
                 print("Using strided convolutions")
                 outpad =(ksize-stride)%2
                 deconvinpad = 0
+                convinpad = 0
                 # convinpad = (ksize-stride+1)//2
                 # deconvinpad = (ksize-stride+outpad)//2
                 outpad = 0
@@ -422,7 +423,7 @@ class SMILE_DataLoader(DataLoader):
             # Add remaining deconv layers
             
             for i in range(n_conv-2):
-                if not use pool:
+                if not use_pool:
                     output_size *= 2
                 addConvTransposeModule(nnet,
                           num_filters=num_filters,
@@ -447,7 +448,7 @@ class SMILE_DataLoader(DataLoader):
 
             # add reconstruction layer
             # reconstruction
-            if not use pool:
+            if not use_pool:
                 output_size *= 2
             addConvTransposeModule(nnet,
                       num_filters=self.channels,

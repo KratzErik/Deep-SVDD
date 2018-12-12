@@ -733,7 +733,7 @@ class PROSIVIC_DataLoader(DataLoader):
             # Add remaining deconv layers
             
             for i in range(n_conv-2):
-                if not use pool:
+                if not use_pool:
                     output_size *= 2
                 addConvTransposeModule(nnet,
                           num_filters=num_filters,
@@ -758,7 +758,7 @@ class PROSIVIC_DataLoader(DataLoader):
 
             # add reconstruction layer
             # reconstruction
-            if not use pool:
+            if not use_pool:
                 output_size *= 2
             addConvTransposeModule(nnet,
                       num_filters=self.channels,
