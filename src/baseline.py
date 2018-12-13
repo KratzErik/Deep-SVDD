@@ -236,6 +236,9 @@ parser.add_argument("--dreyeve_bias",
 parser.add_argument("--dreyeve_val_frac",
                     help="specify the fraction the validation set of the initial training data should be",
                     type=float, default=1./6)
+parser.add_argument("--bias",
+                    help="specify if bias should be used in networks with SMILE configuration",
+                    type=int, default=1)
 
 '''
 parser.add_argument("--bdd100k_rep_dim",
@@ -375,6 +378,7 @@ def main():
     Cfg.e1_diagnostics = bool(args.e1_diagnostics)
     Cfg.ae_diagnostics = bool(args.ae_diagnostics)
 
+    Cfg.bias =  bool(args.bias)
     # Check for previous copy of configuration and compare, abort if not equal
     logged_config = args.xp_dir+"/configuration.py"
     current_config = "./config.py"

@@ -5,9 +5,9 @@ from datasets import loadbdd100k
 
 
 class Configuration(object):
-    only_test = bool(1)
-    export_results = bool(1)
-    dataset = "prosivic"
+    only_test = bool(0)
+    export_results = bool(0)
+    dataset = "dreyeve"
 
     floatX = np.float32
     seed = 0

@@ -5,14 +5,14 @@ from datasets import loadbdd100k
 
 
 class Configuration(object):
-    only_test = bool(1)
-    export_results = bool(1)
+    only_test = bool(0)
+    export_results = bool(0)
     dataset = "prosivic"
 
     floatX = np.float32
     seed = 0
 
-    n_pretrain_epochs = 500
+    n_pretrain_epochs = 2000
     pretrain_learning_rate = 0.001 # standard DSVDD was 0.0001
     plot_filters = bool(0)
     plot_most_out_and_norm = bool(0)
@@ -129,7 +129,7 @@ class Configuration(object):
     ae_loss = "l2"
     ae_lr_drop = True  # separate into "region search" and "fine-tuning" stages
     ae_lr_drop_factor = 10
-    ae_lr_drop_in_epoch = int(n_pretrain_epochs * 1/2)
+    ae_lr_drop_in_epoch = int(n_pretrain_epochs * 2/3)
     ae_weight_decay = False
     ae_C = theano.shared(floatX(1e3), name="ae_C")
 
@@ -141,11 +141,11 @@ class Configuration(object):
 
     # SVDD
     nu = theano.shared(floatX(.2), name="nu")
-    c_mean_init = True
+    c_mean_init = False
     c_mean_init_n_batches = "all"
     hard_margin = False
     block_coordinate = False
-    k_update_epochs = 10  # update R and c only every k epochs, i.e. always train the network for k epochs in one block.
+    k_update_epochs = 5  # update R and c only every k epochs, i.e. always train the network for k epochs in one block.
     R_update_solver = "minimize_scalar"  # "minimize_scalar" (default) or "lp" (linear program)
     R_update_scalar_method = "bounded"  # optimization method used in minimize_scalar ('brent', 'bounded', or 'golden')
     R_update_lp_obj = "primal" # on which objective ("primal" or "dual") should R be optimized if LP?
