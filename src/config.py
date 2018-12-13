@@ -12,7 +12,7 @@ class Configuration(object):
     floatX = np.float32
     seed = 0
 
-    n_pretrain_epochs = 500
+    n_pretrain_epochs = 1000
     pretrain_learning_rate = 0.001 # standard DSVDD was 0.0001
     plot_filters = bool(0)
     plot_most_out_and_norm = bool(0)
@@ -126,7 +126,7 @@ class Configuration(object):
     # Pre-training and autoencoder configuration
     weight_dict_init = False
     pretrain = False
-    ae_loss = "l2"
+    ae_loss = "ce"
     ae_lr_drop = True  # separate into "region search" and "fine-tuning" stages
     ae_lr_drop_factor = 10
     ae_lr_drop_in_epoch = int(n_pretrain_epochs * 1/2)
