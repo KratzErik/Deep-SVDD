@@ -337,10 +337,15 @@ class SMILE_DataLoader(DataLoader):
                 if Cfg.dropout:
                     nnet.addDropoutLayer()
                 if Cfg.bias:
-                    nnet.addDenseLayer(num_units=zsize)
+                    nnet.addDenseLayer(num_units=zsize, use_batch_norm=False)
                 else:
-                    nnet.addDenseLayer(num_units=zsize,
+                    nnet.addDenseLayer(num_units=zsize, use_batch_norm=Cfg.use_batch_norm,
                                         b=None)
+
+                if Cfg.leaky_relu:
+                    nnet.addLeakyReLU()
+                else:
+                    nnet.addReLU()
                 if Cfg.debug_architecture_layers: print("Added dense layer")
             else:
                 h = self.image_height / (2**(n_conv-1))
@@ -368,7 +373,19 @@ class SMILE_DataLoader(DataLoader):
 
                 h1 = self.image_height // (2**n_conv) # height = width of image going into first conv layer
                 num_filters =  c_out * (2**(n_conv-1))
-                nnet.addDenseLayer(num_units = h1**2 * num_filters)
+
+                if Cfg.dropout:
+                    nnet.addDropoutLayer()
+                if Cfg.bias:
+                    nnet.addDenseLayer(num_units=h1**2 * num_filters, use_batch_norm=Cfg.use_batch_norm)
+                else:
+                    nnet.addDenseLayer(num_units=h1**2 * num_filters, use_batch_norm=Cfg.use_batch_norm,
+                                        b=None)
+                if Cfg.leaky_relu:
+                    nnet.addLeakyReLU()
+                else:
+                    nnet.addReLU()
+
                 if Cfg.debug_architecture_layers: print("Added dense layer")
                 nnet.addReshapeLayer(shape=([0], num_filters, h1, h1))
                 if Cfg.debug_architecture_layers: print("Reshaping to (None, %d, %d, %d)"%(num_filters, h1, h1))
@@ -471,7 +488,7 @@ class SMILE_DataLoader(DataLoader):
                       #pad = "valid",
                       bias=Cfg.bias,
                       pool_size=(2,2),
-                      use_batch_norm=Cfg.use_batch_norm,
+                      use_batch_norm=False,
                       dropout=Cfg.dropout,
                       p_dropout=0.2,
                       use_maxpool = False,
@@ -480,6 +497,7 @@ class SMILE_DataLoader(DataLoader):
                       outpad = outpad,
                       upscale = False,
                       inpad = deconvinpad,
-                      output_size = output_size
+                      output_size = output_size,
+                      reconstruction_layer=True
                       )
             if Cfg.debug_architecture_layers: print("Added reconstruction layer")
