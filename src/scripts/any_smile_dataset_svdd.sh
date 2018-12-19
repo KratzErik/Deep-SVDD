@@ -2,7 +2,7 @@
 
 dataset=$1
 device=$2
-xp_dir=../log/prosivic/$3
+xp_dir=../log/$dataset/$3
 seed=$4
 solver=$5
 lr=$6

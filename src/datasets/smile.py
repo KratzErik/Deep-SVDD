@@ -132,6 +132,7 @@ class SMILE_DataLoader(DataLoader):
                 self._X_train, self._X_val, self._X_test = pca(self._X_train, self._X_val, self._X_test, 0.95)
 
         flush_last_line()
+        print("Max pixel value: ", np.amax(self._X_train))
         print("Data loaded.")
 
     def print_architecture(self):

@@ -7,7 +7,7 @@ from datasets import loadbdd100k
 class Configuration(object):
     only_test = bool(0)
     export_results = bool(0)
-    dataset = "dreyeve"
+    dataset = "prosivic"
 
     floatX = np.float32
     seed = 0
@@ -51,10 +51,10 @@ class Configuration(object):
         test_in_folder = "../../weather_detection_data/prosivic/test/in/"
         test_out_folder = "../../weather_detection_data/prosivic/test/out/foggy/"
         data_div = 1
-        n_train = 6785 // data_div
-        n_val = 840 // data_div
-        n_test = 500*2 // data_div
-        n_test_in = 500 // data_div
+        n_train = 7000 // data_div
+        n_val = 1400 // data_div
+        n_test = 784*2 // data_div
+        n_test_in = 784 // data_div
         image_height = 256
         image_width = 256
         channels = 3
@@ -126,7 +126,7 @@ class Configuration(object):
     # Pre-training and autoencoder configuration
     weight_dict_init = False
     pretrain = False
-    ae_loss = "l2"
+    ae_loss = "ce"
     ae_lr_drop = True  # separate into "region search" and "fine-tuning" stages
     ae_lr_drop_factor = 10
     ae_lr_drop_in_epoch = int(n_pretrain_epochs * 1/2)
