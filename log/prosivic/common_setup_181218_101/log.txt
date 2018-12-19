@@ -77,7 +77,7 @@ Test accuracy: 95.0977 %
 Test time: 0.0
 
 
-Start of experiment: 2018-12-18, 20:29:35.917411
+Start of experiment: 2018-12-19, 12:45:24.826256
 Experiment configuration
 Training set size: 6785
 Dataset: prosivic
@@ -104,7 +104,7 @@ Learning rate drop by factor: 10
 Momentum: 0.9
 Rho: None
 Use Batch Normalization? True
-Number of epochs: 50
+Number of epochs: 100
 Batch size: 64
 Leaky ReLU: True
 
@@ -135,14 +135,14 @@ Results
 Train AUC: 0.0 %
 Train AUPR: 0.0 %
 Train accuracy: 0.0 %
-Train time: 1782.5513
+Train time: 3126.4517
 
 Val AUC: 0.0 %
 Val AUPR: 0.0 %
 Val accuracy: 0.0 %
 
-Test AUC: 96.896 %
-Test AUPR: 90.6682 %
+Test AUC: 97.0244 %
+Test AUPR: 90.8189 %
 Test accuracy: 51.1719 %
 Test time: 0.0
 
