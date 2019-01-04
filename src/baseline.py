@@ -421,10 +421,17 @@ def main():
 
         # pickle/serialize AD results
         if Cfg.ad_experiment:
-            nnet.log_results(filename=Cfg.xp_path + "/AD_results.p")
+            if Cfg.test_name is None:
+                nnet.log_results(filename=Cfg.xp_path + "/AD_results.p")
+            else:
+                nnet.log_results(filename=Cfg.xp_path + "/AD_results_%s.p"%Cfg.test_name)
 
         # text log
-        nnet.log.save_to_file("{}_results.p".format(base_file))  # save log
+        if Cfg.test_name is None:
+            nnet.log.save_to_file("{}_results.p".format(base_file))  # save log
+        else:
+            nnet.log.save_to_file("{}_results_{}.p".format(base_file,Cfg.test_name))  # save log
+            
         log_exp_config(Cfg.xp_path, args.dataset)
         log_NeuralNet(Cfg.xp_path, args.loss, args.solver, args.lr, args.momentum, None, args.n_epochs, args.C, args.C_rec,
                     args.nu, args.dataset)
@@ -470,8 +477,12 @@ def main():
         _, recon_errors = ae_performance(ae_net, 'test')
         print("Computed reconstruction errors")
 
-
-        nnet = NeuralNet(dataset=args.dataset, use_weights="{}/weights_best_ep.p".format(args.xp_dir))
+        assert cfg.epoch_for_testing in ("best", "final")
+        if cfg.epoch_for_testing == "best":
+            nnet = NeuralNet(dataset=args.dataset, use_weights="{}/weights_best_ep.p".format(args.xp_dir))
+        else # final epoch
+            nnet = NeuralNet(dataset=args.dataset, use_weights="{}/weights_final.p".format(args.xp_dir))
+        
         nnet.solver = args.solver.lower()
         nnet.compile_updates()
         # nnet.evaluate(solver = args.solver)
@@ -497,7 +508,13 @@ def main():
         
         if Cfg.export_results:
             for name in ("", "_recon_err"):
-                results_filepath = '/home/exjobb_resultat/data/%s_DSVDD%s.pkl'%(args.dataset,name)
+                if cfg.test_name is None:
+                    results_filepath = '/home/exjobb_resultat/data/%s_DSVDD%s.pkl'%(args.dataset,name)
+                    exp_name_file = '/home/exjobb_resultat/data/experiment_names/%s_DSVDD%s.txt'%(args.dataset,name)
+                else:
+                    results_filepath = '/home/exjobb_resultat/data/%s_DSVDD%s_%s.pkl'%(args.dataset,name,Cfg.test_name)
+                    exp_name_file = '/home/exjobb_resultat/data/experiment_names/%s_DSVDD%s_%s.txt'%(args.dataset,name,Cfg.test_name)
+
                 with open(results_filepath,'wb') as f:
                     if name is "_recon_err":
                         pickle.dump([recon_errors,labels],f)
@@ -506,10 +523,15 @@ def main():
                 print("Saved results to %s"%results_filepath)
 
                 # Update data source dict with experiment name
-                common_results_dict = pickle.load(open('/home/exjobb_resultat/data/name_dict.pkl','rb'))
+                # Update data source dict with experiment name
                 exp_name = args.xp_dir.strip('../log/%s/'%args.dataset)
-                common_results_dict[args.dataset]["DSVDD%s"%name] = exp_name
-                pickle.dump(common_results_dict,open('/home/exjobb_resultat/data/name_dict.pkl','wb'))
+                with open(exp_name_file, 'w') as f:
+                    f.write(exp_name)
+                    
+                # common_results_dict = pickle.load(open('/home/exjobb_resultat/data/name_dict.pkl','rb'))
+                # exp_name = args.xp_dir.strip('../log/%s/'%args.dataset)
+                # common_results_dict[args.dataset]["DSVDD%s"%name] = exp_name
+                # pickle.dump(common_results_dict,open('/home/exjobb_resultat/data/name_dict.pkl','wb'))
 
         # print test results to console
         print("\nOutliers from %s"%Cfg.test_out_folder)

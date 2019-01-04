@@ -19,6 +19,9 @@ class Configuration(object):
     debug_architecture_layers = bool(0) # if true, layer output shapes will be printed at compilation for both autoencoder and CNN
     use_checkpoint = True
     checkpoint_interval = 10
+    epoch_for_testing = "final"
+    test_name = None # If you want to run several test sets for same trained model, specify a test name to store results separately
+
 
     if dataset == 'dreyeve':
         # Dr(eye)ve parameters
