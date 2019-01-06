@@ -5,8 +5,8 @@ from datasets import loadbdd100k
 
 
 class Configuration(object):
-    only_test = bool(1)
-    export_results = bool(1)
+    only_test = bool(0)
+    export_results = bool(0)
     dataset = "dreyeve"
 
     floatX = np.float32
@@ -19,16 +19,13 @@ class Configuration(object):
     debug_architecture_layers = bool(0) # if true, layer output shapes will be printed at compilation for both autoencoder and CNN
     use_checkpoint = True
     checkpoint_interval = 10
-    epoch_for_testing = "final"
-    test_name = "urban" # If you want to run several test sets for same trained model, specify a test name to store results separately
-
 
     if dataset == 'dreyeve':
         # Dr(eye)ve parameters
         train_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/train/"
         val_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/val/"
         test_in_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/in/"
-        test_out_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/out/urban/"
+        test_out_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/out/"
         #train_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/train/"
         #val_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/val/"
         #test_in_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/in/"
@@ -52,16 +49,12 @@ class Configuration(object):
         train_folder = "../../weather_detection_data/prosivic/train/"
         val_folder = "../../weather_detection_data/prosivic/val/"
         test_in_folder = "../../weather_detection_data/prosivic/test/in/"
-        test_out_folder = "../../weather_detection_data/prosivic/test/out/urban/"
+        test_out_folder = "../../weather_detection_data/prosivic/test/out/foggy/"
         data_div = 1
         n_train = 6785 // data_div
         n_val = 840 // data_div
         n_test = 500*2 // data_div
         n_test_in = 500 // data_div
-        if "urban" in test_out_folder:
-            n_test = 488*2 // data_div
-            n_test_in = 488 // data_div
-
         image_height = 256
         image_width = 256
         channels = 3

@@ -477,10 +477,10 @@ def main():
         _, recon_errors = ae_performance(ae_net, 'test')
         print("Computed reconstruction errors")
 
-        assert cfg.epoch_for_testing in ("best", "final")
-        if cfg.epoch_for_testing == "best":
+        assert Cfg.epoch_for_testing in ("best", "final")
+        if Cfg.epoch_for_testing == "best":
             nnet = NeuralNet(dataset=args.dataset, use_weights="{}/weights_best_ep.p".format(args.xp_dir))
-        else # final epoch
+        else: # final epoch
             nnet = NeuralNet(dataset=args.dataset, use_weights="{}/weights_final.p".format(args.xp_dir))
         
         nnet.solver = args.solver.lower()
@@ -508,26 +508,28 @@ def main():
         
         if Cfg.export_results:
             for name in ("", "_recon_err"):
-                if cfg.test_name is None:
-                    results_filepath = '/home/exjobb_resultat/data/%s_DSVDD%s.pkl'%(args.dataset,name)
-                    exp_name_file = '/home/exjobb_resultat/data/experiment_names/%s_DSVDD%s.txt'%(args.dataset,name)
+
+                exp_name = args.xp_dir.replace('../log/%s/'%args.dataset,'')
+
+                if Cfg.test_name is None:
+                    results_filepath = '/home/exjobb_resultat/data/%s_DSVDD_%s_%s.pkl'%(args.dataset,exp_name,name)
+                    exp_name_file = '/home/exjobb_resultat/data/experiment_names/%s_DSVDD_%s_%s.txt'%(args.dataset,exp_name,name)
                 else:
-                    results_filepath = '/home/exjobb_resultat/data/%s_DSVDD%s_%s.pkl'%(args.dataset,name,Cfg.test_name)
-                    exp_name_file = '/home/exjobb_resultat/data/experiment_names/%s_DSVDD%s_%s.txt'%(args.dataset,name,Cfg.test_name)
+                    results_filepath = '/home/exjobb_resultat/data/%s_DSVDD_%s_%s_%s.pkl'%(args.dataset,exp_name,name,Cfg.test_name)
+                    exp_name_file = '/home/exjobb_resultat/data/experiment_names/%s_DSVDD_%s_%s_%s.txt'%(args.dataset,exp_name,name,Cfg.test_name)
 
                 with open(results_filepath,'wb') as f:
                     if name is "_recon_err":
                         pickle.dump([recon_errors,labels],f)
                     else:
                         pickle.dump([dsvdd_scores,labels],f)
-                print("Saved results to %s"%results_filepath)
 
                 # Update data source dict with experiment name
-                # Update data source dict with experiment name
-                exp_name = args.xp_dir.strip('../log/%s/'%args.dataset)
                 with open(exp_name_file, 'w') as f:
                     f.write(exp_name)
-                    
+
+                print("Saved results to %s"%results_filepath)
+
                 # common_results_dict = pickle.load(open('/home/exjobb_resultat/data/name_dict.pkl','rb'))
                 # exp_name = args.xp_dir.strip('../log/%s/'%args.dataset)
                 # common_results_dict[args.dataset]["DSVDD%s"%name] = exp_name

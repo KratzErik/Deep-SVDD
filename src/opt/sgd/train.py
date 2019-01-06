@@ -14,7 +14,8 @@ def train_network(nnet):
         return
 
     print("Using %s solver" % nnet.sgd_solver)
-
+    print("Training settings:")
+    print("Hard margin: %r\nCenter fixed: %r\nBlock coordinate: %r"%(Cfg.hard_margin, Cfg.center_fixed, Cfg.block_coordinate))
     epoch = nnet.checkpoint_epoch
 
     # save initial network parameters for diagnostics

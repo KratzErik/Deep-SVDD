@@ -5,30 +5,27 @@ from datasets import loadbdd100k
 
 
 class Configuration(object):
-    only_test = bool(1)
-    export_results = bool(1)
-    dataset = "dreyeve"
+    only_test = bool(0)
+    export_results = bool(0)
+    dataset = "prosivic"
 
     floatX = np.float32
     seed = 0
 
-    n_pretrain_epochs = 500
+    n_pretrain_epochs = 1000
     pretrain_learning_rate = 0.001 # standard DSVDD was 0.0001
     plot_filters = bool(0)
     plot_most_out_and_norm = bool(0)
     debug_architecture_layers = bool(0) # if true, layer output shapes will be printed at compilation for both autoencoder and CNN
     use_checkpoint = True
     checkpoint_interval = 10
-    epoch_for_testing = "final"
-    test_name = "urban" # If you want to run several test sets for same trained model, specify a test name to store results separately
-
 
     if dataset == 'dreyeve':
         # Dr(eye)ve parameters
         train_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/train/"
         val_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/val/"
         test_in_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/in/"
-        test_out_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/out/urban/"
+        test_out_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/out/"
         #train_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/train/"
         #val_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/val/"
         #test_in_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/in/"
@@ -52,16 +49,12 @@ class Configuration(object):
         train_folder = "../../weather_detection_data/prosivic/train/"
         val_folder = "../../weather_detection_data/prosivic/val/"
         test_in_folder = "../../weather_detection_data/prosivic/test/in/"
-        test_out_folder = "../../weather_detection_data/prosivic/test/out/urban/"
+        test_out_folder = "../../weather_detection_data/prosivic/test/out/foggy/"
         data_div = 1
-        n_train = 6785 // data_div
-        n_val = 840 // data_div
-        n_test = 500*2 // data_div
-        n_test_in = 500 // data_div
-        if "urban" in test_out_folder:
-            n_test = 488*2 // data_div
-            n_test_in = 488 // data_div
-
+        n_train = 7000 // data_div
+        n_val = 1400 // data_div
+        n_test = 784*2 // data_div
+        n_test_in = 784 // data_div
         image_height = 256
         image_width = 256
         channels = 3
@@ -133,7 +126,7 @@ class Configuration(object):
     # Pre-training and autoencoder configuration
     weight_dict_init = False
     pretrain = False
-    ae_loss = "l2"
+    ae_loss = "ce"
     ae_lr_drop = True  # separate into "region search" and "fine-tuning" stages
     ae_lr_drop_factor = 10
     ae_lr_drop_in_epoch = int(n_pretrain_epochs * 1/2)
