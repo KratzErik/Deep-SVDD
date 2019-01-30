@@ -45,8 +45,6 @@ class SMILE_DataLoader(DataLoader):
 
         # load data from disk
         self.load_data()
-        #if Cfg.architecture not in (1,2,3,4):
-        #    self.print_architecture()
 
     def check_specific(self):
 

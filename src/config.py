@@ -29,10 +29,6 @@ class Configuration(object):
         val_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/val/"
         test_in_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/in/"
         test_out_folder = "../../weather_detection_data/dreyeve/sunny_highway_countryside_morning_evening_vs_rainy_highway_countryside_morning_evening/test/out/urban/"
-        #train_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/train/"
-        #val_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/val/"
-        #test_in_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/in/"
-        #test_out_folder = "../../weather_detection_data/dreyeve/highway_morning_sunny_vs_rainy/test/out/"
         data_div = 1
         n_train = 6000 // data_div
         n_val = 600 // data_div

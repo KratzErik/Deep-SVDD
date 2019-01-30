@@ -278,8 +278,6 @@ def main():
         sys.exit()
 
     # computation device
-#    if 'gpu' in args.device:
-#        theano.sandbox.cuda.use(args.device)
 
     # set save_at to n_epochs if not provided
     save_at = args.n_epochs if not args.save_at else args.save_at
@@ -314,12 +312,6 @@ def main():
     Cfg.cifar10_normal = args.cifar10_normal
     Cfg.cifar10_outlier = args.cifar10_outlier
     Cfg.gtsrb_rep_dim = args.gtsrb_rep_dim
-#    Cfg.bdd100k_rep_dim = args.bdd100k_rep_dim
-#    Cfg.bdd100k_architecture = args.bdd100k_architecture
-#    Cfg.bdd100k_val_frac = args.bdd100k_val_frac
-#    Cfg.bdd100k_bias = args.bdd100k_bias
-#    Cfg.bdd100k_n_train = args.bdd100k_n_train
-#    Cfg.bdd100k_n_test = args.bdd100k_n_test
 
     # neural network
     Cfg.softmax_loss = (args.loss == 'ce')
@@ -467,12 +459,8 @@ def main():
         # Load parameters from previous training
         ae_net = NeuralNet(dataset=args.dataset, use_weights=args.xp_dir+"/ae_pretrained_weights.p", pretrain=True)
         ae_net.ae_solver = args.solver.lower()
-        #ae_net.ae_learning_rate = args.lr
-        #ae_net.ae_n_epochs = args.n_epochs
 
         # set learning rate
-        #lr_tmp = Cfg.learning_rate.get_value()
-        #Cfg.learning_rate.set_value(Cfg.floatX(lr))
         ae_net.compile_autoencoder()
         _, recon_errors = ae_performance(ae_net, 'test')
         print("Computed reconstruction errors")
@@ -485,27 +473,12 @@ def main():
         
         nnet.solver = args.solver.lower()
         nnet.compile_updates()
-        # nnet.evaluate(solver = args.solver)
-        # nnet.test_time = time.time() - nnet.clock
-        # # pickle/serialize AD results
-        # if Cfg.ad_experiment:
-        #     nnet.log_results(filename=Cfg.xp_path + "/AD_results.p")
 
-        # TODO retrieve labels and scores from evaluation
         _, _, dsvdd_scores = performance(nnet,'test')
 
         labels = nnet.data._y_test
 
-        # # text log
-        # nnet.log.save_to_file("{}_results.p".format(base_file))  # save log
-        # log_exp_config(Cfg.xp_path, args.dataset)
-        # log_NeuralNet(Cfg.xp_path, args.loss, args.solver, args.lr, args.momentum, None, args.n_epochs, args.C, args.C_rec,
-        #             args.nu, args.dataset)
-        # if Cfg.ad_experiment:
-        #     log_AD_results(Cfg.xp_path, nnet)
-
         # Save scores and labels for comparison with other experiments
-        
         if Cfg.export_results:
             for name in ("", "_recon_err"):
 
@@ -529,11 +502,6 @@ def main():
                     f.write(exp_name)
 
                 print("Saved results to %s"%results_filepath)
-
-                # common_results_dict = pickle.load(open('/home/exjobb_resultat/data/name_dict.pkl','rb'))
-                # exp_name = args.xp_dir.strip('../log/%s/'%args.dataset)
-                # common_results_dict[args.dataset]["DSVDD%s"%name] = exp_name
-                # pickle.dump(common_results_dict,open('/home/exjobb_resultat/data/name_dict.pkl','wb'))
 
         # print test results to console
         print("\nOutliers from %s"%Cfg.test_out_folder)
