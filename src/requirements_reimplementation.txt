@@ -34,7 +34,7 @@ pexpect==4.2.1
 picklable-itertools==0.1.1
 Pillow==4.1.0
 progressbar2==3.18.1
-protobuf==3.4.0
+protobuf==3.15.0
 psutil==5.3.1
 ptyprocess==0.5.2
 pycrayon==0.5
