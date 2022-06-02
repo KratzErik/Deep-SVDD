@@ -10,7 +10,7 @@ fuel==0.2.0
 funcsigs==1.0.2
 functools32==3.2.3.post2
 h5py==2.7.0
-html5lib==0.9999999
+html5lib==0.99999999
 idna==2.7
 Keras==2.2.4
 Keras-Applications==1.0.6
