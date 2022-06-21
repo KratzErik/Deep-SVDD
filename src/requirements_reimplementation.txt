@@ -23,7 +23,7 @@ MarkupSafe==1.0
 matplotlib==2.0.0
 mock==2.0.0
 numexpr==2.6.2
-numpy==1.12.1
+numpy==1.22.0
 olefile==0.44
 opencv-python==3.3.0.9
 packaging==16.8
