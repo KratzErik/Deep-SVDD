@@ -17,7 +17,7 @@ Keras-Applications==1.0.6
 Keras-Preprocessing==1.0.5
 Lasagne==0.2.dev1
 lmdb==0.93
-Mako==1.0.7
+Mako==1.2.2
 Markdown==2.6.9
 MarkupSafe==1.0
 matplotlib==2.0.0
